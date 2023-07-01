@@ -90,7 +90,7 @@ def lstm_uni(modell,real_valueser,start_index, end_index,forecast_horizon=24,win
 
 
 def multilstm_full(modell,data,start_idx,end_idx,forecast_horizon=24,window_size=24,forecast_var="temp"):
-    from funcs.funcs_lstm_multi import TemperatureModel_multi_full
+    from Model.funcs.funcs_lstm_multi import TemperatureModel_multi_full
     import numpy as np
     import torch
     from sklearn.preprocessing import MinMaxScaler

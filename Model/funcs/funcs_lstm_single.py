@@ -2,7 +2,7 @@ import torch
 import pytorch_lightning as pl
 from torch.utils.data import Dataset
 from sklearn.preprocessing import MinMaxScaler
-from funcs.visualer_funcs import load_hyperparameters
+from Model.funcs.visualer_funcs import load_hyperparameters
 import numpy as np
 class TemperatureDataset(Dataset):
     def __init__(self, file_path,forecast_horizont=24,window_size=24,forecast_var="temp",wind_dir="sin"):
@@ -25,7 +25,7 @@ class TemperatureDataset(Dataset):
         self.forecast_horizont = forecast_horizont
         self.window_size = window_size
         self.forecast_var=forecast_var
-        self.wind_dir=wind_dir
+        #self.wind_dir=wind_dir
 
 
     def __len__(self):
@@ -39,7 +39,7 @@ class TemperatureDataset(Dataset):
         start_idx = idx
         end_idx = idx + window_size
         window_data = self.data[start_idx:end_idx]#.values
-        wind= self.wind[start_idx:end_idx]#.values
+        #wind= self.wind[start_idx:end_idx]#.values
         target = self.data[end_idx:end_idx+forecast_horizon]#.values
 
 

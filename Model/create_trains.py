@@ -8,6 +8,7 @@ import random
 import xarray as xr
 pl.seed_everything(42)
 
+
 # Setze den Random Seed für torch
 torch.manual_seed(42)
 
@@ -16,9 +17,10 @@ random.seed(42)
 
 # Setze den Random Seed für numpy
 np.random.seed(42)
+storage="/home/alex/Dokumente/storage"
 lite = '../Data/stunden/2016_resample_stunden.nc'
 full = '../Data/zusammengefasste_datei_2016-2019.nc'
-forecast_vars = ["wind_dir_50_sin","wind_dir_50_cos", 'temp', "press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50",     "rain", "wind_10", "wind_50"]
+forecast_vars = ["wind_dir_50_sin","wind_dir_50_cos"]#, 'temp', "press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50",     "rain", "wind_10", "wind_50"]
 #forecast_vars = ["wind_dir_50"]
 lisa=["sin","cos"]
 def create_single_trains():
@@ -28,8 +30,8 @@ def create_single_trains():
     for forecast_var in forecast_vars:
         print(forecast_var)
         for window_size in window_sizes:
-            training_data_path = 'opti/storage/training/lstm_uni/train_'+forecast_var+"_"+str(window_size)+'.pt'
-            val_data_path = 'opti/storage/validation/lstm_uni/val_'+forecast_var+"_"+str(window_size)+'.pt'
+            training_data_path = storage+'/training/lstm_uni/train_'+forecast_var+"_"+str(window_size)+'.pt'
+            val_data_path = storage+'/validation/lstm_uni/val_'+forecast_var+"_"+str(window_size)+'.pt'
             dataset = TemperatureDataset(file_path,window_size=window_size,forecast_horizont=24,forecast_var=forecast_var)
             train_data, val_data = train_test_split(dataset, test_size=0.3, random_state=42)
             torch.save(train_data, training_data_path)
@@ -47,8 +49,8 @@ def create_multi_trains():
     for forecast_var in forecast_vars:
         print(forecast_var)
         for window_size in window_sizes:
-            training_data_path = 'opti/storage/training/lstm_multi/train_' + forecast_var + "_" + str(window_size) + '.pt'
-            val_data_path = 'opti/storage/validation/lstm_multi/val_' + forecast_var + "_" + str(window_size) + '.pt'
+            training_data_path = storage+'/training/lstm_multi/train_' + forecast_var + "_" + str(window_size) + '.pt'
+            val_data_path = storage+'/validation/lstm_multi/val_' + forecast_var + "_" + str(window_size) + '.pt'
             dataset = TemperatureDataset_multi(file_path,window_size=window_size,forecast_horizont=24,forecast_var=forecast_var)
             train_data, val_data = train_test_split(dataset, test_size=0.3, random_state=42)
             torch.save(train_data, training_data_path)
@@ -57,5 +59,5 @@ def create_multi_trains():
     return
 
 
-create_multi_trains()
-#create_single_trains()
+#create_multi_trains()
+create_single_trains()

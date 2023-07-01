@@ -5,12 +5,15 @@ from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
 from pytorch_lightning import loggers
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
-from funcs.funcs_lstm_single import TemperatureDataset, TemperatureModel
+from Model.funcs.funcs_lstm_single import TemperatureDataset, TemperatureModel
 from optuna.integration import PyTorchLightningPruningCallback
 import random
 import numpy as np
 import yaml
-forecast_var = 'humid'
+
+storage="/home/alex/Dokumente/storage"
+logs="/home/alex/Dokumente/lightning_logs"
+forecast_var = 'wind_dir_50_cos'
 # Setzen Sie die Zufallssaat für die GPU
 # Setze den Random Seed für PyTorch
 pl.seed_everything(42)
@@ -37,8 +40,8 @@ def objective(trial):
     weight_intiliazier = trial.suggest_categorical('weight_intiliazier', [ "xavier","kaiming","normal"])
     window_size= trial.suggest_categorical('window_size', [24*7*4])
     # Initialize the model with the suggested hyperparameters
-    training_data_path = 'storage/training/lstm_uni/train_' + forecast_var + "_" + str(window_size) + '.pt'
-    val_data_path = 'storage/validation/lstm_uni/val_' + forecast_var + "_" + str(window_size) + '.pt'
+    training_data_path = storage+'/training/lstm_uni/train_' + forecast_var + "_" + str(window_size) + '.pt'
+    val_data_path = storage+'/validation/lstm_uni/val_' + forecast_var + "_" + str(window_size) + '.pt'
     train_data = torch.load(training_data_path)
     val_data = torch.load(val_data_path)
 
@@ -47,7 +50,7 @@ def objective(trial):
     val_loader = DataLoader(val_data, batch_size=batchsize, shuffle=False, num_workers=8)
 
     model = TemperatureModel(hidden_size=hidden_size, learning_rate=learning_rate, weight_decay=weight_decay,num_layers=num_layers,weight_intiliazier=weight_intiliazier)
-    logger = loggers.TensorBoardLogger(save_dir='../lightning_logs/lstm_uni/' + forecast_var, name='lstm_optimierer')
+    logger = loggers.TensorBoardLogger(save_dir=logs+'/lstm_uni/' + forecast_var, name='lstm_optimierer')
 
     # Define the Lightning callbacks and trainer settings
     early_stopping = EarlyStopping('val_loss', patience=5, mode='min')
@@ -67,7 +70,7 @@ def objective(trial):
     return trainer.callback_metrics['val_loss'].item()
 
 
-study = optuna.create_study(direction='minimize', storage='sqlite:///storage/database.db',study_name="lstm_uni_"+forecast_var, load_if_exists=True)
+study = optuna.create_study(direction='minimize', storage='sqlite:///'+storage+'/database.db',study_name="lstm_uni_"+forecast_var, load_if_exists=True)
 study.optimize(objective, n_trials=10)
 best_params = study.best_trial.params
 print(best_params)
@@ -79,11 +82,11 @@ def export_best_params_and_model(forecast_var):
     # Trainiere das Modell mit den besten Parametern
     best_model = TemperatureModel(hidden_size=best_params['hidden_size'], learning_rate=best_params['learning_rate'], weight_decay=best_params['weight_decay'],
                                   num_layers=best_params['num_layers'], weight_intiliazier=best_params['weight_intiliazier'])
-    logger = loggers.TensorBoardLogger(save_dir='../lightning_logs/lstm_uni/' + forecast_var, name='lstm_optimierer')
+    logger = loggers.TensorBoardLogger(save_dir=logs+'/lstm_uni/' + forecast_var, name='lstm_optimierer')
     trainer = pl.Trainer(logger=logger, max_epochs=20, accelerator="auto", devices="auto",
                          deterministic=True, enable_progress_bar=False)
-    training_data_path = 'storage/training/lstm_uni/train_' + forecast_var + "_" + str(best_params['window_size']) + '.pt'
-    val_data_path = 'storage/validation/lstm_uni/val_' + forecast_var + "_" + str(best_params['window_size']) + '.pt'
+    training_data_path = storage+'/training/lstm_uni/train_' + forecast_var + "_" + str(best_params['window_size']) + '.pt'
+    val_data_path = storage+'/validation/lstm_uni/val_' + forecast_var + "_" + str(best_params['window_size']) + '.pt'
     train_data = torch.load(training_data_path)
     val_data = torch.load(val_data_path)
 
