@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from Model.funcs.visualer_funcs import lstm_uni, skill_score,multilstm_full,tft
+from Model.funcs.visualer_funcs import lstm_uni, skill_score,multilstm_full,tft,ttft
 import pandas as pd
 import xarray as xr
 import datetime
@@ -192,8 +192,30 @@ def forecast_tft():
     df=xr.Dataset.from_dataframe(df)
     df.to_netcdf(output_file)
 
-
-
+def forecast_ttft():
+    var_list = ["temp"]  # , "Geneigt CM-11", 'temp', "press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50","rain", "wind_10", "wind_50"]
+    data = {}
+    for forecast_var in var_list:
+        print(forecast_var)
+        pred_lis = []
+        model_path = "../Model/output/ttft/" + forecast_var + ".pth"
+        model_path="../Model/lightning_logs/lightning_logs/version_15/checkpoints/epoch=9-step=500.ckpt"
+        #lstm_uni_params = '../Model/opti/output/lstm_single/best_params_lstm_single_' + forecast_var + '.yaml'
+        for window, last_window in zip(range(window_size, len(forecast_data.index.tolist()), forecast_horizon),
+                                       range(0, len(forecast_data.index.tolist()) - window_size,
+                                             forecast_horizon)):
+            predictions = ttft(model_path, forecast_data, start_index=last_window,
+                                   end_index=window,
+                                   forecast_var=forecast_var)  # .insert(0, Messfrühling[0:24]),
+            pred_lis.append(predictions)
+        data[forecast_var] = np.array(pred_lis).flatten()
+    df = pd.DataFrame(data)
+    print(df)
+    output_file = "forecast_ttft.nc"
+    df = df.set_index(pd.to_datetime(visual_data.index.tolist()), inplace=False)
+    df.index.name = "Datum"
+    df = xr.Dataset.from_dataframe(df)
+    df.to_netcdf(output_file)
 
 
 
@@ -207,11 +229,12 @@ def forecast_tft():
 #output_file = "forecast_sarima.nc"
 #df = xr.Dataset.from_dataframe(df)
 #df.to_netcdf(output_file)
-forecast_lstm_uni()
+#forecast_lstm_uni()
+forecast_ttft()
 #forecast_lstm_multi()
 #litesarima()
-lite_arima()
-sarima_netcdf()
+#lite_arima()
+#sarima_netcdf()
 #forecast_tft()
 #var= "wind_dir_50"
 #references_var = np.load("sarima/reference_"+var+".npy").flatten()

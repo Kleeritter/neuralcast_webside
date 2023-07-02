@@ -44,7 +44,8 @@ for column in feature_cols:
     scaled_values = scaler.transform(values)
     data[column] = scaled_values.flatten()
 data=data[[  'humid', 'temp', 'press_sl',        'wind_10', 'wind_50', 'gust_10', 'gust_50', 'rain', 'diffuscmp11', 'globalrcmp11', 'wind_dir_50_sin', 'wind_dir_50_cos',"timestep","const"]]
-print(data)
+
+
 max_prediction_length = 24
 max_encoder_length = 672
 training_cutoff = data["timestep"].max() - max_prediction_length
@@ -64,7 +65,7 @@ training = TimeSeriesDataSet(
     add_encoder_length=True,
 )
 
-print(training)
+
 validation = TimeSeriesDataSet.from_dataset(training, data, predict=True, stop_randomization=True)
 
 
@@ -85,15 +86,13 @@ lr_logger = LearningRateMonitor()  # log the learning rate
 logger = TensorBoardLogger("lightning_logs")  # logging results to a tensorboard
 
 trainer = pl.Trainer(
-    max_epochs=50,
+    max_epochs=10,
     accelerator="auto",
     enable_model_summary=True,
     gradient_clip_val=0.1,
     limit_train_batches=50,  # coment in for training, running valiation every 30 batches
-    # fast_dev_run=True,  # comment in to check that networkor dataset has no serious bugs
     callbacks=[lr_logger, early_stop_callback],
     logger=logger,
-    #deterministic=True
 )
 
 tft = TemporalFusionTransformer.from_dataset(
@@ -103,7 +102,7 @@ tft = TemporalFusionTransformer.from_dataset(
     attention_head_size=2,
     dropout=0.1,
     hidden_continuous_size=8,
-    loss=RMSE(),#QuantileLoss(),
+    loss=QuantileLoss(),
     log_interval=10,  # uncomment for learning rate finder and otherwise, e.g. to 10 for logging every 10 batches
     optimizer="Ranger",
     reduce_on_plateau_patience=4,
@@ -115,3 +114,5 @@ trainer.fit(
     train_dataloaders=train_dataloader,
     val_dataloaders=val_dataloader,
 )
+
+torch.save(tft.state_dict(), 'output/ttft/'+target_col+'.ckpt')

@@ -308,64 +308,76 @@ def tft(modell,data,start_idx,end_idx,forecast_horizon=24,window_size=24, foreca
     # print(denormalized_values)
     return denormalized_values
 
-def multilstm_light(modell,data,start_idx,end_idx):
-    from funcs import TemperatureModel_multi_light
+
+
+def ttft(modell,data,start_index, end_index,forecast_horizon=24,window_size=24, hyper_params_path="../opti/output/lstm_single/best_params_lstm_singletemp_org.yaml",forecast_var="temp"):
     import numpy as np
     import torch
-    checkpoint_path = modell
-    checkpoint = torch.load(checkpoint_path)
+    from sklearn.preprocessing import MinMaxScaler
+    import lightning.pytorch as pl
+    from pytorch_forecasting import Baseline, TemporalFusionTransformer,TimeSeriesDataSet
+    import warnings
+
+    warnings.filterwarnings("ignore")  # avoid printing out absolute paths
+
+    #hyper_params = load_hyperparameters(hyper_params_path)
+    pl.seed_everything(42)
+    data=data[start_index:end_index]
+    data["timestep"] = np.arange(0,
+                                 len(data.index.tolist()))  # pd.to_numeric(data.index)- pd.to_numeric(data.index).min()
+    data["const"] = np.ones(len(data))
+    data = data.reset_index()
+    data = data.drop(columns="index")
+    feature_cols = ['humid', 'temp', 'press_sl', 'wind_10', 'wind_50', 'gust_10', 'gust_50', 'rain', 'diffuscmp11',
+                    'globalrcmp11', 'wind_dir_50_sin', 'wind_dir_50_cos']  # Liste der meteorologischen Parameter
+    for column in feature_cols:
+        values = data[column].values.reshape(-1, 1)
+        scaler = MinMaxScaler(feature_range=(0, 1))
+        param_path = "../Data/params_for_normal.yaml"  # '/home/alex/PycharmProjects/nerualcaster/Data/params_for_normal.yaml'  # "../../Data/params_for_normal.yaml"
+        params = load_hyperparameters(param_path)
+        mins = params["Min_" + column]
+        maxs = params["Max_" + column]
+        train_values = [mins, maxs]
+        X_train_minmax = scaler.fit_transform(np.array(train_values).reshape(-1, 1))
+        scaled_values = scaler.transform(values)
+        data[column] = scaled_values.flatten()
+        if column==forecast_var:
+            scalera=scaler
+    data = data[
+        ['humid', 'temp', 'press_sl', 'wind_10', 'wind_50', 'gust_10', 'gust_50', 'rain', 'diffuscmp11', 'globalrcmp11',
+         'wind_dir_50_sin', 'wind_dir_50_cos', "timestep", "const"]]
+    pred = TimeSeriesDataSet(
+        data=data,
+        target=forecast_var,
+        group_ids=["const"],  # Annahme: Spalte mit Zeitstempeln heißt "Timestamp"
+        time_idx="timestep",
+        min_prediction_length=1,
+        time_varying_unknown_reals=feature_cols,
+        add_relative_time_idx=True,
+        add_target_scales=True,
+        add_encoder_length=True,
+        predict_mode=True,
+        max_prediction_length=24,
+        max_encoder_length=672,
+    )
+
+    checkpoint = torch.load(modell)
     #print(checkpoint.keys())
-
-    # Passe die Architektur deines LSTM-Modells entsprechend an
-    model = TemperatureModel_multi_light()  # Ersetze "YourLSTMModel" durch den tatsächlichen Namen deines Modells
-    model.load_state_dict(checkpoint)  # ['state_dict'])
-    model.eval()
-    sliding_window = []  # Liste für das Sliding Window
-
-    # Führe die Vorhersage für die ersten 24 Stunden durch
-    predicted_values = []
-    window_data = data.isel(index=slice(start_idx, end_idx)).to_array().values
-    window_data_normalized = np.zeros_like(window_data)
-    means=[]
-    stds=[]
-    for i in range(window_data.shape[0]):
-        variable = window_data[i, :]
-        mean = np.mean(variable)
-        means.append(mean)
-        std = np.std(variable)
-        stds.append(std)
-        if std != 0:
-            variable_normalized = (variable - mean) / std
-        else:
-            variable_normalized = np.zeros_like(variable)
-        window_data_normalized[i, :] = variable_normalized
-    sliding_window= window_data_normalized
-    #original_mean = np.mean(sliding_window)  # original_data sind die nicht normalisierten Daten
-    #original_std = np.std(sliding_window)
-    #sliding_window = (sliding_window - np.mean(sliding_window)) / np.std(sliding_window)
-    # Berechnung des Durchschnitts und der Standardabweichung des Originaldatensatzes
-
-    #sliding_window=np.expand_dims(window_data_normalized, axis=0)
-    sliding_window = sliding_window.transpose(1, 0)
-    #print(sliding_window)
-    sliding_window=np.expand_dims(sliding_window, axis=0)
-
-    #sliding_window=np.expand_dims(sliding_window, axis=2)
-    #input_data = torch.Tensor(sliding_window)
-    input_data = torch.from_numpy(sliding_window).float()
-    with torch.no_grad():
-        predicted_value = model(input_data)
-    predicted_values.append(predicted_value.tolist())
-    predictions=predicted_value.squeeze().tolist()
+    best_tft = TemporalFusionTransformer.load_from_checkpoint(modell)
+    predictions = best_tft.predict(pred,  trainer_kwargs=dict(accelerator="cpu"))
     #print(predictions)
-    denormalized_values = [(predicted_value * stds[0] )+ means[0] for predicted_value in predictions]
-    #denormalized_values=np.arange(0,len(denormalized_values))
-    #print(denormalized_values)
+    denormalized_values = scalera.inverse_transform(predictions)
+    # denormalized_values =predicted_values
     return denormalized_values
 
 
+def load_hyperparameters(file_path):
+    with open(file_path, 'r') as file:
+        hyperparameters = yaml.safe_load(file)
+    return hyperparameters
+
 def conv(modell,data,start_idx,end_idx):
-    from funcs import TemperatureModel_conv
+    from Model.funcs import TemperatureModel_conv
     import numpy as np
     import torch
     from sklearn import preprocessing
@@ -450,8 +462,3 @@ def conv(modell,data,start_idx,end_idx):
     #denormalized_values=np.arange(0,len(denormalized_values))
     #print(denormalized_values)
     return denormalized_values
-
-def load_hyperparameters(file_path):
-    with open(file_path, 'r') as file:
-        hyperparameters = yaml.safe_load(file)
-    return hyperparameters
