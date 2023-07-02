@@ -358,7 +358,7 @@ def ttft(modell,data,start_index, end_index,forecast_horizon=24,window_size=24, 
         add_encoder_length=True,
         predict_mode=True,
         max_prediction_length=24,
-        max_encoder_length=672,
+        #max_encoder_length=672,
     )
 
     checkpoint = torch.load(modell)

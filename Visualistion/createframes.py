@@ -198,8 +198,8 @@ def forecast_ttft():
     for forecast_var in var_list:
         print(forecast_var)
         pred_lis = []
-        model_path = "../Model/output/ttft/" + forecast_var + ".pth"
-        model_path="../Model/lightning_logs/lightning_logs/version_15/checkpoints/epoch=9-step=500.ckpt"
+        #model_path = "../Model/output/ttft/" + forecast_var + ".ckpt"
+        model_path="../Model/lightning_logs/lightning_logs/version_11/checkpoints/epoch=49-step=2500.ckpt"
         #lstm_uni_params = '../Model/opti/output/lstm_single/best_params_lstm_single_' + forecast_var + '.yaml'
         for window, last_window in zip(range(window_size, len(forecast_data.index.tolist()), forecast_horizon),
                                        range(0, len(forecast_data.index.tolist()) - window_size,
