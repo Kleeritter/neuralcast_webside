@@ -9,8 +9,8 @@ def arima(data):
     # Erstellen und fitten Sie das SARIMA-Modell
     order = (0, 1, 1)  # Beispielwerte für AR, I, MA
     #seasonal_order = (0, 1, 1, 24)  # Beispielwerte für saisonale AR, I, MA, Saisonlänge
-    model = sm.tsa.statespace.SARIMAX(train, order=order)
-    model_fit = model.fit(disp=0)
+    model = sm.tsa.arima.ARIMA(train, order=order)
+    model_fit = model.fit()
 
     # Generieren Sie Vorhersagen für die nächsten 24h
     forecast = model_fit.get_forecast(steps=24)

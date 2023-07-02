@@ -13,5 +13,5 @@ def wind_split(file):
     return
 
 
-wind_split('stunden/2022_resample_stunden.nc')
-wind_split('zusammengefasste_datei_2016-2019.nc')
+wind_split('stunden/2021_resample_stunden.nc')
+#wind_split('zusammengefasste_datei_2016-2019.nc')

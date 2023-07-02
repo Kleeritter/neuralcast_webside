@@ -38,8 +38,8 @@ def skill_score(actual_values, prediction, reference_values):
     return sc
 
 
-def lstm_uni(modell,real_valueser,start_index, end_index,forecast_horizon=24,window_size=24, hyper_params_path="../opti/output/lstm_single/best_params_lstm_singletemp_org.yaml"):
-    from funcs.funcs_lstm_single import TemperatureModel
+def lstm_uni(modell,real_valueser,start_index, end_index,forecast_horizon=24,window_size=24, hyper_params_path="../opti/output/lstm_single/best_params_lstm_singletemp_org.yaml",forecast_var="temp"):
+    from Model.funcs.funcs_lstm_single import TemperatureModel
     import numpy as np
     import torch
     from sklearn.preprocessing import MinMaxScaler
@@ -62,9 +62,15 @@ def lstm_uni(modell,real_valueser,start_index, end_index,forecast_horizon=24,win
     # Führe die Vorhersage für die ersten 24 Stunden durch
     predicted_values = []
     scaler = MinMaxScaler(feature_range=(0, 1))
-    train_values = [261, 310]
+    param_path = '/home/alex/PycharmProjects/nerualcast/Data/params_for_normal.yaml'  # "../../Data/params_for_normal.yaml"
+    params = load_hyperparameters(param_path)
+    mins = params["Min_" + forecast_var]
+    maxs = params["Max_" + forecast_var]
+    #print(real_valueser)
+    train_values = [mins, maxs]
     X_train_minmax = scaler.fit_transform(np.array(train_values).reshape(-1, 1))
     real_valueser = scaler.transform([[x] for x in real_valueser]).flatten()
+
     sliding_window= real_valueser[start_index:end_index]#.values
     #print(len(sliding_window))
     #original_mean = np.mean(sliding_window)  # original_data sind die nicht normalisierten Daten
@@ -208,7 +214,7 @@ def multilstm_full(modell,data,start_idx,end_idx,forecast_horizon=24,window_size
     return denormalized_values
 
 def tft(modell,data,start_idx,end_idx,forecast_horizon=24,window_size=24, forecast_var="temp"):
-    from funcs.funcs_tft import TFT_Modell
+    from Model.funcs.funcs_tft import TFT_Modell
     import numpy as np
     import torch
     from sklearn.preprocessing import MinMaxScaler

@@ -6,7 +6,7 @@ import pytorch_lightning as pl
 import numpy as np
 import random
 import xarray as xr
-from funcs.visualer_funcs import load_hyperparameters
+from Model.funcs.visualer_funcs import load_hyperparameters
 
 pl.seed_everything(42)
 
