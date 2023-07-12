@@ -68,6 +68,16 @@ class TemperatureDataset_multi(Dataset):
 
 
 class TemperatureModel_multi_light(pl.LightningModule):
+    pl.seed_everything(42)
+
+    # Setze den Random Seed für torch
+    torch.manual_seed(42)
+
+    # Setze den Random Seed für random
+    random.seed(42)
+
+    # Setze den Random Seed für numpy
+    np.random.seed(42)
     def __init__(self, window_size=24, forecast_horizont=24):
         super().__init__()
         self.lstm = torch.nn.LSTM(input_size=3, hidden_size=32, num_layers=1, batch_first=True)

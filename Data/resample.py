@@ -123,4 +123,4 @@ def resample_stunden(filelist, years):
     #print(len(ds["time"]))
 #resample_zehner(filelist,years)
 #resample_stunden(filelist,years)
-resample_stunden(["einer/Messwerte_2016.nc","einer/Messwerte_2017.nc","einer/Messwerte_2018.nc","einer/Messwerte_2019.nc","einer/Messwerte_2020.nc","einer/Messwerte_2021.nc","einer/Messwerte_2022.nc"],[2016,2017,2018,2019,2020,2021,2022])
+resample_stunden(["einer/Messwerte_2021.nc","einer/Messwerte_2020.nc","einer/Messwerte_2017.nc","einer/Messwerte_2018.nc","einer/Messwerte_2019.nc","einer/Messwerte_2020.nc","einer/Messwerte_2021.nc","einer/Messwerte_2022.nc"],[2021,2020,2017,2018,2019,2020,2021,2022])

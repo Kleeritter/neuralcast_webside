@@ -1,36 +1,10 @@
-from sklearn.preprocessing import MinMaxScaler
-import numpy as np
+def daylenght(doy,L):
+    from math import tan,atan,sin,asin,cos,acos,pi
+    theta=0.2163108+2*atan(0.9671396*tan(0.00860*(doy-186)))
+    phi=asin(0.39795*cos(theta))
 
-# Annahme: Normalisierung wurde mit einem Mindestwert von 0 und einem Maximalwert von 1 durchgeführt
-min_value = 261
-max_value = 310
+    D= 24- (24/pi)*acos((sin((L*pi))/(180)*sin(phi))/(cos((L*pi)/180)*cos(phi)))
 
+    return D
 
-# Werte aus der anderen Datei, die normalisiert werden sollen
-
-train_values=[261,310]
-values_to_normalize = [270, 300, 305,400]
-
-# MinMaxScaler-Objekt erstellen und mit den bekannten Maximal- und Minimalwerten anpassen
-
-...
-scaler = MinMaxScaler()
-
-
-
-
-# Normalisierung durchführen
-X_train_minmax = scaler.fit_transform(np.array(train_values).reshape(-1, 1))
-
-# Normalisierte Werte ausgeben
-print(X_train_minmax.flatten())
-
-# MinMaxScaler-Objekt erstellen und mit den ursprünglichen Daten anpassen
-xtest=scaler.transform(np.array(values_to_normalize).reshape(-1,1)).flatten()
-
-print(xtest)
-# Denormalisierung durchführen
-denormalized_values = scaler.inverse_transform([[x] for x in xtest])
-
-# Denormalisierte Werte ausgeben
-print(denormalized_values.flatten())
+print(daylenght(150,10.5))

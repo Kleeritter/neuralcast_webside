@@ -11,8 +11,8 @@ from optuna.integration import PyTorchLightningPruningCallback
 import random
 import numpy as np
 import yaml
-#forecast_var = 'wind_dir_50_sin'
-forecast_vars=["wind_dir_50_cos", 'temp', "press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50",     "rain", "wind_10", "wind_50"]
+#forecast_vars =[ 'temp']
+forecast_vars=[ "press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50",     "rain", "wind_10", "wind_50","wind_dir_50_sin", "wind_dir_50_cos"]
 storage="/home/alex/Dokumente/storage"
 logs="/home/alex/Dokumente/lightning_logs"
 # Setzen Sie die Zufallssaat für die GPU
@@ -37,8 +37,9 @@ def objective(trial):
     #optimizer  = trial.suggest_categorical('optimizer', ["Adam","AdamW"])
     #dropout = trial.suggest_categorical('dropout', [0,0.2,0.5])
     num_layers = trial.suggest_categorical('num_layers', [1, 2,4,6])
-    batchsize = trial.suggest_categorical('batchsize', [6,12,24])
-    weight_intiliazier = trial.suggest_categorical('weight_intiliazier', [ "xavier","kaiming","normal"])
+    #batchsize = trial.suggest_categorical('batchsize', [1,2,3,6,12,24])
+    batchsize=trial.suggest_int('batchsize', 32, 128, step=8)
+    weight_intiliazier = trial.suggest_categorical('weight_initializer', [ "xavier","kaiming","normal"])
     window_size= trial.suggest_categorical('window_size', [24*7*4])
     # Initialize the model with the suggested hyperparameters
     training_data_path = storage+'/training/lstm_multi/train_' + forecast_var + "_" + str(window_size) + '.pt'
@@ -77,8 +78,8 @@ def export_best_params_and_model(forecast_var):
         yaml.dump(best_params, file)
 
     # Trainiere das Modell mit den besten Parametern
-    best_model = TemperatureModel(hidden_size=best_params['hidden_size'], learning_rate=best_params['learning_rate'], weight_decay=best_params['weight_decay'],
-                                  num_layers=best_params['num_layers'], weight_intiliazier=best_params['weight_intiliazier'])
+    best_model = TemperatureModel_multi_full(hidden_size=best_params['hidden_size'], learning_rate=best_params['learning_rate'], weight_decay=best_params['weight_decay'],
+                                  num_layers=best_params['num_layers'], weight_initializer=best_params['weight_initializer'])
     logger = loggers.TensorBoardLogger(save_dir=logs+'/lstm_multi/' + forecast_var, name='lstm_optimierer')
     trainer = pl.Trainer(logger=logger, max_epochs=20, accelerator="auto", devices="auto",
                          deterministic=True, enable_progress_bar=False)
@@ -102,7 +103,7 @@ def export_best_params_and_model(forecast_var):
 
 for forecast_var in forecast_vars:
     study = optuna.create_study(direction='minimize', storage='sqlite:///' + storage + '/database.db',
-                                study_name="lstm_multi_" + forecast_var , load_if_exists=True)
+                                study_name="lstm_multi_test_" + forecast_var , load_if_exists=True)
     study.optimize(objective, n_trials=10)
     best_params = study.best_trial.params
     export_best_params_and_model(forecast_var)

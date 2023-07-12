@@ -48,7 +48,7 @@ dropout=0
 #print("koksnot")
 start_index_test = forecast_data.index.get_loc(dt)
 
-references=np.load("sarima/reference_temp_.npy").flatten()
+#references=np.load("sarima/reference_temp_.npy").flatten()
 
 #print(forecast_data.iloc[-1])
 
@@ -79,7 +79,7 @@ def fullsarima(number):
 
 def litesarima():
     var_list = [
-        "press_sl"]  # , "Geneigt CM-11", 'temp', "press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50","rain", "wind_10", "wind_50"]
+        "diffuscmp11","globalrcmp11"]  # , "Geneigt CM-11", 'temp', "press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50","rain", "wind_10", "wind_50"]
 
     for var in var_list:
         print(var)
@@ -95,7 +95,7 @@ def litesarima():
 
 def lite_arima():
     var_list = [
-        "wind_dir_50_cos"]  # , "Geneigt CM-11", 'temp', "press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50","rain", "wind_10", "wind_50"]
+        "rain","gust_10","press_sl","humid","gust_50","wind_10","wind_50","wind_dir_50_sin","wind_dir_50_cos","diffuscmp11"]  # , "Geneigt CM-11", 'temp', "press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50","rain", "wind_10", "wind_50"]
 
     for var in var_list:
         print(var)
@@ -111,7 +111,7 @@ def lite_arima():
 
 def sarima_netcdf():
     var_list = [
-        "temp","wind_dir_50_sin","wind_dir_50_cos"]  # , "Geneigt CM-11", 'temp', "press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50","rain", "wind_10", "wind_50"]
+        "wind_dir_50_sin","temp", "wind_dir_50_cos","rain", "press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50", "wind_10", "wind_50"]  # , "Geneigt CM-11", 'temp', "press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50","rain", "wind_10", "wind_50"]
     data = {}
     for var in var_list:
         print(var)
@@ -129,7 +129,7 @@ def sarima_netcdf():
 def forecast_lstm_uni():
 
     var_list = [
-        "wind_dir_50_sin","temp", "wind_dir_50_cos"]  # , "Geneigt CM-11", 'temp', "press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50","rain", "wind_10", "wind_50"]
+        "temp", "press_sl", "humid"]
     data = {}
     for forecast_var in var_list:
         print(forecast_var)
@@ -156,22 +156,46 @@ def forecast_lstm_uni():
 
 
 
-def forecast_lstm_multi():
-    predicted_temp_multi = []
-    for window, last_window in zip(range(window_size, len(forecast_data.index.tolist()), forecast_horizon),
-                                   range(0, len(forecast_data.index.tolist()) - window_size,
-                                         forecast_horizon)):
-        predictions_multi = multilstm_full(multivariant_model_path, forecast_data, start_idx=last_window,
-                                           end_idx=window, forecast_var=forecast_var)
-        predicted_temp_multi.append(predictions_multi)
-    data = pd.DataFrame({
-        'temp': np.array(predicted_temp_multi).flatten(),
+def forecast_lstm_multi(model_folder,params_folder,var_list,output_file,forecast_horizont,window_size):
+    import glob
+    #var_list = [
+     #   "temp", "press_sl", "humid"]
+    #var_list= [ "press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50",     "rain", "wind_10", "wind_50","wind_dir_50_sin", "temp"]
+    dtl = datetime.datetime(forecast_year - 1, 12, 31, 23)
+    dtlast = dtl - datetime.timedelta(hours=window_size - 1)
+    dtlast = dtl - datetime.timedelta(hours=window_size - 1)
+    nc_path = '../Data/stunden/' + str(
+        forecast_year) + '_resample_stunden.nc'  # Replace with the actual path to your NetCDF file
+    nc_path_last = '../Data/stunden/' + str(forecast_year - 1) + '_resample_stunden.nc'
+    data = xr.open_dataset(nc_path)  # .to_dataframe()#["index">dt]
+    datalast = xr.open_dataset(nc_path_last)
+    # print(data.to_dataframe().iloc[-1])
+    data = xr.concat([datalast, data], dim="index").to_dataframe()
+    start_index_forecast = data.index.get_loc(dtlast)
+    forecast_data = data[start_index_forecast:]
+    print(forecast_data.head())
 
-    })
-    output_file = "forecast_lstm_multi.nc"
-    df = data.set_index(pd.to_datetime(visual_data.index.tolist()), inplace=False)
+    data = {}
+    for forecast_var in var_list:
+        print(forecast_var)
+        pred_lis = []
+        multivariant_model_path = model_folder+"/best_model_state_" + forecast_var +'_'+str(window_size)+'_'+str(forecast_horizont)+ ".pt"#../Model/opti/output/lstm_multi/models/best_model_state_" + forecast_var + ".pt"
+        lstm_multi_params = params_folder#+'/best_params_lstm_multi_' + forecast_var + '.yaml'#'../Model/opti/output/lstm_multi/best_params_lstm_multi_' + forecast_var + '.yaml'
+        for window, last_window in zip(range(window_size, len(forecast_data.index.tolist()), forecast_horizon),
+                                       range(0, len(forecast_data.index.tolist()) - window_size,
+                                             forecast_horizon)):
+            #print(forecast_data[last_window:window])
+            predictions_multi = multilstm_full(multivariant_model_path, forecast_data, start_idx=last_window,
+                                               end_idx=window, forecast_var=forecast_var,hyper_params_path=lstm_multi_params)
+            pred_lis.append(predictions_multi)
+        data[forecast_var]=np.array(pred_lis).flatten()
+
+    df = pd.DataFrame(data)
+    print(df)
+    output_file = output_file#"forecast_lstm_multi.nc"
+    df = df.set_index(pd.to_datetime(visual_data.index.tolist()), inplace=False)
     df.index.name = "Datum"
-    df=xr.Dataset.from_dataframe(df)
+    df = xr.Dataset.from_dataframe(df)
     df.to_netcdf(output_file)
 
 def forecast_tft():
@@ -230,7 +254,7 @@ def forecast_ttft():
 #df = xr.Dataset.from_dataframe(df)
 #df.to_netcdf(output_file)
 #forecast_lstm_uni()
-forecast_ttft()
+#forecast_ttft()
 #forecast_lstm_multi()
 #litesarima()
 #lite_arima()

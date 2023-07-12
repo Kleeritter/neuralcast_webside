@@ -13,7 +13,7 @@ import yaml
 
 storage="/home/alex/Dokumente/storage"
 logs="/home/alex/Dokumente/lightning_logs"
-forecast_var = 'rain'
+forecast_var = 'wind_50'
 # Setzen Sie die Zufallssaat für die GPU
 # Setze den Random Seed für PyTorch
 pl.seed_everything(42)
