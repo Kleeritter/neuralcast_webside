@@ -1,10 +1,8 @@
-def daylenght(doy,L):
-    from math import tan,atan,sin,asin,cos,acos,pi
-    theta=0.2163108+2*atan(0.9671396*tan(0.00860*(doy-186)))
-    phi=asin(0.39795*cos(theta))
+import itertools
 
-    D= 24- (24/pi)*acos((sin((L*pi))/(180)*sin(phi))/(cos((L*pi)/180)*cos(phi)))
+forecast_horizonts=[2,4,6,12,15,18,24,32,48,60,72,84,96,192]
+window_sizes=[16*24*7,8*7*24,4*7*24,2*7*24,7*24,6*24,5*24,4*24,3*24,2*24,24,12,6,3]
 
-    return D
+permutations = list(itertools.product(forecast_horizonts, window_sizes))
 
-print(daylenght(150,10.5))
+print(permutations)

@@ -96,7 +96,7 @@ def lstm_uni(modell,real_valueser,start_index, end_index,forecast_horizon=24,win
     return denormalized_values
 
 
-def multilstm_full(modell,data,start_idx,end_idx,forecast_horizon=24,window_size=24,forecast_var="temp",hyper_params_path="../opti/output/lstm_multi/best_params_lstm_multi.yaml"):
+def multilstm_full(modell,data,start_idx,end_idx,forecast_horizon,window_size,forecast_var="temp",hyper_params_path="../opti/output/lstm_multi/best_params_lstm_multi.yaml"):
     from Model.funcs.funcs_lstm_multi import TemperatureModel_multi_full
     import numpy as np
     import torch
@@ -106,6 +106,7 @@ def multilstm_full(modell,data,start_idx,end_idx,forecast_horizon=24,window_size
     checkpoint = torch.load(checkpoint_path)
     data=data[["wind_dir_50_sin","wind_dir_50_cos",'temp',"press_sl","humid","diffuscmp11","globalrcmp11","gust_10","gust_50", "rain", "wind_10", "wind_50"]]
     data=data[start_idx: end_idx]
+    #print(data)
     for column in data.columns:
         values = data[column].values.reshape(-1, 1)
         scaler = MinMaxScaler(feature_range=(0, 1))
@@ -125,11 +126,12 @@ def multilstm_full(modell,data,start_idx,end_idx,forecast_horizon=24,window_size
     best_params = load_hyperparameters(hyper_params_path)
     # Passe die Architektur deines LSTM-Modells entsprechend an
     model = TemperatureModel_multi_full(hidden_size=best_params['hidden_size'], learning_rate=best_params['learning_rate'], weight_decay=best_params['weight_decay'],
-                                  num_layers=best_params['num_layers'], weight_initializer=best_params['weight_initializer'])
+                                  num_layers=best_params['num_layers'], weight_initializer=best_params['weight_initializer'],forecast_horizont=forecast_horizon,window_size=window_size)
     model.load_state_dict(checkpoint)  # ['state_dict'])
     model.eval()
     sliding_window = data  # Liste für das Sliding Window
     sliding_window = np.expand_dims(sliding_window, axis=0)
+    #print(forecast_horizon)
     #sliding_window = np.expand_dims(sliding_window, axis=2)
     input_data = torch.from_numpy(np.array(sliding_window)).float()
     with torch.no_grad():
@@ -137,7 +139,7 @@ def multilstm_full(modell,data,start_idx,end_idx,forecast_horizon=24,window_size
     predicted_values = np.array(predicted_value).flatten()
     #print(predicted_values)
     denormalized_values = scalera.inverse_transform(predicted_values.reshape(-1, 1)).flatten()
-
+    #print(len(denormalized_values))
     return denormalized_values
 
 def tft(modell,data,start_idx,end_idx,forecast_horizon=24,window_size=24, forecast_var="temp"):

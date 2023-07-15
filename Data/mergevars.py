@@ -21,37 +21,21 @@ import glob
 
 # Speichern der zusammengeführten Datei
 #merged.to_netcdf('zusammengefuegt.nc')
-def mergin(folder,ouput):
+def mergin(folder,ouput,rename=False):
     files = glob.glob(folder+"/*.nc")
     combined_dataset = xr.Dataset()
     for file in files:
+        print(file[70:-3])
         input_dataset = xr.open_dataset(file)
+        if rename:
+            input_dataset = input_dataset.rename({'temp':file[70:-3] })
         combined_dataset = xr.merge([combined_dataset, input_dataset])
+
         input_dataset.close()
         output_file = ouput
         combined_dataset.to_netcdf(output_file)
     return combined_dataset
-#varlist=["temp","rain","press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50", "wind_10", "wind_50","wind_dir_50_sin","wind_dir_50_cos"]
-#combined_dataset = xr.Dataset()
 
-# Iterieren Sie über die Jahre 2010-2014
-#for var in varlist:
- #   input_file = f'../Visualistion/best_nhit_{var}.nc' # Annahme: Die Dateien haben das Format "datei_<jahr>.nc"
 
-    # Überprüfen Sie, ob die Eingabedatei existiert
-  #  if os.path.isfile(input_file):
-   #     input_dataset = xr.open_dataset(input_file)  # Öffnen Sie die Eingabedatei
-
-        # Führen Sie die Eingabedatei mit der kombinierten Dataset zusammen
-    #    combined_dataset = xr.merge([combined_dataset, input_dataset])
-
-     #   input_dataset.close()  # Schließen Sie die Eingabedatei
-
-# Speichern Sie das kombinierte Dataset in eine neue Datei
-#output_file = "../Visualistion/nhit.nc"
-##-combined_dataset.to_netcdf(output_file)
-
-# Schließen Sie das kombinierte Dataset
-#combined_dataset.close()
-
-mergin("../Visualistion/tcn","../Visualistion/tcn.nc")
+#mergin("/home/alex/PycharmProjects/neuralcaster/Model/timetest/lstm_multi/output/temp","../Visualistion/timetest_full.nc")
+mergin("/home/alex/PycharmProjects/neuralcaster/Visualistion/sarima/dart/temp","../Visualistion/timetest_sarima.nc",rename=True)

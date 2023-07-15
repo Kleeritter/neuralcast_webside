@@ -22,21 +22,21 @@ dt = datetime.datetime(forecast_year,1,1,0,0) #+ datetime.timedelta(hours=window
 nc_path = '../Data/stunden/'+str(forecast_year)+'_resample_stunden.nc' # Replace with the actual path to your NetCDF file
 
 #references=np.load("sarima/reference_temp_.npy").flatten()
-references_path="forecast_sarima.nc"
+references_path="sarima/dart/temp/672_24.nc"#"forecast_sarima.nc"
 lstm_uni_path="forecast_lstm_uni.nc"
 lstm_multi_path="forecast_lstm_multi.nc"
 tft_path="tft_dart.nc"
 
-nhits="/home/alex/PycharmProjects/neuralcaster/Visualistion/tcn/best_tcn_temp.nc"
+nhits="nhits.nc"
 lstm_uni=xr.open_dataset(lstm_uni_path).to_dataframe()
 lstm_multi=xr.open_dataset(lstm_multi_path).to_dataframe()
 tft=xr.open_dataset(tft_path).to_dataframe()
 data = xr.open_dataset(nc_path).to_dataframe()
-references= xr.open_dataset(references_path).to_dataframe()
+references= xr.open_dataset(references_path).to_dataframe()#[:-24]
 nhits=xr.open_dataset(nhits).to_dataframe()
 
 
-
+print(len(references),len(data),len(lstm_uni),len(lstm_multi),len(nhits))
 
 def skills_calc(model):
     skills = []
@@ -121,15 +121,13 @@ def luftdrucktendenz(data):
     return luftdrucktendenz
 
 
-jan_ref=[]
-jan_lstm_uni=[]
 
 
 for model in modellist:
     #print(model)
     temps.append( math.sqrt(mean_squared_error(data["temp"], model["temp"])))
-    tagesmax_temps.append( math.sqrt(mean_squared_error(tagesmax(data),tagesmax(model))))
-    tagesmin_temps.append(math.sqrt(mean_squared_error(tagesmin(data), tagesmin(model))))
+    #tagesmax_temps.append( math.sqrt(mean_squared_error(tagesmax(data),tagesmax(model))))
+    #tagesmin_temps.append(math.sqrt(mean_squared_error(tagesmin(data), tagesmin(model))))
     #humids.append(math.sqrt(mean_squared_error(data["humid"], model["humid"])))
     #press.append(math.sqrt(mean_squared_error(data["press_sl"]/100, model["press_sl"]/100)))
     #press_3h.append(math.sqrt(mean_squared_error(luftdrucktendenz(data), luftdrucktendenz(model))))
@@ -173,8 +171,8 @@ scores=pd.DataFrame({
 skills=pd.DataFrame({
     'Models': ["LSTN_UNI","LSTM_MULTI","nhits"],
     'temp': [(1-(x/temps[0])) for x in temps[1:]],
-    'tmax': [(1-(x/tagesmax_temps[0])) for x in tagesmax_temps[1:]],
-    'tmin': [(1-(x/tagesmin_temps[0])) for x in tagesmin_temps[1:]],
+    #'tmax': [(1-(x/tagesmax_temps[0])) for x in tagesmax_temps[1:]],
+    #'tmin': [(1-(x/tagesmin_temps[0])) for x in tagesmin_temps[1:]],
     #'humid': [(1-(x/humids[0])) for x in humids[1:]],
     #'rain': [(1-(x/rain[0])) for x in rain[1:]],
     #'press': [(1-(x/press[0])) for x in press[1:]],

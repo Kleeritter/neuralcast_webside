@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split
 from funcs.funcs_lstm_multi import TemperatureDataset_multi, TemperatureModel_multi_full
 from Visualistion.createframes import forecast_lstm_multi
 import yaml
+from  tqdm  import tqdm
 
 full='../Data/zusammengefasste_datei_2016-2019.nc'
 file_path =full # Replace with the actual path to your NetCDF file
@@ -26,7 +27,7 @@ def train(forecast_var,forecast_horizont,window_size):
     model = TemperatureModel_multi_full(hidden_size=best_params['hidden_size'], learning_rate=best_params['learning_rate'], weight_decay=best_params['weight_decay'],
                                   num_layers=best_params['num_layers'], weight_initializer=best_params['weight_initializer'],forecast_horizont=forecast_horizont, window_size=window_size)
     logger = loggers.TensorBoardLogger(save_dir=logs+'/lstm_multi/' + forecast_var, name='lstm_optimierer')
-    trainer = pl.Trainer(logger=logger, max_epochs=1, accelerator="auto", devices="auto",
+    trainer = pl.Trainer(logger=logger, max_epochs=20, accelerator="auto", devices="auto",
                          deterministic=True, enable_progress_bar=True)
 
 
@@ -43,10 +44,11 @@ def train(forecast_var,forecast_horizont,window_size):
 if __name__ == '__main__':
     forecast_vars=['temp']
     for forecast_var in forecast_vars:
-        for window_size in [4*7*24]:
-            for forecast_horizont in [12]:
+        for window_size in tqdm([16*7*24,8*7*24,4*7*24,2*7*24,7*24,6*24,5*24,4*24,3*24,2*24,24,12,6,3]):
+            for forecast_horizont in [2,4,6,12,15,18,24,32,48,60,72,84,96,192]:
+
                 train('temp',forecast_horizont,window_size)
-                model_path='timetest/lstm_multi/models'
+                model_path='timetest/lstm_multi/models/best_model_state_'+forecast_var+'_'+str(window_size)+'_'+str(forecast_horizont)+'.pt'
                 params_folder='opti/output/lstm_multi/best_params_lstm_multi_'+"temp"+'.yaml'
                 varlist = ['temp']
                 output_file='timetest/lstm_multi/output/'+forecast_var+'/timetest_lstm_multi'+forecast_var+'_'+str(window_size)+'_'+str(forecast_horizont)+'.nc'
