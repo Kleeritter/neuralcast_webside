@@ -126,24 +126,24 @@ def luftdrucktendenz(data):
 for model in modellist:
     #print(model)
     temps.append( math.sqrt(mean_squared_error(data["temp"], model["temp"])))
-    #tagesmax_temps.append( math.sqrt(mean_squared_error(tagesmax(data),tagesmax(model))))
-    #tagesmin_temps.append(math.sqrt(mean_squared_error(tagesmin(data), tagesmin(model))))
-    #humids.append(math.sqrt(mean_squared_error(data["humid"], model["humid"])))
-    #press.append(math.sqrt(mean_squared_error(data["press_sl"]/100, model["press_sl"]/100)))
-    #press_3h.append(math.sqrt(mean_squared_error(luftdrucktendenz(data), luftdrucktendenz(model))))
-    #globals.append(math.sqrt(mean_squared_error(data["globalrcmp11"], model["globalrcmp11"])))
-    #rain.append(math.sqrt(mean_squared_error(data["rain"], model["rain"])))
-    #diffus.append(math.sqrt(mean_squared_error(data["diffuscmp11"], model["diffuscmp11"])))
-    #gust_10.append(math.sqrt(mean_squared_error(data["gust_10"], model["gust_10"])))
-    #gust_50.append(math.sqrt(mean_squared_error(data["gust_50"], model["gust_50"])))
-    #wind_10.append(math.sqrt(mean_squared_error(data["wind_10"], model["wind_10"])))
-    #wind_50.append(math.sqrt(mean_squared_error(data["wind_50"], model["wind_50"])))
-    #wind_dir_50_sin.append(math.sqrt(mean_squared_error(data["wind_dir_50_sin"], model["wind_dir_50_sin"])))
-    #wind_dir_50_cos.append(math.sqrt(mean_squared_error(data["wind_dir_50_cos"], model["wind_dir_50_cos"])))
+    tagesmax_temps.append( math.sqrt(mean_squared_error(tagesmax(data),tagesmax(model))))
+    tagesmin_temps.append(math.sqrt(mean_squared_error(tagesmin(data), tagesmin(model))))
+    humids.append(math.sqrt(mean_squared_error(data["humid"], model["humid"])))
+    press.append(math.sqrt(mean_squared_error(data["press_sl"]/100, model["press_sl"]/100)))
+    press_3h.append(math.sqrt(mean_squared_error(luftdrucktendenz(data), luftdrucktendenz(model))))
+    globals.append(math.sqrt(mean_squared_error(data["globalrcmp11"], model["globalrcmp11"])))
+    rain.append(math.sqrt(mean_squared_error(data["rain"], model["rain"])))
+    diffus.append(math.sqrt(mean_squared_error(data["diffuscmp11"], model["diffuscmp11"])))
+    gust_10.append(math.sqrt(mean_squared_error(data["gust_10"], model["gust_10"])))
+    gust_50.append(math.sqrt(mean_squared_error(data["gust_50"], model["gust_50"])))
+    wind_10.append(math.sqrt(mean_squared_error(data["wind_10"], model["wind_10"])))
+    wind_50.append(math.sqrt(mean_squared_error(data["wind_50"], model["wind_50"])))
+    wind_dir_50_sin.append(math.sqrt(mean_squared_error(data["wind_dir_50_sin"], model["wind_dir_50_sin"])))
+    wind_dir_50_cos.append(math.sqrt(mean_squared_error(data["wind_dir_50_cos"], model["wind_dir_50_cos"])))
 
 
 
-"""
+
 
 scores=pd.DataFrame({
     'Models': ["SARIMA","LSTN_UNI","LSTM_MULTI","nhits"],
@@ -167,24 +167,23 @@ scores=pd.DataFrame({
     #'SARIMA' : references[:-24]
 
 })
-"""
 skills=pd.DataFrame({
     'Models': ["LSTN_UNI","LSTM_MULTI","nhits"],
     'temp': [(1-(x/temps[0])) for x in temps[1:]],
-    #'tmax': [(1-(x/tagesmax_temps[0])) for x in tagesmax_temps[1:]],
-    #'tmin': [(1-(x/tagesmin_temps[0])) for x in tagesmin_temps[1:]],
-    #'humid': [(1-(x/humids[0])) for x in humids[1:]],
-    #'rain': [(1-(x/rain[0])) for x in rain[1:]],
-    #'press': [(1-(x/press[0])) for x in press[1:]],
-    #'press_3h': [(1-(x/press_3h[0])) for x in press_3h[1:]],
-    #'globals': [(1 - (x / globals[0])) for x in globals[1:]],
-    #'diffus': [(1-(x/diffus[0])) for x in diffus[1:]],
-    #'gust_10': [(1-(x/gust_10[0])) for x in gust_10[1:]],
-    #'gust_50': [(1-(x/gust_50[0])) for x in gust_50[1:]],
-    #'wind_10': [(1-(x/wind_10[0])) for x in wind_10[1:]],
-    #'wind_50': [(1-(x/wind_50[0])) for x in wind_50[1:]],
-    #'wind_dir_50': [(1-(x/wind_dir_50_sin[0])) for x in wind_dir_50_sin[1:]],
-    #'wind_dir_50_cos': [(1-(x/wind_dir_50_cos[0])) for x in wind_dir_50_cos[1:]]
+    'tmax': [(1-(x/tagesmax_temps[0])) for x in tagesmax_temps[1:]],
+    'tmin': [(1-(x/tagesmin_temps[0])) for x in tagesmin_temps[1:]],
+    'humid': [(1-(x/humids[0])) for x in humids[1:]],
+    'rain': [(1-(x/rain[0])) for x in rain[1:]],
+    'press': [(1-(x/press[0])) for x in press[1:]],
+    'press_3h': [(1-(x/press_3h[0])) for x in press_3h[1:]],
+    'globals': [(1 - (x / globals[0])) for x in globals[1:]],
+    'diffus': [(1-(x/diffus[0])) for x in diffus[1:]],
+    'gust_10': [(1-(x/gust_10[0])) for x in gust_10[1:]],
+    'gust_50': [(1-(x/gust_50[0])) for x in gust_50[1:]],
+    'wind_10': [(1-(x/wind_10[0])) for x in wind_10[1:]],
+    'wind_50': [(1-(x/wind_50[0])) for x in wind_50[1:]],
+    'wind_dir_50': [(1-(x/wind_dir_50_sin[0])) for x in wind_dir_50_sin[1:]],
+    'wind_dir_50_cos': [(1-(x/wind_dir_50_cos[0])) for x in wind_dir_50_cos[1:]]
 
 })
 #scores=scores.set_index("Models")

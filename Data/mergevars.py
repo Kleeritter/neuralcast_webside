@@ -25,9 +25,10 @@ def mergin(folder,ouput,rename=False):
     files = glob.glob(folder+"/*.nc")
     combined_dataset = xr.Dataset()
     for file in files:
-        print(file[70:-3])
+
         input_dataset = xr.open_dataset(file)
         if rename:
+            print(file[70:-3])
             input_dataset = input_dataset.rename({'temp':file[70:-3] })
         combined_dataset = xr.merge([combined_dataset, input_dataset])
 
@@ -37,5 +38,6 @@ def mergin(folder,ouput,rename=False):
     return combined_dataset
 
 
-#mergin("/home/alex/PycharmProjects/neuralcaster/Model/timetest/lstm_multi/output/temp","../Visualistion/timetest_full.nc")
-mergin("/home/alex/PycharmProjects/neuralcaster/Visualistion/sarima/dart/temp","../Visualistion/timetest_sarima.nc",rename=True)
+#
+mergin("/home/alex/PycharmProjects/neuralcaster/Model/timetest/lstm_multi/output/temp","../Visualistion/timetest_full_new.nc")
+#mergin("/home/alex/PycharmProjects/neuralcaster/Visualistion/sarima/dart/temp","../Visualistion/timetest_sarima.nc",rename=True)
