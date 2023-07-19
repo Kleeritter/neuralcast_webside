@@ -160,7 +160,7 @@ def forecast_lstm_uni():
 
 
 
-def forecast_lstm_multi(model_folder,params_folder,var_list,output_file,forecast_horizont,window_size):
+def forecast_lstm_multi(model_folder,params_folder,var_list,output_file,forecast_horizont,window_size,corvars=[ "temp","press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50","rain", "wind_10", "wind_50","wind_dir_50_sin", "wind_dir_50_cos"]):
     import glob
     #var_list = [
      #   "temp", "press_sl", "humid"]
@@ -191,7 +191,7 @@ def forecast_lstm_multi(model_folder,params_folder,var_list,output_file,forecast
         for window, last_window in zip(range(window_size, len(forecast_data.index.tolist()), forecast_horizont),range(0, len(forecast_data.index.tolist()) - window_size,forecast_horizont)):
             #print(len(forecast_data[last_window:window]))
             predictions_multi = multilstm_full(multivariant_model_path, forecast_data, start_idx=last_window,
-                                               end_idx=window, forecast_var=forecast_var,hyper_params_path=lstm_multi_params,forecast_horizon=forecast_horizont,window_size=window_size)
+                                               end_idx=window, forecast_var=forecast_var,hyper_params_path=lstm_multi_params,forecast_horizon=forecast_horizont,window_size=window_size,cor_vars=corvars,numvars=len(corvars))
             pred_lis.append(predictions_multi)
             lost_window += 1
             #lost_last_window = last_window
@@ -201,13 +201,13 @@ def forecast_lstm_multi(model_folder,params_folder,var_list,output_file,forecast
     if len(df)>len(visual_data):
 
         df=df[:-(len(df)-len(visual_data))]
-    print(lost_window)
-    print(df)
+    #print(lost_window)
+    #print(df)
     output_file = output_file#"forecast_lstm_multi.nc"
     df = df.set_index(pd.to_datetime(visual_data.index.tolist()), inplace=False)
     df.index.name = "Datum"
-    df = xr.Dataset.from_dataframe(df).rename({forecast_var: str(window_size) +'_'+str(forecast_horizont)+'_'+forecast_var})
-    df.to_netcdf(output_file)
+    #df = xr.Dataset.from_dataframe(df).rename({forecast_var: str(window_size) +'_'+str(forecast_horizont)+'_'+forecast_var})
+    df.to_xarray().to_netcdf(output_file)
 
 def forecast_tft():
     predicted_temp_multi = []

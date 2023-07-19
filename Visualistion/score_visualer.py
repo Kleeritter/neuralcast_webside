@@ -22,14 +22,15 @@ dt = datetime.datetime(forecast_year,1,1,0,0) #+ datetime.timedelta(hours=window
 nc_path = '../Data/stunden/'+str(forecast_year)+'_resample_stunden.nc' # Replace with the actual path to your NetCDF file
 
 #references=np.load("sarima/reference_temp_.npy").flatten()
-references_path="sarima/dart/temp/672_24.nc"#"forecast_sarima.nc"
+references_path="forecast_sarima.nc"
 lstm_uni_path="forecast_lstm_uni.nc"
-lstm_multi_path="forecast_lstm_multi.nc"
+lstm_multi_path="time_test_better_a.nc"#"../Model/timetest/lstm_multi/output/temp/timetest_lstm_multitemp_24_24.nc"#"forecast_lstm_multi.nc"
 tft_path="tft_dart.nc"
-
-nhits="nhits.nc"
+cors_path="cortest_all.nc"#"../Model/cortest/lstm_multi/output/temp/cortest_lstm_multitemp_24_24.nc"
+nhits="nhit.nc"
 lstm_uni=xr.open_dataset(lstm_uni_path).to_dataframe()
 lstm_multi=xr.open_dataset(lstm_multi_path).to_dataframe()
+LSTM_MULTI_CORS=xr.open_dataset(cors_path).to_dataframe()
 tft=xr.open_dataset(tft_path).to_dataframe()
 data = xr.open_dataset(nc_path).to_dataframe()
 references= xr.open_dataset(references_path).to_dataframe()#[:-24]
@@ -107,7 +108,7 @@ wind_10=[]
 wind_50=[]
 wind_dir_50_sin=[]
 wind_dir_50_cos=[]
-modellist=[references,lstm_uni,lstm_multi,nhits]
+modellist=[references,lstm_uni,lstm_multi,nhits,LSTM_MULTI_CORS]
 def tagesmax(data):
     tagesmax=data.groupby(data.index.date)['temp'].max()
     return tagesmax
@@ -146,21 +147,21 @@ for model in modellist:
 
 
 scores=pd.DataFrame({
-    'Models': ["SARIMA","LSTN_UNI","LSTM_MULTI","nhits"],
+    'Models': ["SARIMA","LSTN_UNI","LSTM_MULTI","nhits","LSTM_MULTI_CORS"],
     'RMSE_temp':temps,
     'RMSE_tmax': tagesmax_temps,
     'RMSE_tmin': tagesmin_temps,
     'RMSE_humid':humids,
-    "RMSE_rain":rain,
-    "RMSE_press":press,
-    "RMSE_press_3h":press_3h,
-    'RMSE_globals': globals,
-    "RMSE_diffus":diffus,
-    "RMSE_gust_10":gust_10,
-    "RMSE_gust_50":gust_50,
-    "RMSE_wind_10":wind_10,
-    "RMSE_wind_50":wind_50,
-    "RMSE_wind_dir_50":wind_dir_50_sin,
+    #"RMSE_rain":rain,
+    #"RMSE_press":press,
+    #"RMSE_press_3h":press_3h,
+    #'RMSE_globals': globals,
+    #"RMSE_diffus":diffus,
+    #"RMSE_gust_10":gust_10,
+    #"RMSE_gust_50":gust_50,
+    #"RMSE_wind_10":wind_10,
+    #"RMSE_wind_50":wind_50,
+    #"RMSE_wind_dir_50":wind_dir_50_sin,
     #"RMSE_wind_dir_50_cos":wind_dir_50_cos
 
     #'RMSE_TFT':rmse()
@@ -168,7 +169,7 @@ scores=pd.DataFrame({
 
 })
 skills=pd.DataFrame({
-    'Models': ["LSTN_UNI","LSTM_MULTI","nhits"],
+    'Models': ["LSTN_UNI","LSTM_MULTI","nhits","LSTM_MULTI_CORS"],
     'temp': [(1-(x/temps[0])) for x in temps[1:]],
     'tmax': [(1-(x/tagesmax_temps[0])) for x in tagesmax_temps[1:]],
     'tmin': [(1-(x/tagesmin_temps[0])) for x in tagesmin_temps[1:]],
@@ -209,10 +210,10 @@ def highlight_max(s, props=''):
 #scores.apply(highlight_max, props='color:white;background-color:darkblue', axis=0)
 #plt.show()
 #skills
-#skills.style.format(precision=2)\
-  #  .highlight_max().to_excel("skillss.xlsx")
+skills.style.format(precision=2)\
+    .highlight_max().to_excel("skills_a.xlsx")
 
 #scores.style.format(precision=2)\
  #   .highlight_min().to_excel("scores.xlsx")
-  #          #.background_gradient(cmap="RdYlGn").
+    #.background_gradient(cmap="RdYlGn")
 print(skills)

@@ -7,74 +7,81 @@ import yaml
 # Erstellen Sie eine neue NetCDF-Datei zum Zusammenfassen der Daten
 
 # Erstellen Sie eine leere Dataset zum Zusammenführen der Daten
-combined_dataset = xr.Dataset()
+#combined_dataset = xr.Dataset()
 
-filelist=['zusammengefasste_datei_2016-2019','stunden/2022_resample_stunden.nc']
+#filelist=['zusammengefasste_datei_2016-2019','stunden/2022_resample_stunden.nc']
 # Iterieren Sie über die Jahre 2010-2014
-for file in filelist:
-    input_file = file # Annahme: Die Dateien haben das Format "datei_<jahr>.nc"
+#for file in filelist:
+    #input_file = file # Annahme: Die Dateien haben das Format "datei_<jahr>.nc"
 
     # Überprüfen Sie, ob die Eingabedatei existiert
-    if os.path.isfile(input_file):
-        input_dataset = xr.open_dataset(input_file)  # Öffnen Sie die Eingabedatei
+    #if os.path.isfile(input_file):
+        #input_dataset = xr.open_dataset(input_file)  # Öffnen Sie die Eingabedatei
 
         # Führen Sie die Eingabedatei mit der kombinierten Dataset zusammen
-        combined_dataset = xr.merge([combined_dataset, input_dataset])
+        #combined_dataset = xr.merge([combined_dataset, input_dataset])
 
-        input_dataset.close()  # Schließen Sie die Eingabedatei
+        #input_dataset.close()  # Schließen Sie die Eingabedatei
 
-datalast= xr.open_dataset('zusammengefasste_datei_2016-2019.nc')
-data= xr.open_dataset('stunden/2022_resample_stunden.nc')
-data=xr.concat([datalast,data],dim="index").to_dataframe()
+#datalast= xr.open_dataset('zusammengefasste_datei_2016-2019.nc')
+#data= xr.open_dataset('stunden/2022_resample_stunden.nc')
+data= xr.open_dataset('zusammengefasste_datei_2016-2022.nc').to_dataframe()
+#data=xr.concat([datalast,data],dim="index").to_dataframe()
 # Speichern Sie das kombinierte Dataset in eine neue Datei
 
 #data=combined_dataset.to_dataframe()
 print(data.head())
-#print("MaxT", max(data['temp']),data.loc[data['temp'] == max(data['temp'])])
-#print("MaxH", max(data['humid']),data.loc[data['humid'] == max(data['humid'])])
-#print("MaxP", max(data['press_sl']),data.loc[data['press_sl'] == max(data['press_sl'])])
-#print("MaxW", max(data['wind_50']),data.loc[data['wind_50'] == max(data['wind_50'])])
-#print("MaxW", max(data['wind_10']),data.loc[data['wind_10'] == max(data['wind_10'])])
-#print("MaxW", max(data['gust_10']),data.loc[data['gust_10'] == max(data['gust_10'])])
-#print("MaxW", max(data['gust_50']),data.loc[data['gust_50'] == max(data['gust_50'])])
-#print("MaxR", max(data['rain']),data.loc[data['rain'] == max(data['rain'])])
-#print("MaxD", max(data['diffuscmp11']),data.loc[data['diffuscmp11'] == max(data['diffuscmp11'])])
-#print("MaxG", max(data['globalrcmp11']),data.loc[data['globalrcmp11'] == max(data['globalrcmp11'])])
-data["wind_dir_sin"]=data["wind_dir_50"].apply(lambda x: math.sin(math.radians(x)))
-data["wind_dir_cos"]=data["wind_dir_50"].apply(lambda x: math.cos(math.radians(x)))
-#print("MaxW", max(data['wind_dir_sin']),data.loc[data['wind_dir_sin'] == max(data['wind_dir_sin'])])
-#print("MaxW", max(data['wind_dir_cos']),data.loc[data['wind_dir_cos'] == max(data['wind_dir_cos'])])
 
-maxT=round(max(data['temp']),2)
-maxH=round(max(data['humid']),2)
-maxP=round(max(data['press_sl']),2)
-maxW=round(max(data['wind_50']),2)
-maxW10=round(max(data['wind_10']),2)
-maxG=round(max(data['gust_50']),2)
-maxG10=round(max(data['gust_10']),2)
-maxR=round(max(data['rain']),2)
-maxD=round(max(data['diffuscmp11']),2)
-maxGlo=round(max(data['globalrcmp11']),2)
-maxSin=round(max(data['wind_dir_sin']),2)
-maxCos=round(max(data['wind_dir_cos']),2)
+#data["wind_dir_sin"]=data["wind_dir_50"].apply(lambda x: math.sin(math.radians(x)))
+#data["wind_dir_cos"]=data["wind_dir_50"].apply(lambda x: math.cos(math.radians(x)))
 
-minT=round(min(data['temp']),2)
-minH=round(min(data['humid']),2)
-minP=round(min(data['press_sl']),2)
-minW=round(min(data['wind_50']),2)
-minW10=round(min(data['wind_10']),2)
-minG=round(min(data['gust_50']),2)
-minG10=round(min(data['gust_10']),2)
-minR=round(min(data['rain']),2)
-minD=round(min(data['diffuscmp11']),2)
-minGlo=round(min(data['globalrcmp11']),2)
-minSin=round(min(data['wind_dir_sin']),2)
-minCos=round(min(data['wind_dir_cos']),2)
+max_values = {
+    "Max_temp": round(max(data['temp']), 2),
+    "Max_humid": round(max(data['humid']), 2),
+    "Max_press_sl": round(max(data['press_sl']), 2),
+    "Max_wind_50": round(max(data['wind_50']), 2),
+    "Max_wind_10": round(max(data['wind_10']), 2),
+    "Max_gust_50": round(max(data['gust_50']), 2),
+    "Max_gust_10": round(max(data['gust_10']), 2),
+    "Max_rain": round(max(data['rain']), 2),
+    "Max_diffuscmp11": round(max(data['diffuscmp11']), 2),
+    "Max_globalrcmp11": round(max(data['globalrcmp11']), 2),
+    "Max_wind_dir_50_sin": round(max(data['wind_dir_50_sin']), 2),
+    "Max_wind_dir_50_cos": round(max(data['wind_dir_50_cos']), 2),
+    "Max_taupunkt": round(max(data['taupunkt']), 2),
+    "Max_gradwind": round(max(data['gradwind']), 2),
+    "Max_temp3h": round(max(data['temp3h']), 2),
+    "Max_rainsum3h": round(max(data['rainsum3h']), 2),
+    "Max_press3h": round(max(data['press3h']), 2),
+    "Max_Taupunkt3h": round(max(data['Taupunkt3h']), 2)
+}
 
-yaml_dict = {"Max_temp": maxT, "Max_humid": maxH, "Max_press_sl": maxP, "Max_wind_50": maxW, "Max_wind_10": maxW10, "Max_gust_50": maxG, "Max_gust_10": maxG10, "Max_rain": maxR, "Max_diffuscmp11": maxD, "Max_globalrcmp11": maxGlo, "Max_wind_dir_50_sin": maxSin, "Max_wind_dir_cos": maxCos, "Min_temp": minT, "Min_humid": minH, "Min_press_sl": minP, "Min_wind_50": minW, "Min_wind_10": minW10, "Min_gust_50": minG, "Min_gust_10": minG10, "Min_rain": minR, "Min_diffuscmp11": minD, "Min_globalrcmp11": minGlo, "Min_wind_dir_50_sin": minSin, "Min_wind_dir_50_cos": minCos}
+# Calculate minimum values
+min_values = {
+    "Min_temp": round(min(data['temp']), 2),
+    "Min_humid": round(min(data['humid']), 2),
+    "Min_press_sl": round(min(data['press_sl']), 2),
+    "Min_wind_50": round(min(data['wind_50']), 2),
+    "Min_wind_10": round(min(data['wind_10']), 2),
+    "Min_gust_50": round(min(data['gust_50']), 2),
+    "Min_gust_10": round(min(data['gust_10']), 2),
+    "Min_rain": round(min(data['rain']), 2),
+    "Min_diffuscmp11": round(min(data['diffuscmp11']), 2),
+    "Min_globalrcmp11": round(min(data['globalrcmp11']), 2),
+    "Min_wind_dir_50_sin": round(min(data['wind_dir_50_sin']), 2),
+    "Min_wind_dir_50_cos": round(min(data['wind_dir_50_cos']), 2),
+    "Min_taupunkt": round(min(data['taupunkt']), 2),
+    "Min_gradwind": round(min(data['gradwind']), 2),
+    "Min_temp3h": round(min(data['temp3h']), 2),
+    "Min_rainsum3h": round(min(data['rainsum3h']), 2),
+    "Min_press3h": round(min(data['press3h']), 2),
+    "Min_Taupunkt3h": round(min(data['Taupunkt3h']), 2)
+}
 
+# Combine both dictionaries into a single YAML dictionary
+yaml_dict = {**max_values, **min_values}
 # Schließen Sie das kombinierte Dataset
 
 with open('params_for_normal.yaml', 'w') as file:
     yaml.dump(yaml_dict, file)
-combined_dataset.close()
+#data.close()

@@ -21,15 +21,15 @@ np.random.seed(42)
 
 
 class TemperatureDataset_multi(Dataset):
-    def __init__(self, file_path,forecast_horizont=24,window_size=24,forecast_var="temp"):
-        self.data = xr.open_dataset(file_path)[["wind_dir_50_sin","wind_dir_50_cos",'temp',"press_sl","humid","diffuscmp11","globalrcmp11","gust_10","gust_50", "rain", "wind_10", "wind_50"]].to_dataframe()#.valuesmissing_values_mask = dataset['temp'].isnull()
+    def __init__(self, file_path,forecast_horizont=24,window_size=24,forecast_var="temp",cor_vars=["wind_dir_50_sin","wind_dir_50_cos",'temp',"press_sl","humid","diffuscmp11","globalrcmp11","gust_10","gust_50", "rain", "wind_10", "wind_50"]):
+        self.data = xr.open_dataset(file_path)[cor_vars].to_dataframe()#.valuesmissing_values_mask = dataset['temp'].isnull()
         self.length = len(self.data[forecast_var]) - window_size
        # scaler = MinMaxScaler(feature_range=(0, 1))
        # self.data=scaler.fit_transform([[x] for x in self.data]).flatten()
         for column in self.data.columns:
             values = self.data[column].values.reshape(-1, 1)
             scaler = MinMaxScaler(feature_range=(0, 1))
-            param_path = '/home/alex/PycharmProjects/nerualcast/Data/params_for_normal.yaml'  # "../../Data/params_for_normal.yaml"
+            param_path ='/home/alex/PycharmProjects/neuralcaster/Data/params_for_normal.yaml'  # "../../Data/params_for_normal.yaml"
             params = load_hyperparameters(param_path)
             mins = params["Min_" + column]
             maxs = params["Max_" + column]
@@ -108,13 +108,13 @@ class TemperatureModel_multi_light(pl.LightningModule):
         return optimizer
 
 class TemperatureModel_multi_full(pl.LightningModule):
-    def __init__(self, window_size=24, forecast_horizont=24, num_layers=1, hidden_size=40, learning_rate=0.001, weight_decay=0.001, weight_initializer="None"):
+    def __init__(self, window_size=24, forecast_horizont=24, num_layers=1, hidden_size=40, learning_rate=0.001, weight_decay=0.001, weight_initializer="None", numvars=12):
         super().__init__()
         self.num_layers = num_layers
         self.hidden_size = hidden_size
         self.learning_rate = learning_rate
         self.weight_decay = weight_decay
-        self.lstm = torch.nn.LSTM(input_size=12, hidden_size=hidden_size, num_layers=num_layers,batch_first=True)
+        self.lstm = torch.nn.LSTM(input_size=numvars, hidden_size=hidden_size, num_layers=num_layers,batch_first=True)
         self.linear = torch.nn.Linear(hidden_size, forecast_horizont)
 
         self.weight_initializer = weight_initializer
