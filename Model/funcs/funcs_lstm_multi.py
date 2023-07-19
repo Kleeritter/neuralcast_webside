@@ -39,6 +39,7 @@ class TemperatureDataset_multi(Dataset):
             scaled_values = scaler.transform(values)
             self.data[column] = scaled_values.flatten()
 
+        print(self.data["rain"])
 
         #print(self.data)
         self.forecast_horizont = forecast_horizont

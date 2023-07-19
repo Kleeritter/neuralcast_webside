@@ -25,7 +25,7 @@ nc_path = '../Data/stunden/'+str(forecast_year)+'_resample_stunden.nc' # Replace
 #references=np.load("sarima/reference_temp_.npy").flatten()
 references_path="forecast_sarima.nc"
 lstm_uni_path="forecast_lstm_uni.nc"
-lstm_multi_path="time_test_better.nc"#../Model/timetest/lstm_multi/output/temp/timetest_lstm_multitemp_24_24.nc"#"forecast_lstm_multi.nc"
+lstm_multi_path="time_test_better_a.nc"#../Model/timetest/lstm_multi/output/temp/timetest_lstm_multitemp_24_24.nc"#"forecast_lstm_multi.nc"
 tft_path="tft_dart.nc"
 
 nhits="nhit.nc"
@@ -52,7 +52,8 @@ def monthsdataf(var,data,modelvar="Null",multidata=lstm_multi_org):
             'RMSE_sarima':rmses_month(references,var,data),
         })
     return months
-
+sns.set_theme(style="darkgrid")
+sns.set_context("talk")
 sns.lineplot(x="Month", y='value', hue='variable',data=pd.melt(monthsdataf(var=vars[0],data=data,multidata=lstm_multi), ['Month']),ax=ax[0,0])
 sns.lineplot(x="Month", y='value', hue='variable',data=pd.melt(monthsdataf(var=vars[1],data=data), ['Month']),ax=ax[1,0])
 sns.lineplot(x="Month", y='value', hue='variable',data=pd.melt(monthsdataf(var=vars[2],data=data), ['Month']),ax=ax[0,1])#

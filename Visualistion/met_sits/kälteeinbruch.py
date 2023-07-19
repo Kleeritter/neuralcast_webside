@@ -24,6 +24,8 @@ nhits=xr.open_dataset(nhits).to_dataframe()
 daystart=pd.to_datetime(str(forecast_year)+"-12-08 00:00")
 dayend=pd.to_datetime(str(forecast_year)+"-12-20 23:00")
 
+def calc_rmse(model):
+    return math.sqrt(mean_squared_error(data.loc[daystart:dayend]["temp"],model.loc[daystart:dayend]["temp"]))
 
 sns.set_theme(style="darkgrid")
 temps = pd.DataFrame({
@@ -37,7 +39,20 @@ temps = pd.DataFrame({
 
 })
 
+rmse_data = pd.DataFrame({
+    'Model': ['Multi', 'Uni', 'SAR', 'Nhits'],
+    'RMSE': [calc_rmse(lstm_multi), calc_rmse(lstm_uni), calc_rmse(references), calc_rmse(nhits)]
+})
+
+# Erstelle einen FacetGrid für die Darstellung der RMSE-Werte
+#g = sns.FacetGrid(rmse_data, aspect=1.5, height=5)
+#sns.barplot(rmse_data["RMSE"], palette='pastel', order=['LSTM Multi', 'LSTM Uni', 'SARIMA', 'T_Nhits'])
+fig, ax = plt.subplots()
+#sns.set_context("talk")
+
 sns.lineplot(x="Date", y='value', hue='variable',data=pd.melt(temps, ['Date']))#,ax=ax[1,0])
+right_inset_ax = fig.add_axes([.65, .7, .1, .1])
+right_inset_ax.bar(rmse_data["Model"],rmse_data["RMSE"])
 #sns.despine(offset=10, trim=True)
 
 plt.show()

@@ -29,6 +29,7 @@ def add_cool_stuff(file):
     data["gradwind"] = data["wind_50"] - data["wind_10"]
     data["taupunkt"] = data["dewpoint_calc"]
     data["rain_event"] = data["rain"].rolling('3H').apply(lambda x: 1 if x.sum() > 0 else 0).fillna(0)
+    data["rain"] =data["rain"]+1
     data=data.to_xarray()
     data.to_netcdf(file)
     return
@@ -38,5 +39,5 @@ wind_split('stunden/2021_resample_stunden.nc')
 wind_split('zusammengefasste_datei_2016-2021.nc')
 #add_cool_stuff('zusammengefasste_datei_2016-2022.nc')
 add_cool_stuff('zusammengefasste_datei_2016-2021.nc')
-
+add_cool_stuff('stunden/2022_resample_stunden.nc')
 add_cool_stuff('stunden/2021_resample_stunden.nc')

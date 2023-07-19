@@ -26,19 +26,21 @@ daystart=pd.to_datetime(str(forecast_year)+"-02-15 00:00")
 dayend=pd.to_datetime(str(forecast_year)+"-02-20 23:00")
 
 fig, ax = plt.subplots(2, 2,figsize=(10,10))
-def frame(var):
+def frame(var,cor=0):
     winds = pd.DataFrame({
         'Date': data.loc[daystart:dayend].index,
-        'T_gemmessen':data.loc[daystart:dayend][var],
-        'T_LSTM_Multi': lstm_multi.loc[daystart:dayend][var],
+        'T_gemmessen':data.loc[daystart:dayend][var]-cor,
+        'T_LSTM_Multi': lstm_multi.loc[daystart:dayend][var]-cor,
         'T_LSTM_UNI':lstm_uni.loc[daystart:dayend][var],
         'SARIMA': references.loc[daystart:dayend][var],
         'T_Nhits':nhits.loc[daystart:dayend][var]
     })
     return winds
+sns.set_context("talk")
+
 sns.set_theme(style="darkgrid")
 sns.lineplot(x="Date", y='value', hue='variable',data=pd.melt(frame(var="wind_50"), ['Date']),ax=ax[0,0])
 sns.lineplot(x="Date", y='value', hue='variable',data=pd.melt(frame(var="gust_50"), ['Date']),ax=ax[0,1])
 sns.lineplot(x="Date", y='value', hue='variable',data=pd.melt(frame(var="wind_10"), ['Date']),ax=ax[1,0])
-sns.lineplot(x="Date", y='value', hue='variable',data=pd.melt(frame(var="rain"), ['Date']),ax=ax[1,1])
+sns.lineplot(x="Date", y='value', hue='variable',data=pd.melt(frame(var="rain",cor=0), ['Date']),ax=ax[1,1])
 plt.show()
