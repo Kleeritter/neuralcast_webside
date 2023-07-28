@@ -22,12 +22,13 @@ dt = datetime.datetime(forecast_year,1,1,0,0) #+ datetime.timedelta(hours=window
 nc_path = '../Data/stunden/'+str(forecast_year)+'_resample_stunden.nc' # Replace with the actual path to your NetCDF file
 
 #references=np.load("sarima/reference_temp_.npy").flatten()
-references_path="forecast_sarima.nc"
+references_path="baseline.nc"#"forecast_sarima.nc"
 lstm_uni_path="forecast_lstm_uni.nc"
 lstm_multi_path="time_test_better_a.nc"#"../Model/timetest/lstm_multi/output/temp/timetest_lstm_multitemp_24_24.nc"#"forecast_lstm_multi.nc"
 tft_path="tft_dart.nc"
 cors_path="cortest_all.nc"#"../Model/cortest/lstm_multi/output/temp/cortest_lstm_multitemp_24_24.nc"
 nhits="nhit.nc"
+prohet_path="prophet.nc"
 lstm_uni=xr.open_dataset(lstm_uni_path).to_dataframe()
 lstm_multi=xr.open_dataset(lstm_multi_path).to_dataframe()
 LSTM_MULTI_CORS=xr.open_dataset(cors_path).to_dataframe()
@@ -35,6 +36,7 @@ tft=xr.open_dataset(tft_path).to_dataframe()
 data = xr.open_dataset(nc_path).to_dataframe()
 references= xr.open_dataset(references_path).to_dataframe()#[:-24]
 nhits=xr.open_dataset(nhits).to_dataframe()
+prophet=xr.open_dataset(prohet_path).to_dataframe()
 
 
 print(len(references),len(data),len(lstm_uni),len(lstm_multi),len(nhits))
@@ -108,7 +110,8 @@ wind_10=[]
 wind_50=[]
 wind_dir_50_sin=[]
 wind_dir_50_cos=[]
-modellist=[references,lstm_uni,lstm_multi,nhits,LSTM_MULTI_CORS]
+wind_dir_50 = []
+modellist=[references,prophet,lstm_uni,lstm_multi,nhits,LSTM_MULTI_CORS]
 def tagesmax(data):
     tagesmax=data.groupby(data.index.date)['temp'].max()
     return tagesmax
@@ -125,13 +128,13 @@ def luftdrucktendenz(data):
 
 
 for model in modellist:
-    #print(model)
+    print(model)
     temps.append( math.sqrt(mean_squared_error(data["temp"], model["temp"])))
-    tagesmax_temps.append( math.sqrt(mean_squared_error(tagesmax(data),tagesmax(model))))
-    tagesmin_temps.append(math.sqrt(mean_squared_error(tagesmin(data), tagesmin(model))))
+    #tagesmax_temps.append( math.sqrt(mean_squared_error(tagesmax(data),tagesmax(model))))
+    #tagesmin_temps.append(math.sqrt(mean_squared_error(tagesmin(data), tagesmin(model))))
     humids.append(math.sqrt(mean_squared_error(data["humid"], model["humid"])))
     press.append(math.sqrt(mean_squared_error(data["press_sl"]/100, model["press_sl"]/100)))
-    press_3h.append(math.sqrt(mean_squared_error(luftdrucktendenz(data), luftdrucktendenz(model))))
+    #press_3h.append(math.sqrt(mean_squared_error(luftdrucktendenz(data), luftdrucktendenz(model))))
     globals.append(math.sqrt(mean_squared_error(data["globalrcmp11"], model["globalrcmp11"])))
     rain.append(math.sqrt(mean_squared_error(data["rain"], model["rain"])))
     diffus.append(math.sqrt(mean_squared_error(data["diffuscmp11"], model["diffuscmp11"])))
@@ -139,19 +142,20 @@ for model in modellist:
     gust_50.append(math.sqrt(mean_squared_error(data["gust_50"], model["gust_50"])))
     wind_10.append(math.sqrt(mean_squared_error(data["wind_10"], model["wind_10"])))
     wind_50.append(math.sqrt(mean_squared_error(data["wind_50"], model["wind_50"])))
-    wind_dir_50_sin.append(math.sqrt(mean_squared_error(data["wind_dir_50_sin"], model["wind_dir_50_sin"])))
-    wind_dir_50_cos.append(math.sqrt(mean_squared_error(data["wind_dir_50_cos"], model["wind_dir_50_cos"])))
+    #wind_dir_50_sin.append(math.sqrt(mean_squared_error(data["wind_dir_50_sin"], model["wind_dir_50_sin"])))
+    #wind_dir_50_cos.append(math.sqrt(mean_squared_error(data["wind_dir_50_cos"], model["wind_dir_50_cos"])))
+    wind_dir_50.append(math.sqrt(mean_squared_error(data["wind_dir_50"], model["wind_dir_50"])))
 
 
 
 
 
 scores=pd.DataFrame({
-    'Models': ["SARIMA","LSTN_UNI","LSTM_MULTI","nhits","LSTM_MULTI_CORS"],
+    'Models': ["SARIMA","prohet","LSTN_UNI","LSTM_MULTI","nhits","LSTM_MULTI_CORS"],
     'RMSE_temp':temps,
-    'RMSE_tmax': tagesmax_temps,
-    'RMSE_tmin': tagesmin_temps,
-    'RMSE_humid':humids,
+    #'RMSE_tmax': tagesmax_temps,
+    #'RMSE_tmin': tagesmin_temps,
+   # 'RMSE_humid':humids,
     #"RMSE_rain":rain,
     #"RMSE_press":press,
     #"RMSE_press_3h":press_3h,
@@ -169,22 +173,23 @@ scores=pd.DataFrame({
 
 })
 skills=pd.DataFrame({
-    'Models': ["LSTN_UNI","LSTM_MULTI","nhits","LSTM_MULTI_CORS"],
+    'Models': ["prohet","LSTN_UNI","LSTM_MULTI","nhits","LSTM_MULTI_CORS"],
     'temp': [(1-(x/temps[0])) for x in temps[1:]],
-    'tmax': [(1-(x/tagesmax_temps[0])) for x in tagesmax_temps[1:]],
-    'tmin': [(1-(x/tagesmin_temps[0])) for x in tagesmin_temps[1:]],
+    #'tmax': [(1-(x/tagesmax_temps[0])) for x in tagesmax_temps[1:]],
+    #'tmin': [(1-(x/tagesmin_temps[0])) for x in tagesmin_temps[1:]],
     'humid': [(1-(x/humids[0])) for x in humids[1:]],
     'rain': [(1-(x/rain[0])) for x in rain[1:]],
     'press': [(1-(x/press[0])) for x in press[1:]],
-    'press_3h': [(1-(x/press_3h[0])) for x in press_3h[1:]],
+    #'press_3h': [(1-(x/press_3h[0])) for x in press_3h[1:]],
     'globals': [(1 - (x / globals[0])) for x in globals[1:]],
     'diffus': [(1-(x/diffus[0])) for x in diffus[1:]],
     'gust_10': [(1-(x/gust_10[0])) for x in gust_10[1:]],
     'gust_50': [(1-(x/gust_50[0])) for x in gust_50[1:]],
     'wind_10': [(1-(x/wind_10[0])) for x in wind_10[1:]],
     'wind_50': [(1-(x/wind_50[0])) for x in wind_50[1:]],
-    'wind_dir_50': [(1-(x/wind_dir_50_sin[0])) for x in wind_dir_50_sin[1:]],
-    'wind_dir_50_cos': [(1-(x/wind_dir_50_cos[0])) for x in wind_dir_50_cos[1:]]
+   # 'wind_dir_50_sin': [(1-(x/wind_dir_50_sin[0])) for x in wind_dir_50_sin[1:]],
+    #'wind_dir_50_cos': [(1-(x/wind_dir_50_cos[0])) for x in wind_dir_50_cos[1:]],
+    'wind_dir_50': [(1-(x/wind_dir_50[0])) for x in wind_dir_50[1:]],
 
 })
 #scores=scores.set_index("Models")
@@ -211,7 +216,7 @@ def highlight_max(s, props=''):
 #plt.show()
 #skills
 skills.style.format(precision=2)\
-    .highlight_max().to_excel("skills_a.xlsx")
+    .highlight_max().to_excel("skills_proh.xlsx")
 
 #scores.style.format(precision=2)\
  #   .highlight_min().to_excel("scores.xlsx")

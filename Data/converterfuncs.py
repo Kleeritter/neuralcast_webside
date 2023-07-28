@@ -78,12 +78,27 @@ def dew_point(T, tt):
     T_dp = (b * alpha) / (a - alpha)
     return T_dp
 
+def dewpoint_new(t,r):
+    import numpy as np
+    import math
+    if t>=0:
+        a=7.5
+        b=237.3
+    else:
+        a=7.6
+        b=240.7
+    sdd=6.1078*10**((a*t)/(t+b))
+    dd= r*sdd
+    v= np.log10(dd/6.1078)
+    td= b*v/(a-v)
+    return td
+
 def dew_pointa(T, RH):
     import numpy as np
     """Berechnet den Taupunkt in Grad Celsius mit der Goff-Gratch-Gleichung."""
     a = 7.5
     b = 237.3
-    alpha = ((a * T) / (b + T)) + np.log10(RH/100.0)
+    alpha = ((a * T) / (b + T)) + np.log10(RH)
     T_dp = (b * alpha) / (a - alpha)
     return T_dp
 def csvreader(filelist):

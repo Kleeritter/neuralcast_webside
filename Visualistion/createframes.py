@@ -160,18 +160,24 @@ def forecast_lstm_uni():
 
 
 
-def forecast_lstm_multi(model_folder,params_folder,var_list,output_file,forecast_horizont,window_size,corvars=[ "temp","press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50","rain", "wind_10", "wind_50","wind_dir_50_sin", "wind_dir_50_cos"]):
+def forecast_lstm_multi(model_folder,params_folder,var_list,output_file,forecast_horizont,window_size,corvars=[ "temp","press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50","rain", "wind_10", "wind_50","wind_dir_50_sin", "wind_dir_50_cos"],ruthe=False,forecast_year=2022):
     import glob
     #var_list = [
      #   "temp", "press_sl", "humid"]
     #var_list= [ "press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50",     "rain", "wind_10", "wind_50","wind_dir_50_sin", "temp"]
-    forecast_year=2022
+    forecast_year=forecast_year
     dtl = datetime.datetime(forecast_year - 1, 12, 31, 23)
     dtlast = dtl - datetime.timedelta(hours=window_size - 1)
     dtlast = dtl - datetime.timedelta(hours=window_size - 1)
-    nc_path = '../Data/stunden/' + str(
-        forecast_year) + '_resample_stunden.nc'  # Replace with the actual path to your NetCDF file
-    nc_path_last = '../Data/stunden/' + str(forecast_year - 1) + '_resample_stunden.nc'
+    if ruthe:
+       nc_path = '../Data/ruthe_' + str(
+            forecast_year)+'_resample_stunden.nc'
+       nc_path_last = '../Data/ruthe_' + str(
+            forecast_year-1)+'_resample_stunden.nc'
+    else:
+        nc_path = '../Data/stunden/' + str(
+            forecast_year) + '_resample_stunden.nc'  # Replace with the actual path to your NetCDF file
+        nc_path_last = '../Data/stunden/' + str(forecast_year - 1) + '_resample_stunden.nc'
     data = xr.open_dataset(nc_path)  # .to_dataframe()#["index">dt]
     datalast = xr.open_dataset(nc_path_last)
     # print(data.to_dataframe().iloc[-1])

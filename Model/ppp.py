@@ -24,6 +24,11 @@ from darts.datasets import AirPassengersDataset
 from darts.models import ExponentialSmoothing, TBATS, AutoARIMA, Theta, NBEATSModel,NHiTSModel,TFTModel,ARIMA,StatsForecastAutoARIMA, NaiveMovingAverage
 from multiprocessing import Pool
 import logging
+from prophet import Prophet
+import logging
+
+logging.getLogger("prophet").setLevel(logging.WARNING)
+logging.getLogger("cmdstanpy").disabled = True
 #forecast_var = "diffuscmp11"
 window_size=672
 forecast_horizont=24
@@ -34,26 +39,7 @@ forecast_horizont=24
 forecast_vars=["temp","press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50",     "rain", "wind_10", "wind_50","wind_dir_50_sin", "wind_dir_50_cos"]
 #forecast_vars=["temp"]
 random.seed(42)
-#permutations = list(itertools.product(forecast_horizonts, window_sizes))
-#random.shuffle(permutations)
-empfohlene_fenstergroessen = {
-    "temp": 168,
-    "press_sl": 168,
-    "humid": 168,
-    "diffuscmp11": 72,
-    "globalrcmp11": 72,
-    "gust_10": 24,
-    "gust_50": 24,
-    "rain": 24,
-    "wind_10": 24,
-    "wind_50": 24,
-    "wind_dir_50_sin": 168,
-    "wind_dir_50_cos": 168
-}
-#print(permutations)
-#pred=model.predict(24,year_values[:672])
-#print(pred)
-def darima(number):
+def ppp(number):
     #print("start")
     forecast_var=forecast_vars[number]
     data = xr.open_dataset('../Data/zusammengefasste_datei_2016-2022.nc').to_dataframe()[
@@ -63,12 +49,16 @@ def darima(number):
     #forecast_horizonts=[2,4,6,12,15,18,24,32,48,60,72,84,96,192]
     #window_sizes=[16*4*7,8*7*24,4*7*24,2*7*24,7*24,6*24,5*24,4*24,3*24,2*24,24,12,6,3]
     forecast_horizont=24#permutations[number][0] #forecast_horizonts[-number]
-    window_size=672#empfohlene_fenstergroessen[forecast_var]#permutations[number][1]#window_sizes[number]
+    window_size=168#empfohlene_fenstergroessen[forecast_var]#permutations[number][1]#window_sizes[number]
 
 
     startday = datetime.datetime(2022, 1, 1, 0) - datetime.timedelta(
         hours=window_size)  # .strftime('%Y-%m-%d %H:%M:%S')
     rest, year_values = series.split_after(pd.Timestamp(startday))
+
+    year_values= year_values.pd_dataframe()
+    year_values = year_values.reset_index().rename(columns={'index': 'ds', forecast_var: 'y'})
+    #print(year_values)
 
     #train, val = rest.split_before(0.8)
     #plot_acf(train, m=12, alpha=0.05)
@@ -80,35 +70,47 @@ def darima(number):
 
     for window, last_window in tqdm(zip(range(window_size, len(year_values), forecast_horizont),
                                    range(0, len(year_values) - window_size, forecast_horizont))):
-        model =NaiveMovingAverage(input_chunk_length=24)# ARIMA(p=0,d=1,q=1,seasonal_order=(0,1,1,24))#StatsForecastAutoARIMA(season_length=24)
-        model.fit(year_values[last_window:window])
+        #model =NaiveMovingAverage(input_chunk_length=168)# ARIMA(p=0,d=1,q=1,seasonal_order=(0,1,1,24))#StatsForecastAutoARIMA(season_length=24)
+        #model.fit(year_values[last_window:window])
         #print(model)
+        model = Prophet()
+        model.fit(year_values[last_window:window])
         if last_window == 0:
-            pred_tmp = model.predict( n=forecast_horizont, verbose=False)
-            df = pred_tmp.pd_dataframe()
+           # pred_tmp = model.predict( n=forecast_horizont, verbose=False)
+           future = model.make_future_dataframe(periods=forecast_horizont, freq='H')
+           dfs= model.predict(future)
+           forecast_values = dfs[['ds', 'yhat']].tail(24)
+           forecast_values = forecast_values.set_index('ds')
+           forecast_values=forecast_values.rename(columns={'yhat': forecast_var})
+
+           df = forecast_values
+           #print(df)
+            #df = pred_tmp.pd_dataframe()
             #print(df)
 
         else:
-            pres = model.predict( n=forecast_horizont, verbose=False)
-
-            fs = pres.pd_dataframe()
+            #pres = model.predict( n=forecast_horizont, verbose=False)
+            future = model.make_future_dataframe(periods=forecast_horizont, freq='H')
+            dfs = model.predict(future)
+            forecast_values = dfs[['ds', 'yhat']].tail(24)
+            forecast_values = forecast_values.set_index('ds')
+            forecast_values = forecast_values.rename(columns={'yhat': forecast_var})
+            fs = forecast_values
+            #fs = pres.pd_dataframe()
             df = pd.concat([df, fs])
 
     if len(df) > 8760:
         df = df[:-(len(df)-8760)]
-    preds=TimeSeries.from_dataframe(df)
+    #preds=TimeSeries.from_dataframe(df)
     #preds.plot(label="Forecast")
     #val.plot(label="Obs")
     #plt.show()
-    file= "../Visualistion/arma/"+forecast_var+str(window_size)+"_"+str(forecast_horizont)+".nc"
-    output=preds.pd_dataframe().to_xarray().to_netcdf(file)
+    file= "../Visualistion/ppp/"+forecast_var+str(window_size)+"_"+str(forecast_horizont)+".nc"
+    #output=preds.pd_dataframe().to_xarray().to_netcdf(file)
+    output=df.to_xarray().to_netcdf(file)
 
-    return
-
-
-#numbers=[1,2,3]
 numbers=range(0,len(forecast_vars))
 with Pool(6) as p:
-    p.map(darima, numbers)
+    p.map(ppp, numbers)
 
-darima(0)
+#ppp(0)

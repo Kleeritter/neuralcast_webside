@@ -50,7 +50,8 @@ def resample_zehner(filelist,years):
     return
 
 
-def resample_stunden(filelist, years):
+def resample_stunden(filelist, years, vars=["humid", "temp", "press", "press_sl", "dewpoint_calc", "ptd", "ptm", "wind_10", "wind_50",
+                "wind_dir_50", "gust_10", "gust_50", "rain","Geneigt CM-11","diffuscmp11","globalrcmp11"]):
     for i in range(len(filelist)):
         print(years[i])
         print(filelist[i])
@@ -59,8 +60,8 @@ def resample_stunden(filelist, years):
         #print(ds)
         time_index = pd.to_datetime(ds['time'].values, unit='s')
         # values =xr.Dataset(coords=dict(time=ds["time"].resample(time="10T",origin="epoch")))
-        vars = ["humid", "temp", "press", "press_sl", "dewpoint_calc", "ptd", "ptm", "wind_10", "wind_50",
-                "wind_dir_50", "gust_10", "gust_50", "rain","Geneigt CM-11","diffuscmp11","globalrcmp11"]# "globalrcm11"]
+        vars = vars#["humid", "temp", "press", "press_sl", "dewpoint_calc", "ptd", "ptm", "wind_10", "wind_50",
+                #"wind_dir_50", "gust_10", "gust_50", "rain","Geneigt CM-11","diffuscmp11","globalrcmp11"]# "globalrcm11"]
         values = ds[vars].isel(time=time_index.minute % 60 == 0)  # time_index.minute%10==0
         print(len(values["time"]))
         start_date = str(years[i])+'-01-01 00:00:00'
@@ -110,9 +111,10 @@ def resample_stunden(filelist, years):
 
         # Entferne ganze Tage mit größeren Lücken
         df_cleaned = dfs.interpolate(method='linear')#dfs.drop(missing_days)
-        df_cleaned.loc[df_cleaned['wind_dir_50'] < 0, 'wind_dir_50'] = 0   #     print(len(df_cleaned.index.tolist()))
-        df_cleaned.to_xarray().to_netcdf("stunden/" + str(years[i]) + '_resample_stunden.nc')  # .asfreq(freq='10T', method='pad')
-
+        if "wind_dir_50" in vars:
+            df_cleaned.loc[df_cleaned['wind_dir_50'] < 0, 'wind_dir_50'] = 0   #     print(len(df_cleaned.index.tolist()))
+        #df_cleaned.to_xarray().to_netcdf("stunden/" + str(years[i]) + '_resample_stunden.nc')  # .asfreq(freq='10T', method='pad')
+        df_cleaned.to_xarray().to_netcdf("ruthe_" + str(years[i]) + '_resample_stunden.nc')
         ds.close()
     return
 
@@ -123,4 +125,6 @@ def resample_stunden(filelist, years):
     #print(len(ds["time"]))
 #resample_zehner(filelist,years)
 #resample_stunden(filelist,years)
-resample_stunden(["einer/Messwerte_2021.nc","einer/Messwerte_2020.nc","einer/Messwerte_2017.nc","einer/Messwerte_2018.nc","einer/Messwerte_2019.nc","einer/Messwerte_2020.nc","einer/Messwerte_2021.nc","einer/Messwerte_2022.nc"],[2021,2020,2017,2018,2019,2020,2021,2022])
+#resample_stunden(["einer/Messwerte_2021.nc","einer/Messwerte_2020.nc","einer/Messwerte_2017.nc","einer/Messwerte_2018.nc","einer/Messwerte_2019.nc","einer/Messwerte_2020.nc","einer/Messwerte_2021.nc","einer/Messwerte_2022.nc"],[2021,2020,2017,2018,2019,2020,2021,2022])
+resample_stunden(["ruthe_2019.nc"],[2019],vars=["humid","temp","rain","globalrcmp11","wind_10","wind_dir_10","tau"])
+resample_stunden(["ruthe_2020.nc"],[2020],vars=["humid","temp","rain","globalrcmp11","wind_10","wind_dir_10","tau"])
