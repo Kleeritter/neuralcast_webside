@@ -6,22 +6,28 @@ from tqdm import tqdm
 from collections import Counter
 import yaml
 random.seed(42)
-nc_path = '../../Data/zusammengefasste_datei_2016-2019.nc' # Replace with the actual path to your NetCDF file
+nc_path = '../../Data/stunden/2022_resample_stunden.nc'#'../../Data/zusammengefasste_datei_2016-2019.nc' # Replace with the actual path to your NetCDF file
 
 data = xr.open_dataset(nc_path).to_dataframe()
 
+forecastvar ="wind_dir_50"
 # Annahme: Ihre Zeitreihendaten sind im DataFrame df und die Zeitreihe ist in der Spalte "temp".
-y = data['temp']
+y = data[forecastvar]
+
+seasonal=False
+
+seasonal_period = 0
 
 # Anzahl der Stunden in einem Block
-block_size = 672
+block_size = 72
 
 # Mindestabstand zwischen den Blöcken
 min_block_distance = 24
 
 # Anzahl der zufälligen Proben, die Sie erstellen möchten
-num_samples = 10
+num_samples = 15
 
+maxiters = 40
 # Liste zur Speicherung der besten Modelle für jeden Block
 best_models = []
 
@@ -34,12 +40,12 @@ for _ in tqdm(range(num_samples)):
     y_block = y[start_idx : start_idx + block_size]
 
     # Verwenden von auto_arima, um die besten SARIMA-Parameter automatisch zu ermitteln
-    model = auto_arima(y_block, seasonal=True, m=24, stepwise=True, trace=False, start_p=1, max_p=3, start_q=1, max_q=3,
-                       start_P=1, max_P=3, start_Q=1, max_Q=3)
+    model = auto_arima(y_block, seasonal=seasonal, m=seasonal_period, stepwise=True, trace=False, start_p=0, max_p=3, start_q=0, max_q=3,start_d=0,start_D=0,
+                       start_P=0, max_P=3, start_Q=0, max_Q=3, max_D=3,max_d=3,maxiter=maxiters)
 
     # Die besten Parameter werden im 'model' Objekt gespeichert
     best_models.append((model.order, model.seasonal_order))
-    print( model.order ,model.seasonal_order)
+    print( model.order ,model.seasonal_order,start_idx)
 
 # Berechnen des Durchschnitts der besten Modelle über alle Proben
 parameter_counts = Counter(best_models)
@@ -51,6 +57,7 @@ most_common_seasonal_params = parameter_counts.most_common(1)[0][0][1]
 
 print("Durchschnittliche nicht-saisonale Parameter (p, d, q):", most_common_non_seasonal_params)
 print("Durchschnittliche saisonale Parameter (P, D, Q, s):", most_common_seasonal_params)
+
 
 
 output_params = {
@@ -68,5 +75,5 @@ output_params = {
 }
 
 
-with open('bestparams/best_sarima_params.yaml', 'w') as file:
+with open('bestparams/best_sarima_params_'+forecastvar+'.yaml', 'w') as file:
     yaml.dump(output_params, file)
