@@ -7,7 +7,7 @@ nc_path = '../../Data/zusammengefasste_datei_2016-2019.nc' # Replace with the ac
 data = xr.open_dataset(nc_path).to_dataframe()
 
 # Annahme: Ihre Zeitreihendaten sind im DataFrame df und die Zeitreihe ist in der Spalte "value".
-y = data['temp']
+y = data['temp'][-672:]
 
 # Verwenden Sie auto_arima, um die besten SARIMA-Parameter automatisch zu ermitteln.
 model = auto_arima(y, seasonal=True, m=24, stepwise=True, trace=True, start_p=1, max_p=3, start_q=1, max_q=3,
