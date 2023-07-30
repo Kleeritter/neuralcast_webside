@@ -4,6 +4,6 @@ non_seasonal_params:
   q: 0
 seasonal_params:
   D: 0
-  P: 1
-  Q: 0
+  P: 0
+  Q: 1
   s: 24
