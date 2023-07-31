@@ -81,6 +81,7 @@ def paramfinder(forecast_var, seasonal=True):
 
 
 #forecast_vars=["temp","humid", "globalrcmp11", "wind_10","wind_50", "gust_10", "gust_50"]
-forecast_vars =["rain", "diffuscmp11", "rain", "wind_dir_50"]
+#forecast_vars =["rain", "diffuscmp11", "rain", "wind_dir_50"]
+forecast_vars = ["press_sl"]
 for forecast_var in forecast_vars:
-    paramfinder(forecast_var, False)
+    paramfinder(forecast_var)

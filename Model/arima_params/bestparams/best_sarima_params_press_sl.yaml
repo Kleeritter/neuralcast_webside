@@ -1,0 +1,9 @@
+non_seasonal_params:
+  d: 2
+  p: 0
+  q: 1
+seasonal_params:
+  D: 0
+  P: 1
+  Q: 0
+  s: 24
