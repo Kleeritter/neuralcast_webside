@@ -9,7 +9,7 @@ from sklearn.metrics import mean_squared_error
 import seaborn as sns
 
 forecast_year=2022
-references_path="../forecast_sarima.nc"
+references_path="../auto_arima.nc"
 lstm_uni_path="../forecast_lstm_uni.nc"
 lstm_multi_path="../time_test_better_a.nc"#"../forecast_lstm_multi.nc"#"../../Model/timetest/lstm_multi/output/temp/timetest_lstm_multitemp_24_24.nc"#"forecast_lstm_multi.nc"
 tft_path="../tft_dart.nc"

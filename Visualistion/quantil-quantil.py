@@ -28,7 +28,8 @@ axes=[ax1, ax2,ax3,ax4]
 
 figs,axe=plt.subplots()
 def qq(modeln,ax, modelname):
-    ax.scatter(modeln, obs,label='Observation',color='lightsteelblue')
+    #ax.scatter(modeln, obs,label='Observation',color='lightsteelblue')
+    ax.hexbin(obs, modeln,gridsize=15, cmap='Blues')
     ax.set_title(modelname)
     quantiles = [0.10,0.25, 0.5, 0.75,0.9]  # Wähle die gewünschten Quantile
     combined_df = pd.DataFrame({

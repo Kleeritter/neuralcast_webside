@@ -53,7 +53,7 @@ def train(forecast_var,forecast_horizont,window_size,transfer_learning=False,cor
     return
 
 if __name__ == '__main__':
-    forecast_vars=["humid","temp","rain","globalrcmp11","wind_10","wind_dir_10"]#[ "temp","press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50",     "rain", "wind_10", "wind_50","wind_dir_50_sin", "wind_dir_50_cos"]
+    forecast_vars=["humid","temp","rain","globalrcmp11","wind_10"]#[ "temp","press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50",     "rain", "wind_10", "wind_50","wind_dir_50_sin", "wind_dir_50_cos"]
     for forecast_var in forecast_vars:
     #    corspath = 'corpars/'+forecast_var+'.yaml'
      #   with open(corspath, 'r') as file:

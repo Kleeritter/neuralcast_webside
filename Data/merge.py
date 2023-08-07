@@ -50,9 +50,10 @@ def mergefolder(folder,output_file):
 
 #mergefolder("../Model/cortest/lstm_multi/output/all","../Visualistion/cortest_all_p.nc")
 #mergefolder("../Model/timetest/lstm_multi/output/all","../Visualistion/time_test_better_a.nc")
-#mergefolder("../Visualistion/AUTOARIMA","../Visualistion/auto_arima.nc")
-mergefolder("../Visualistion/arma","../Visualistion/baseline.nc")
-mergefolder("../Visualistion/ppp","../Visualistion/prophet.nc")
+mergefolder("../Visualistion/AUTOARIMA","../Visualistion/auto_arima.nc")
+#mergefolder("../Visualistion/arma","../Visualistion/baseline.nc")
+#mergefolder("../Visualistion/ppp","../Visualistion/prophet.nc")
+#mergefolder("../Model/Ruthe/lstm_multi/output/all","../Visualistion/ruthe_forecast.nc")
 
 
 # Schließen Sie das kombinierte Dataset

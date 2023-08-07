@@ -1,7 +1,7 @@
 non_seasonal_params:
-  d: 2
-  p: 0
-  q: 1
+  d: 0
+  p: 2
+  q: 0
 seasonal_params:
   D: 0
   P: 1

@@ -23,7 +23,10 @@ from darts.dataprocessing.transformers import Scaler
 from darts.datasets import AirPassengersDataset
 from darts.models import ExponentialSmoothing, TBATS, AutoARIMA, Theta, NBEATSModel,NHiTSModel,TFTModel,ARIMA,StatsForecastAutoARIMA, NaiveMovingAverage
 from multiprocessing import Pool
+from Model.funcs.visualer_funcs import load_hyperparameters
 import logging
+
+logging.basicConfig(level=logging.INFO)
 #forecast_var = "diffuscmp11"
 window_size=672
 forecast_horizont=24
@@ -31,8 +34,13 @@ forecast_horizont=24
 
 #forecast_horizonts=[24]#[2,4,6,12,15,18,24,32,48,60,72,84,96,192]
 #window_sizes=[672]#[16*24*7,8*7*24,4*7*24,2*7*24,7*24,6*24,5*24,4*24,3*24,2*24,24,12,6,3]
-forecast_vars=["temp","press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50",     "rain", "wind_10", "wind_50","wind_dir_50_sin", "wind_dir_50_cos"]
-#forecast_vars=["temp"]
+#forecast_vars=["temp","press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50",     "rain", "wind_10", "wind_50","wind_dir_50"]
+#forecast_vars=["press_sl", "humid", "globalrcmp11", "gust_10", "gust_50", "wind_10", "wind_50"]
+#forecast_vars=["wind_10","wind_50","wind_dir_50","gust_10","gust_50"]
+#forecast_vars=["gust_50"]
+#forecast_vars = ["globalrcmp11"]
+#forecast_vars = ["temp"]
+forecast_vars =[ "diffuscmp11"]
 random.seed(42)
 #permutations = list(itertools.product(forecast_horizonts, window_sizes))
 #random.shuffle(permutations)
@@ -58,6 +66,7 @@ def darima(number):
     forecast_var=forecast_vars[number]
     data = xr.open_dataset('../Data/zusammengefasste_datei_2016-2022.nc').to_dataframe()[
         [forecast_var]]  # [['index','temp']].to_dataframe()
+    #data[forecast_var]=np.log(data[forecast_var])
     series = TimeSeries.from_dataframe(data, value_cols=forecast_var, freq="h")
     train, series = series.split_before(pd.Timestamp("2020-01-01 00:00:00"))
     #forecast_horizonts=[2,4,6,12,15,18,24,32,48,60,72,84,96,192]
@@ -77,10 +86,39 @@ def darima(number):
      #   is_seasonal, period = check_seasonality(year_values, m=m, alpha=0.05)
       #  if is_seasonal:
        #     print("There is seasonality of order {}.".format(period))
+    #hyper_params_path = '../Model/arima_params/bestparams/best_sarima_params_'+forecast_vars[number]+'.yaml'
+    hyper_params_path = '../Model/arima_params/bestparams/best_sarima_params_temp'+'.yaml'
+
+    best_params = load_hyperparameters(hyper_params_path)
+    non_seasonal_params = best_params["non_seasonal_params"]
+    seasonal_params = best_params["seasonal_params"]
+
+    p=non_seasonal_params["p"]
+    d=non_seasonal_params["d"]
+    q=non_seasonal_params["q"]
+    P=seasonal_params["P"]
+    D=seasonal_params["D"]
+    Q=seasonal_params["Q"]
+    if P and D and Q ==0 :
+        Seasonal=0
+    else:
+        Seasonal = 24# seasonal_params["Seasonal"]
 
     for window, last_window in tqdm(zip(range(window_size, len(year_values), forecast_horizont),
                                    range(0, len(year_values) - window_size, forecast_horizont))):
-        model =NaiveMovingAverage(input_chunk_length=24)# ARIMA(p=0,d=1,q=1,seasonal_order=(0,1,1,24))#StatsForecastAutoARIMA(season_length=24)
+
+
+        #model =StatsForecastAutoARIMA(season_length=24)#ARIMA(p=p,d=d,q=q,seasonal_order=(P,D,Q,Seasonal))#NaiveMovingAverage(input_chunk_length=24)# ARIMA(p=0,d=1,q=1,seasonal_order=(0,1,1,24))#StatsForecastAutoARIMA(season_length=24)
+        #model=ARIMA(p=p,d=d,q=q,seasonal_order=(P,D,Q,Seasonal))
+       # try:
+        #    model= ARIMA(p=0,d=1,q=1,seasonal_order=(0,1,1,24))
+         #   model.fit(year_values[last_window:window])
+        #except:
+         #   model = NaiveMovingAverage(input_chunk_length=24)
+          #  model.fit(year_values[last_window:window])
+        #model = StatsForecastAutoARIMA(season_length=0)
+        model = NaiveSeasonal()#ARIMA(0,0,1)
+
         model.fit(year_values[last_window:window])
         #print(model)
         if last_window == 0:
@@ -100,8 +138,10 @@ def darima(number):
     #preds.plot(label="Forecast")
     #val.plot(label="Obs")
     #plt.show()
-    file= "../Visualistion/arma/"+forecast_var+str(window_size)+"_"+str(forecast_horizont)+".nc"
-    output=preds.pd_dataframe().to_xarray().to_netcdf(file)
+    output = preds.pd_dataframe()
+    print(output.head())
+    file= "../Visualistion/AUTOARIMA/"+forecast_var+str(window_size)+"_"+str(forecast_horizont)+".nc"
+    output=output.to_xarray().to_netcdf(file)
 
     return
 
@@ -111,4 +151,4 @@ numbers=range(0,len(forecast_vars))
 with Pool(6) as p:
     p.map(darima, numbers)
 
-darima(0)
+#darima(0)
