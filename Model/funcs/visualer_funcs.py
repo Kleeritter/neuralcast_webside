@@ -102,24 +102,31 @@ def multilstm_full(modell,data,start_idx,end_idx,forecast_horizon,window_size,fo
     import torch
     from sklearn.preprocessing import MinMaxScaler
     from sklearn import preprocessing
+    from scipy import stats
     checkpoint_path = modell
     checkpoint = torch.load(checkpoint_path)
     data=data[cor_vars]
     data=data[start_idx: end_idx]
     #print(data)
     for column in data.columns:
+
         values = data[column].values.reshape(-1, 1)
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        param_path = "../Data/params_for_normal.yaml"  # '/home/alex/PycharmProjects/nerualcaster/Data/params_for_normal.yaml'  # "../../Data/params_for_normal.yaml"
-        params = load_hyperparameters(param_path)
-        mins = params["Min_" + column]
-        maxs = params["Max_" + column]
-        train_values = [mins, maxs]
-        X_train_minmax = scaler.fit_transform(np.array(train_values).reshape(-1, 1))
-        scaled_values = scaler.transform(values)
-        data[column] = scaled_values.flatten()
-        if column == forecast_var:
-            scalera = scaler
+        if column == "srain":
+            data[column] = stats.zscore(values).flatten()
+            mean = np.mean(values)
+            std = np.std(values)
+        else:
+            scaler = MinMaxScaler(feature_range=(0, 1))
+            param_path = "../Data/params_for_normal.yaml"  # '/home/alex/PycharmProjects/nerualcaster/Data/params_for_normal.yaml'  # "../../Data/params_for_normal.yaml"
+            params = load_hyperparameters(param_path)
+            mins = params["Min_" + column]
+            maxs = params["Max_" + column]
+            train_values = [mins, maxs]
+            X_train_minmax = scaler.fit_transform(np.array(train_values).reshape(-1, 1))
+            scaled_values = scaler.transform(values)
+            data[column] = scaled_values.flatten()
+            if column == forecast_var:
+                scalera = scaler
     #print(data)
     predicted_values = []
     #print(data)
@@ -138,7 +145,10 @@ def multilstm_full(modell,data,start_idx,end_idx,forecast_horizon,window_size,fo
         predicted_value = model(input_data)
     predicted_values = np.array(predicted_value).flatten()
     #print(predicted_values)
-    denormalized_values = scalera.inverse_transform(predicted_values.reshape(-1, 1)).flatten()
+    if forecast_var=="srain":
+        denormalized_values = predicted_values * std + mean
+    else:
+        denormalized_values = scalera.inverse_transform(predicted_values.reshape(-1, 1)).flatten()
     #print(len(denormalized_values))
     return denormalized_values
 

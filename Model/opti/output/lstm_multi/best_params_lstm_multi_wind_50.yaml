@@ -1,0 +1,7 @@
+batchsize: 104
+hidden_size: 64
+learning_rate: 0.00016690970472289533
+num_layers: 1
+weight_decay: 2.283380540504033e-05
+weight_initializer: xavier
+window_size: 672

@@ -7,7 +7,7 @@ import numpy as np
 import random
 import xarray as xr
 from Model.funcs.visualer_funcs import load_hyperparameters
-
+from scipy import stats
 pl.seed_everything(42)
 
 # Setze den Random Seed für torch
@@ -28,16 +28,20 @@ class TemperatureDataset_multi(Dataset):
        # self.data=scaler.fit_transform([[x] for x in self.data]).flatten()
         for column in self.data.columns:
             values = self.data[column].values.reshape(-1, 1)
-            scaler = MinMaxScaler(feature_range=(0, 1))
-            param_path ='/home/alex/PycharmProjects/neuralcaster/Data/params_for_normal.yaml'  # "../../Data/params_for_normal.yaml"
-            params = load_hyperparameters(param_path)
-            mins = params["Min_" + column]
-            maxs = params["Max_" + column]
-            train_values = [mins, maxs]
-            X_train_minmax = scaler.fit_transform(np.array(train_values).reshape(-1, 1))
-            #self.data = scaler.transform([[x] for x in self.data]).flatten()
-            scaled_values = scaler.transform(values)
-            self.data[column] = scaled_values.flatten()
+            if column == "srain":
+                self.data[column] = stats.zscore(values).flatten()
+
+            else:
+                scaler = MinMaxScaler(feature_range=(0, 1))
+                param_path ='/home/alex/PycharmProjects/neuralcaster/Data/params_for_normal.yaml'  # "../../Data/params_for_normal.yaml"
+                params = load_hyperparameters(param_path)
+                mins = params["Min_" + column]
+                maxs = params["Max_" + column]
+                train_values = [mins, maxs]
+                X_train_minmax = scaler.fit_transform(np.array(train_values).reshape(-1, 1))
+                #self.data = scaler.transform([[x] for x in self.data]).flatten()
+                scaled_values = scaler.transform(values)
+                self.data[column] = scaled_values.flatten()
 
         print(self.data["rain"])
 
@@ -146,6 +150,7 @@ class TemperatureModel_multi_full(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
+        #loss = torch.nn.MSELoss()(y_hat, y)
         loss = torch.nn.MSELoss()(y_hat, y)
         self.log('train_loss', loss)
         return loss
