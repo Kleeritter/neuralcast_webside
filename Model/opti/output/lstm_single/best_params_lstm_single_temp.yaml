@@ -1,4 +1,4 @@
-batchsize: 6
+batchsize: 60
 hidden_size: 8
 learning_rate: 0.0004740011264593218
 num_layers: 4

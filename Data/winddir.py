@@ -1,3 +1,4 @@
+from converterfuncs import pressurereduction,dew_pointa
 def wind_split(file):
     import os
     import xarray as xr
@@ -58,12 +59,16 @@ def add_cool_stuff_ruthe(file):
     import xarray as xr
     import pandas as pd
     data = xr.open_dataset(file).to_dataframe()
-    data["Taupunkt3h"] = resammple(data, "tau")
+    print(data.columns)
+    data["Taupunkt3h"] = resammple(data, "taupunkt")
     data["rainsum3h"] = resammple(data, "rain", sum=True)
     data["temp3h"] = resammple(data, "temp")
-    data["taupunkt"] = data["tau"]
+    #data["press_sl"] = data["press"].apply(lambda x: pressurereduction(x,50,data["temp"].loc[x.index[0]]))
+    #data["press3h"] = resammple(data, "press_sl")
+    data["gust_10"] = data["wind_10_max"]
+    data["taupunkt"] = data.apply(lambda row: dew_pointa(row['temp']-273.15, row['humid']), axis=1)+273.15
     data["rain_event"] = data["rain"].rolling('3H').apply(lambda x: 1 if x.sum() > 0 else 0).fillna(0)
-    data["rain"] =data["rain"]
+    #data["rain"] =data["rain"]*0.01
     data["index"] = data.index
     data=data.to_xarray()
     data.to_netcdf(file)
@@ -84,5 +89,5 @@ def add_cool_stuff_ruthe(file):
 #rewind('../Visualistion/cortest_all.nc')
 #rewind('../Visualistion/nhit.nc')
 #rewind('../Visualistion/forecast_lstm_uni.nc')
-add_cool_stuff_ruthe('ruthe_2019_resample_stunden.nc')
-add_cool_stuff_ruthe('ruthe_2020_resample_stunden.nc')
+#add_cool_stuff_ruthe('ruthe_2019_resample_stunden.nc')
+add_cool_stuff_ruthe('zusammengefasste_datei_ruthe.nc')

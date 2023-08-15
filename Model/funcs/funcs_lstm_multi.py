@@ -43,7 +43,7 @@ class TemperatureDataset_multi(Dataset):
                 scaled_values = scaler.transform(values)
                 self.data[column] = scaled_values.flatten()
 
-        print(self.data["rain"])
+        #print(self.data["rain"])
 
         #print(self.data)
         self.forecast_horizont = forecast_horizont
@@ -98,6 +98,7 @@ class TemperatureModel_multi_light(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
+        #loss = torch.nn.MSELoss()(y_hat, y)
         loss = torch.nn.MSELoss()(y_hat, y)
         self.log('train_loss', loss)
         return loss
@@ -120,6 +121,7 @@ class TemperatureModel_multi_full(pl.LightningModule):
         self.learning_rate = learning_rate
         self.weight_decay = weight_decay
         self.lstm = torch.nn.LSTM(input_size=numvars, hidden_size=hidden_size, num_layers=num_layers,batch_first=True)
+        #self.RELU = torch.nn.ReLU()
         self.linear = torch.nn.Linear(hidden_size, forecast_horizont)
 
         self.weight_initializer = weight_initializer
@@ -143,6 +145,7 @@ class TemperatureModel_multi_full(pl.LightningModule):
                         torch.nn.init.xavier_uniform_(param)
 
     def forward(self, x):
+       # x= self.RELU(x)
         lstm_output, _ = self.lstm(x)
         output = self.linear(lstm_output[:, -1, :])
         return output

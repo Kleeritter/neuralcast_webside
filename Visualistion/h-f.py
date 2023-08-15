@@ -3,31 +3,30 @@ import pylab as pl
 import xarray as xr
 import numpy as np
 import pandas as pd
+import seaborn as sns
+import matplotlib.dates as mdates
+
 
 forecast_var = 'rain'
 nc_path = '../Data/stunden/'+str(2022)+'_resample_stunden.nc' # Replace with the actual path to your NetCDF file
-lstm_uni_path="forecast_lstm_uni.nc"
-nhit_path="nhit.nc"
-lstm_multi_path="forecast_lstm_multi.nc"
-sarima_path="forecast_sarima.nc"
+lstm_uni_path= "time_test_single.nc"#"forecast_lstm_uni.nc"
+nhit_path="../Model/baseline/baseline.nc"
+lstm_multi_path="time_test_better_a.nc"
+lstm_multi_cor_path="cortest_all.nc"
+sarima_path="auto_arima.nc"
 
 
 obs=xr.open_dataset(nc_path).to_dataframe()[forecast_var]
 lstm_uni=xr.open_dataset(lstm_uni_path).to_dataframe()[forecast_var]
 sarima=xr.open_dataset(sarima_path).to_dataframe()[forecast_var]
 lstm_multi=xr.open_dataset(lstm_multi_path).to_dataframe()[forecast_var]
-nhit=xr.open_dataset(nhit_path).to_dataframe()[forecast_var]
-print(nhit.describe())
-lstm_uni.loc[lstm_uni < 0.000518] = 0
-sarima.loc[sarima < 0.000518] = 0
+baseline=xr.open_dataset(nhit_path).to_dataframe()[forecast_var]
+lstm_multi_cor=xr.open_dataset(lstm_multi_cor_path).to_dataframe()[forecast_var]
 
-nhit.loc[nhit < 0.091275] = 0
-lstm_multi.loc[lstm_multi < 0.001401] = 0
+daystart=pd.to_datetime(str(2022)+"-12-25 00:00")
+dayend=pd.to_datetime(str(2022)+"-12-30 23:00")
+models = [sarima,lstm_uni ,lstm_multi,baseline,lstm_multi_cor]
 
-print(obs.describe())
-print(sarima.describe())
-models = [sarima,lstm_uni ,lstm_multi,nhit]
-# Überprüfung auf Hits
 
 
 
@@ -44,7 +43,8 @@ def hitc(data):
 
     print("Hitrate: {:.2f}%".format(hitrate))
     return hitrate
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(ncols=2)
+#sns.set_context("paper", font_scale=1.5)
 def fsar(data):
     fsr=0
     for observed_value, calculated_value in zip(obs, data):
@@ -56,28 +56,61 @@ def fsar(data):
     print("FSR: {:.2f}%".format(false_alarm_rate))
     return false_alarm_rate
 
-modelss=["(S)ARIMA", "LSTM","LSTM-Multi","NBeats"]
+modelss=["(S)ARIMA", "LSTM","LSTM-Multi","baseline","LSTN-Multi-Cor"]
+colorlist=["red","blue","green","orange","purple","black"]
 for i in range(len(models)):
     #print(model)
     x = []
     y = []
     y.append(hitc(models[i]))
     x.append(fsar(models[i]))
-    ax.scatter(x, y,label=modelss[i])
+    sns.scatterplot(x=x, y=y,label=modelss[i],ax=ax[0],s=100,color=colorlist[i])
+
+def frame(var,cor=0):
+    winds = pd.DataFrame({
+        'Date': obs.loc[daystart:dayend].index,
+        'SARIMA': 100*sarima.loc[daystart:dayend],
+        'univariate LSTM': 100* lstm_uni.loc[daystart:dayend],
+        'multivariate LSTM': 100*lstm_multi.loc[daystart:dayend]-cor,
 
 
+        'baseline':100*baseline.loc[daystart:dayend],
+        'cor. multi. LSTM':100*lstm_multi_cor.loc[daystart:dayend],
+        'observed': 100* obs.loc[daystart:dayend] - cor
+    })
+    return winds
 #ax.axis([0, 1, 0, 1])
-plt.ylabel("H=a/(a+c)")
-plt.xlabel("F=b/(b+d)")
-plt.title("H-F Diagramm")
-ax.legend()
-ax.set_yscale('log')
-plt.set_cmap("magma")
-ax.grid(True)
+ax[0].set_ylabel("H=a/(a+c)")
+ax[0].set_xlabel("F=b/(b+d)")
+ax[0].set_title("H-F diagram")
+ax[0].legend()
+ax[0].set_yscale('log')
 
-#ax.set_yticks([0,0., 1, ])
-#pl.ylim=(0,1)#=[0,1]
-#pl.set(xlim=(xmin, xmax), ylim=(ymin, ymax))
-#pl.yticks(np.arange(0,1,0.2))
-#plt.scatter(x,y)
+#ax[0].set_cmap("magma")
+ax[0].grid(True)
+sns.lineplot(x="Date", y='value', hue='variable',data=pd.melt(frame(var="rain",cor=0), ['Date']),ax=ax[1],legend=False,palette=colorlist)
+#ax[1].set_ylabel("Precipitation [mm]")
+ax2 = ax[1].twinx()
+ax[1].get_shared_y_axes().join(ax[1], ax2)
+ax[1].set_ylabel("")
+ax[1].set_title("Precipitation in December 2022")
+
+# Skala von ax[1] deaktivieren
+ax[1].tick_params(axis='y', left=False, right=False, labelleft=False, labelright=False)
+
+ax2.set_ylabel("Precipitation [mm]")
+date_format = mdates.DateFormatter('%d.')
+ax[1].xaxis.set_major_formatter(date_format)
+
+# Anzahl der x-Ticks reduzieren
+# ax[1, 0].xaxis.set_major_locator(ticker.MaxNLocator(nbins=6))  # Du kannst die Anzahl nach Bedarf ändern
+
+# ax[1, 0].tick_params(rotation=45)
+# Ticks alle 2 Jahre anzeigen
+years_locator = mdates.DayLocator(interval=1)
+ax[1].xaxis.set_major_locator(years_locator)
+#plt.grid(True)
+plt.tight_layout()
+plt.savefig("/home/alex/Dokumente/Bach/figures/raino.png", dpi=300, bbox_inches="tight")
+
 plt.show()

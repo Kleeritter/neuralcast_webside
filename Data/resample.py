@@ -126,5 +126,5 @@ def resample_stunden(filelist, years, vars=["humid", "temp", "press", "press_sl"
 #resample_zehner(filelist,years)
 #resample_stunden(filelist,years)
 #resample_stunden(["einer/Messwerte_2021.nc","einer/Messwerte_2020.nc","einer/Messwerte_2017.nc","einer/Messwerte_2018.nc","einer/Messwerte_2019.nc","einer/Messwerte_2020.nc","einer/Messwerte_2021.nc","einer/Messwerte_2022.nc"],[2021,2020,2017,2018,2019,2020,2021,2022])
-resample_stunden(["ruthe_2019.nc"],[2019],vars=["humid","temp","rain","globalrcmp11","wind_10","wind_dir_10","tau"])
-resample_stunden(["ruthe_2020.nc"],[2020],vars=["humid","temp","rain","globalrcmp11","wind_10","wind_dir_10","tau"])
+resample_stunden(["ruthe_2019.nc"],[2019],vars=["humid","temp","rain","globalrcmp11","wind_10","wind_dir_10","tau","wind_10_max"])
+resample_stunden(["ruthe_2020.nc"],[2020],vars=["humid","temp","rain","globalrcmp11","wind_10","wind_dir_10","tau","wind_10_max"])

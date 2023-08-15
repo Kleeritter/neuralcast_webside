@@ -40,7 +40,12 @@ forecast_horizont=24
 #forecast_vars=["gust_50"]
 #forecast_vars = ["globalrcmp11"]
 #forecast_vars = ["temp"]
-forecast_vars =[ "diffuscmp11"]
+#forecast_vars =[ "diffuscmp11"]
+#forecast_vars =["wind_dir_50_sin","wind_dir_50_cos"]
+#forecast_vars =["wind_10","gust_10","diffuscmp11","rain"]
+#forecast_vars = ["temp","press_sl", "humid", "globalrcmp11", "gust_50", "wind_50"]
+#forecast_vars = ["temp","humid","wind_10","gust_10","rain","globalrcmp11"]
+forecast_vars = ["wind_10","gust_10","rain"]
 random.seed(42)
 #permutations = list(itertools.product(forecast_horizonts, window_sizes))
 #random.shuffle(permutations)
@@ -61,21 +66,24 @@ empfohlene_fenstergroessen = {
 #print(permutations)
 #pred=model.predict(24,year_values[:672])
 #print(pred)
-def darima(number):
+def darima(number, Ruthe=True):
     #print("start")
     forecast_var=forecast_vars[number]
-    data = xr.open_dataset('../Data/zusammengefasste_datei_2016-2022.nc').to_dataframe()[
-        [forecast_var]]  # [['index','temp']].to_dataframe()
+    if Ruthe:
+        data=xr.open_dataset('../Data/zusammengefasste_datei_ruthe.nc').to_dataframe()[[forecast_var]]
+    else:
+     data = xr.open_dataset('../Data/zusammengefasste_datei_2016-2022.nc').to_dataframe()[
+         [forecast_var]]  # [['index','temp']].to_dataframe()
     #data[forecast_var]=np.log(data[forecast_var])
     series = TimeSeries.from_dataframe(data, value_cols=forecast_var, freq="h")
-    train, series = series.split_before(pd.Timestamp("2020-01-01 00:00:00"))
+    #train, series = series.split_before(pd.Timestamp("2020-01-01 00:00:00"))
     #forecast_horizonts=[2,4,6,12,15,18,24,32,48,60,72,84,96,192]
     #window_sizes=[16*4*7,8*7*24,4*7*24,2*7*24,7*24,6*24,5*24,4*24,3*24,2*24,24,12,6,3]
     forecast_horizont=24#permutations[number][0] #forecast_horizonts[-number]
     window_size=672#empfohlene_fenstergroessen[forecast_var]#permutations[number][1]#window_sizes[number]
+    print(data.max())
 
-
-    startday = datetime.datetime(2022, 1, 1, 0) - datetime.timedelta(
+    startday = datetime.datetime(2020, 1, 1, 0) - datetime.timedelta(
         hours=window_size)  # .strftime('%Y-%m-%d %H:%M:%S')
     rest, year_values = series.split_after(pd.Timestamp(startday))
 
@@ -110,15 +118,16 @@ def darima(number):
 
         #model =StatsForecastAutoARIMA(season_length=24)#ARIMA(p=p,d=d,q=q,seasonal_order=(P,D,Q,Seasonal))#NaiveMovingAverage(input_chunk_length=24)# ARIMA(p=0,d=1,q=1,seasonal_order=(0,1,1,24))#StatsForecastAutoARIMA(season_length=24)
         #model=ARIMA(p=p,d=d,q=q,seasonal_order=(P,D,Q,Seasonal))
-       # try:
-        #    model= ARIMA(p=0,d=1,q=1,seasonal_order=(0,1,1,24))
-         #   model.fit(year_values[last_window:window])
+      # try:
+       #     model= ARIMA(p=0,d=1,q=1,seasonal_order=(0,1,1,24))
+        #    model.fit(year_values[last_window:window])
         #except:
-         #   model = NaiveMovingAverage(input_chunk_length=24)
+        #model = NaiveMovingAverage(input_chunk_length=24)
           #  model.fit(year_values[last_window:window])
         #model = StatsForecastAutoARIMA(season_length=0)
-        model = NaiveSeasonal()#ARIMA(0,0,1)
-
+        #model = NaiveSeasonal(K=24)#ARIMA(0,0,1)
+        #model = ARIMA(p=0, d=1, q=1, seasonal_order=(0, 1, 1, 24))
+        model=NaiveMovingAverage(input_chunk_length=24)
         model.fit(year_values[last_window:window])
         #print(model)
         if last_window == 0:
@@ -140,7 +149,8 @@ def darima(number):
     #plt.show()
     output = preds.pd_dataframe()
     print(output.head())
-    file= "../Visualistion/AUTOARIMA/"+forecast_var+str(window_size)+"_"+str(forecast_horizont)+".nc"
+    print(output.max())
+    file= "../Visualistion/RUTHE_ARIMA/"+forecast_var+str(window_size)+"_"+str(forecast_horizont)+".nc"
     output=output.to_xarray().to_netcdf(file)
 
     return

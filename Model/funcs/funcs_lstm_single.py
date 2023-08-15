@@ -103,7 +103,7 @@ class TemperatureDataset(Dataset):
 
 
 class TemperatureModel(pl.LightningModule):
-    def __init__(self, hidden_size=32, learning_rate=0.00005, weight_decay=0.0001, optimizer="Adam",dropout=0, num_layers=1, weight_intiliazier="None"):
+    def __init__(self, hidden_size=32, learning_rate=0.00005, weight_decay=0.0001, optimizer="Adam",dropout=0, num_layers=1, weight_intiliazier="None",forecast_horizont=24, window_size=24):
         super().__init__()
         self.hidden_size = hidden_size
         self.learning_rate = learning_rate
@@ -113,7 +113,7 @@ class TemperatureModel(pl.LightningModule):
         self.num_layers=num_layers
         self.weight_intiliazier= weight_intiliazier
         self.lstm = torch.nn.LSTM(input_size=1, hidden_size=self.hidden_size, num_layers=num_layers, batch_first=True,dropout=dropout)
-        self.linear = torch.nn.Linear(self.hidden_size, 24)
+        self.linear = torch.nn.Linear(self.hidden_size, forecast_horizont)
         self.apply(self.initialize_weights)
 
     def initialize_weights(self, module):

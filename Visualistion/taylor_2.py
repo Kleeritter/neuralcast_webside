@@ -17,12 +17,12 @@ var_list = [    "temp",    "press_sl", "humid",
 #var_list= ["temp", "press_sl", "humid"]
 #var_list=["temp"]
 nc_path = '../Data/stunden/'+str(2022)+'_resample_stunden.nc'
-darts_path= 'nhit.nc'
+darts_path= '../Model/baseline/baseline.nc'
 references="auto_arima.nc"
-lstm_uni_path="time_test_better_a.nc"#"forecast_lstm_uni.nc"
-lstm_multi_path="forecast_lstm_multi.nc"
-tft_path="forecast_tft.nc"
-ttft_path="forecast_ttft.nc"
+lstm_uni_path="forecast_lstm_uni.nc"
+lstm_multi_path="time_test_better_a.nc"
+#tft_path="forecast_tft.nc"
+#ttft_path="forecast_ttft.nc"
 
 
 markers= ["o", "v", "s", "p", "P", "*", "X", "D", "d", "1",
@@ -72,9 +72,9 @@ def tayl(forecast_var,marker):
 
 
     ax.scatter(correlation1, stdv1, color='blue', marker=marker,edgecolors='black')
-   # ax.scatter(correlation2, stdv2,color="red", marker=marker,edgecolors='black')
-   # ax.scatter(correlation3, stdv3, color="green", marker=marker)
-    #ax.scatter(observations4, stdv4, color="orange", marker=marker)
+    ax.scatter(correlation2, stdv2,color="red", marker=marker,edgecolors='black')
+    ax.scatter(correlation3, stdv3, color="green", marker=marker)
+    ax.scatter(observations4, stdv4, color="orange", marker=marker)
 
     ax.set_rmax(2)
     #ax.set_thetaticks([1,0])
@@ -127,7 +127,7 @@ for i in range(len(var_list)):
 
 
 
-models=["(S)ARIMA"]#, "LSTM","LSTM-Multi","NBeats"]
+models=["SARIMA", "LSTM","LSTM-Multi","LSTM-Multi-CORS"]
 colors=["blue","red","green","orange"]
 for i in range(len(models)):
     model_handle = ax.scatter([], [], color=colors[i], marker='o',
@@ -136,11 +136,12 @@ for i in range(len(models)):
     model_labels.append(models[i])  # Hier die gewünschten Labels für die Modelle einsetzen
 ax.plot([], [], color='black', linestyle='dashed')
 
-#var_legend = ax.legend(var_handles, var_labels, loc='upper left', title='Variablen')
-#model_legend = ax.legend(model_handles, model_labels, loc='upper right', title='Modelle')
+#var_legend = ax.legend(var_handles, var_labels, loc='upper left', title='variables',  bbox_to_anchor=(1, 1))
+#model_legend = ax.legend(model_handles, model_labels, loc='upper right', title='models')
 
 # Füge beide Legenden zusammen, damit sie gemeinsam angezeigt werden
 #ax.add_artist(var_legend)
 #ax.add_artist(model_legend)
 #plt.show()
-plt.savefig("/home/alex/Dokumente/Bach/figures/taylor_empty.png", dpi=300)
+fig.tight_layout()
+plt.savefig("/home/alex/Dokumente/Bach/figures/taylor_full.png", dpi=300)
