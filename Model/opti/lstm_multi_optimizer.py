@@ -11,21 +11,15 @@ from optuna.integration import PyTorchLightningPruningCallback
 import random
 import numpy as np
 import yaml
-#forecast_vars =[ 'temp']
+
 forecast_vars=[ "press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50",     "rain", "wind_10", "wind_50","wind_dir_50_sin", "wind_dir_50_cos"]
 storage="/home/alex/Dokumente/storage"
 logs="/home/alex/Dokumente/lightning_logs"
-# Setzen Sie die Zufallssaat für die GPU
-# Setze den Random Seed für PyTorch
+
+#Seeds for reproducibility
 pl.seed_everything(42)
-
-# Setze den Random Seed für torch
 torch.manual_seed(42)
-
-# Setze den Random Seed für random
 random.seed(42)
-
-# Setze den Random Seed für numpy
 np.random.seed(42)
 
 torch.set_float32_matmul_precision('medium')
@@ -34,10 +28,8 @@ def objective(trial):
     learning_rate = trial.suggest_float('learning_rate', 1e-5, 1e-3,log=True)
     weight_decay = trial.suggest_float('weight_decay', 1e-5, 1e-3,log=True)
     hidden_size = trial.suggest_categorical('hidden_size', [4,8,16, 32, 64,128])
-    #optimizer  = trial.suggest_categorical('optimizer', ["Adam","AdamW"])
-    #dropout = trial.suggest_categorical('dropout', [0,0.2,0.5])
+
     num_layers = trial.suggest_categorical('num_layers', [1, 2,4,6])
-    #batchsize = trial.suggest_categorical('batchsize', [1,2,3,6,12,24])
     batchsize=trial.suggest_int('batchsize', 32, 128, step=8)
     weight_intiliazier = trial.suggest_categorical('weight_initializer', [ "xavier","kaiming","normal"])
     window_size= trial.suggest_categorical('window_size', [24*7*4])
@@ -63,13 +55,9 @@ def objective(trial):
 
     # Train the model using the pre-loaded train and validation loaders
     trainer.fit(model, train_loader, val_loader)
-    #trial.report(trainer.callback_metrics['val_loss'], epoch=trainer.current_epoch)
 
-    # Handle pruning based on the reported value
-    #if trial.should_prune():
-     #   raise optuna.exceptions.TrialPruned()
 
-    # Return the performance metric you want to optimize (e.g., validation loss)
+
     return trainer.callback_metrics['val_loss'].item()
 
 def export_best_params_and_model(forecast_var):
@@ -98,8 +86,6 @@ def export_best_params_and_model(forecast_var):
     return
 
 
-
-# Erhalte die besten Parameter und speichere sie in einer Datei
 
 for forecast_var in forecast_vars:
     study = optuna.create_study(direction='minimize', storage='sqlite:///' + storage + '/database.db',

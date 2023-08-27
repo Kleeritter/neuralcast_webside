@@ -8,9 +8,8 @@ import math
 from sklearn.metrics import mean_squared_error,mean_absolute_error
 
 
-from Model.funcs.trad import p_ro,sarima
+
 from Model.funcs.visualer_funcs import skill_score
-# Passe die folgenden Variablen entsprechend an
 forecast_var="temp" #Which variable to forecast
 window_size=24*7*4 #How big is the window for training
 forecast_horizon=24 #How long to cast in the future
@@ -21,7 +20,7 @@ dt = datetime.datetime(forecast_year,1,1,0,0) #+ datetime.timedelta(hours=window
 
 nc_path = '../Data/stunden/'+str(forecast_year)+'_resample_stunden.nc' # Replace with the actual path to your NetCDF file
 
-#references=np.load("sarima/reference_temp_.npy").flatten()
+
 references_path="auto_arima.nc"#"forecast_sarima.nc"
 baseline_path="../Model/baseline/baseline_n.nc"
 lstm_uni_path= "time_test_single.nc"#"forecast_lstm_uni.nc"
@@ -77,27 +76,9 @@ def skills_calc(model):
 
 
 
-#np.save(file="reference.csv",arr=np.array(referencor))
-
-#sns.set_theme(style="darkgrid")
 
 
-#print(len(data))
-#skiller=pd.DataFrame({
-    #'Datum': data.index.tolist()[:-24],
-    #'Datum': np.arange(0,365,1),
-    #'Messdaten': data[forecast_var].tolist(),
-    #'Univariantes-LSTM' :lstm_uni[forecast_var],
-    #'Multivariantes-LSTM' :lstm_multi[forecast_var],#[:-25],
-    #'TFT' :np.array(predicted_temp_tft).flatten(),
-    #'SKILL_TFT': np.array(skills_calc(tft)).flatten(),
-    #'SKILL_LSTM_uni': np.array(skills_calc(lstm_uni)).flatten(),
-    #'SKILL_LSTM_multi': np.array(skills_calc(lstm_multi)).flatten(),
-    #'SKILL_nHits': np.array(skills_calc(nhits)).flatten(),
-    #'RMSE_TFT':rmse()
-    #'SARIMA' : references[:-24]
 
-#})
 print(math.sqrt(mean_squared_error(data["temp"], nhits["temp"])))
 temps=[]
 humids=[]
@@ -236,34 +217,14 @@ skills=pd.DataFrame({
 })
 """
 scores=scores.set_index("Models")
-#skills=skills.set_index("Models")
-# Plot the responses for different events and regions
-#sns.lineplot(x="Datum", y="SKILL",             data=skiller)
 
-#sns.lineplot(x="Datum", y='value', hue='variable',data=pd.melt(visualerdata, ['Datum']))
-#sns.lineplot(x="Datum", y='value', hue='variable',data=pd.melt(skiller, ['Datum']))
-
-#plt.show()
 
 
 def style_negative(v, props=''):
     return props if v < 0 else None
 def highlight_max(s, props=''):
     return np.where(s == np.nanmax(s.values), props, '')
-#scores.style \
- # .format(precision=3, thousands=".", decimal=",") \
-  #.format_index(str.upper, axis=1) \
-  #.applymap(style_negative, props='color:red;')
 
-#scores.apply(highlight_max, props='color:white;background-color:darkblue', axis=0)
-#plt.show()
-#skills
-#skills.style.format(precision=2)\
- #   .highlight_max().to_excel("skills_neu_fürs_paper.xlsx")
-
-#scores.style.format(precision=2)\
- #   .highlight_min().to_excel("scores.xlsx")
-    #.background_gradient(cmap="RdYlGn")
 print(scores)
 
 scores=round(scores,3)

@@ -86,27 +86,22 @@ ax[0].set_title("H-F diagram")
 ax[0].legend()
 ax[0].set_yscale('log')
 
-#ax[0].set_cmap("magma")
 ax[0].grid(True)
 sns.lineplot(x="Date", y='value', hue='variable',data=pd.melt(frame(var="rain",cor=0), ['Date']),ax=ax[1],legend=False,palette=colorlist)
-#ax[1].set_ylabel("Precipitation [mm]")
+
 ax2 = ax[1].twinx()
 ax[1].get_shared_y_axes().join(ax[1], ax2)
 ax[1].set_ylabel("")
 ax[1].set_title("Precipitation in December 2022")
 
-# Skala von ax[1] deaktivieren
+
 ax[1].tick_params(axis='y', left=False, right=False, labelleft=False, labelright=False)
 
 ax2.set_ylabel("Precipitation [mm]")
 date_format = mdates.DateFormatter('%d.')
 ax[1].xaxis.set_major_formatter(date_format)
 
-# Anzahl der x-Ticks reduzieren
-# ax[1, 0].xaxis.set_major_locator(ticker.MaxNLocator(nbins=6))  # Du kannst die Anzahl nach Bedarf ändern
 
-# ax[1, 0].tick_params(rotation=45)
-# Ticks alle 2 Jahre anzeigen
 years_locator = mdates.DayLocator(interval=1)
 ax[1].xaxis.set_major_locator(years_locator)
 #plt.grid(True)

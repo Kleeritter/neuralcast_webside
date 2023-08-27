@@ -4,36 +4,12 @@ import xarray as xr
 import math
 import pandas as pd
 import yaml
-# Erstellen Sie eine neue NetCDF-Datei zum Zusammenfassen der Daten
 
-# Erstellen Sie eine leere Dataset zum Zusammenführen der Daten
-#combined_dataset = xr.Dataset()
-
-#filelist=['zusammengefasste_datei_2016-2019','stunden/2022_resample_stunden.nc']
-# Iterieren Sie über die Jahre 2010-2014
-#for file in filelist:
-    #input_file = file # Annahme: Die Dateien haben das Format "datei_<jahr>.nc"
-
-    # Überprüfen Sie, ob die Eingabedatei existiert
-    #if os.path.isfile(input_file):
-        #input_dataset = xr.open_dataset(input_file)  # Öffnen Sie die Eingabedatei
-
-        # Führen Sie die Eingabedatei mit der kombinierten Dataset zusammen
-        #combined_dataset = xr.merge([combined_dataset, input_dataset])
-
-        #input_dataset.close()  # Schließen Sie die Eingabedatei
-
-#datalast= xr.open_dataset('zusammengefasste_datei_2016-2019.nc')
-#data= xr.open_dataset('stunden/2022_resample_stunden.nc')
 data= xr.open_dataset('zusammengefasste_datei_2016-2022.nc').to_dataframe()
-#data=xr.concat([datalast,data],dim="index").to_dataframe()
-# Speichern Sie das kombinierte Dataset in eine neue Datei
 
-#data=combined_dataset.to_dataframe()
 print(data.head())
 
-#data["wind_dir_sin"]=data["wind_dir_50"].apply(lambda x: math.sin(math.radians(x)))
-#data["wind_dir_cos"]=data["wind_dir_50"].apply(lambda x: math.cos(math.radians(x)))
+
 
 max_values = {
     "Max_temp": round(max(data['temp']), 2),
@@ -80,8 +56,8 @@ min_values = {
 
 # Combine both dictionaries into a single YAML dictionary
 yaml_dict = {**max_values, **min_values}
-# Schließen Sie das kombinierte Dataset
+
 
 with open('params_for_normal.yaml', 'w') as file:
     yaml.dump(yaml_dict, file)
-#data.close()
+

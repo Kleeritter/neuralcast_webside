@@ -6,16 +6,10 @@ import pytorch_lightning as pl
 import numpy as np
 import random
 import xarray as xr
+
 pl.seed_everything(42)
-
-
-# Setze den Random Seed für torch
 torch.manual_seed(42)
-
-# Setze den Random Seed für random
 random.seed(42)
-
-# Setze den Random Seed für numpy
 np.random.seed(42)
 storage="/home/alex/Dokumente/storage"
 lite = '../Data/stunden/2016_resample_stunden.nc'
@@ -23,6 +17,7 @@ full = '../Data/zusammengefasste_datei_2016-2019.nc'
 forecast_vars = ["wind_dir_50_sin","wind_dir_50_cos"]#, 'temp', "press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50",     "rain", "wind_10", "wind_50"]
 #forecast_vars = ["wind_dir_50"]
 lisa=["sin","cos"]
+
 def create_single_trains():
 
     window_sizes= [24*7*4]
@@ -41,9 +36,7 @@ def create_single_trains():
 
 
 
-
 def create_multi_trains():
-    #forecast_vars=["wind_dir_50",'temp',"press_sl","humid","diffuscmp11","globalrcmp11","gust_10","gust_50", "rain", "wind_10", "wind_50"]
     window_sizes= [24*7*4]
     file_path = full
     for forecast_var in forecast_vars:
@@ -58,6 +51,4 @@ def create_multi_trains():
             print("saved")
     return
 
-
-#create_multi_trains()
 create_single_trains()

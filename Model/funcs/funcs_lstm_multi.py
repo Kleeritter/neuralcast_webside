@@ -1,3 +1,5 @@
+# Import necessary libraries
+
 from sklearn.preprocessing import MinMaxScaler
 import torch
 from torch.utils.data import Dataset, DataLoader
@@ -8,24 +10,21 @@ import random
 import xarray as xr
 from Model.funcs.visualer_funcs import load_hyperparameters
 from scipy import stats
+
+
+# Set random seeds for reproducibility
 pl.seed_everything(42)
-
-# Setze den Random Seed für torch
 torch.manual_seed(42)
-
-# Setze den Random Seed für random
 random.seed(42)
-
-# Setze den Random Seed für numpy
 np.random.seed(42)
 
-
+# Define a custom dataset class for multivariate temperature forecasting
 class TemperatureDataset_multi(Dataset):
     def __init__(self, file_path,forecast_horizont=24,window_size=24,forecast_var="temp",cor_vars=["wind_dir_50_sin","wind_dir_50_cos",'temp',"press_sl","humid","diffuscmp11","globalrcmp11","gust_10","gust_50", "rain", "wind_10", "wind_50"]):
+        # Load data from NetCDF file and preprocess
         self.data = xr.open_dataset(file_path)[cor_vars].to_dataframe()#.valuesmissing_values_mask = dataset['temp'].isnull()
         self.length = len(self.data[forecast_var]) - window_size
-       # scaler = MinMaxScaler(feature_range=(0, 1))
-       # self.data=scaler.fit_transform([[x] for x in self.data]).flatten()
+        # Min-max scaling for data preprocessing
         for column in self.data.columns:
             values = self.data[column].values.reshape(-1, 1)
             if column == "srain":
@@ -39,13 +38,10 @@ class TemperatureDataset_multi(Dataset):
                 maxs = params["Max_" + column]
                 train_values = [mins, maxs]
                 X_train_minmax = scaler.fit_transform(np.array(train_values).reshape(-1, 1))
-                #self.data = scaler.transform([[x] for x in self.data]).flatten()
                 scaled_values = scaler.transform(values)
                 self.data[column] = scaled_values.flatten()
 
-        #print(self.data["rain"])
-
-        #print(self.data)
+        # Set dataset parameters
         self.forecast_horizont = forecast_horizont
         self.window_size = window_size
         self.forecast_var = forecast_var
@@ -59,59 +55,19 @@ class TemperatureDataset_multi(Dataset):
         window_data = self.data.iloc[start_idx:end_idx]#isel(index=slice(start_idx, end_idx)).to_array()#.values#self.data[start_idx:end_idx].values
         target = self.data[self.forecast_var][end_idx:end_idx+self.forecast_horizont]#.values
 
-        # Check if target has exactly 24 hours, otherwise adjust it
+        # Ensure the target has the required length
         if target.shape[0] < self.forecast_horizont:
             target = np.pad(target, ((0, self.forecast_horizont - target.shape[0])), mode='constant')
-        # Convert to torch tensors
-        #window_data = window_data_normalized.transpose(1, 0)
-        #print(window_data)
+
+        # Convert data to torch tensors
         target = np.array(target).reshape((self.forecast_horizont,))
         window_data = torch.from_numpy(np.array(window_data)).float()#[:, np.newaxis]).float()
         target = torch.from_numpy(target).float()
-        #print(window_data.shape)
+
         return window_data, target
 
 
-class TemperatureModel_multi_light(pl.LightningModule):
-    pl.seed_everything(42)
-
-    # Setze den Random Seed für torch
-    torch.manual_seed(42)
-
-    # Setze den Random Seed für random
-    random.seed(42)
-
-    # Setze den Random Seed für numpy
-    np.random.seed(42)
-    def __init__(self, window_size=24, forecast_horizont=24):
-        super().__init__()
-        self.lstm = torch.nn.LSTM(input_size=3, hidden_size=32, num_layers=1, batch_first=True)
-        self.linear = torch.nn.Linear(32, forecast_horizont)
-
-    def forward(self, x):
-        #print(x.shape)
-        lstm_output, _ = self.lstm(x)
-        output = self.linear(lstm_output[:, -1, :])
-        #print(output.shape)
-        return output
-
-    def training_step(self, batch, batch_idx):
-        x, y = batch
-        y_hat = self(x)
-        #loss = torch.nn.MSELoss()(y_hat, y)
-        loss = torch.nn.MSELoss()(y_hat, y)
-        self.log('train_loss', loss)
-        return loss
-
-    def validation_step(self, batch, batch_idx):
-        x, y = batch
-        y_hat = self(x)
-        loss = torch.nn.MSELoss()(y_hat, y)
-        self.log('val_loss', loss)
-        return loss
-    def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(), lr=0.001, weight_decay=0.001)  # weight_decay-Wert anpassen
-        return optimizer
+# Define a PyTorch Lightning module for multivariate temperature forecasting
 
 class TemperatureModel_multi_full(pl.LightningModule):
     def __init__(self, window_size=24, forecast_horizont=24, num_layers=1, hidden_size=40, learning_rate=0.001, weight_decay=0.001, weight_initializer="None", numvars=12):
@@ -121,7 +77,7 @@ class TemperatureModel_multi_full(pl.LightningModule):
         self.learning_rate = learning_rate
         self.weight_decay = weight_decay
         self.lstm = torch.nn.LSTM(input_size=numvars, hidden_size=hidden_size, num_layers=num_layers,batch_first=True)
-        #self.RELU = torch.nn.ReLU()
+
         self.linear = torch.nn.Linear(hidden_size, forecast_horizont)
 
         self.weight_initializer = weight_initializer
@@ -145,7 +101,6 @@ class TemperatureModel_multi_full(pl.LightningModule):
                         torch.nn.init.xavier_uniform_(param)
 
     def forward(self, x):
-       # x= self.RELU(x)
         lstm_output, _ = self.lstm(x)
         output = self.linear(lstm_output[:, -1, :])
         return output
@@ -153,7 +108,6 @@ class TemperatureModel_multi_full(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
-        #loss = torch.nn.MSELoss()(y_hat, y)
         loss = torch.nn.MSELoss()(y_hat, y)
         self.log('train_loss', loss)
         return loss

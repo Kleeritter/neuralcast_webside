@@ -31,54 +31,35 @@ def koks(year):
     datasonic= csvreader(filelistsonic)
 
     dataall=data.join(datadach)#pd.concat([data, datadach], axis=1)
-    #print(dataall.columns)
+
     dataall.rename(columns={' Feuchte':'Feuchte','   Regen':'Regen' ,'  Temperatur':'Temperatur'  }, inplace=True)
     dataall=dataall.drop_duplicates()
-    #print(dataall[dataall.index.duplicated()])
-    #print(dataall.loc[3658800])
+
 
     datasonic.rename(columns={'Temperatur':'sonicTemp'},inplace=True)
-    #print(datasonic.columns)
+
     dataall=dataall.join(datasonic)
 
-    #print(dataall.loc[25445700])
 
-
-    #dataall.rename(columns={'Druck (hPa)': 'Druck',' Feuchte':'Feuchte','   Regen':'Regen' }, inplace=True)
-       # pass
-    #print(dataall['Druck'])
-    #print(dataall.columns)
     dataall=dataall.drop_duplicates(subset=['Druck','Feuchte','Temperatur','Regen'])
     dataall= dataall.apply(pd.to_numeric, errors='coerce')
     print(dataall.index[dataall.index.duplicated()])
-    #dataall['Temperatur'] = pd.to_numeric(dataall['Temperatur'], errors='coerce')
+
     print(dataall.columns)
     print(dataall["GlobalCMP-11(W/m2)"])
 
-   #print(dataall["Temperatur"])
-    string_found = False
-
-    # Durchlaufen Sie die Liste und prüfen Sie jedes Element, ob es ein String ist
-
-    #Calculations:
-    #print("Calculating Starting")
-    #for i in tqdm(dataall.index):
-            #print(i)
-     #       dataall.at[i, 'Temperatur']=kelvinize(dataall.at[i,'Temperatur'])
-            #dataall.at[i,'Druck']= pressreduction_international( dataall.at[i,'Druck'],51, dataall.at[i,'Temperatur'])
 
     tempuss=dataall['Temperatur']+273.15
-    #temp=pd.DataFrame({'Temperatur':tempus})
-    #dataall.update(temp)
+
     druckus=dataall['Druck']
-    #print(druckus)
+
     drucka=[]
     for i,j in zip( druckus,tempuss):
         drucka.append(pressreduction_international(i,51, j))
 
     drucku=pd.DataFrame({'Druck_reduziert':drucka, 'Time':dataall.index}).set_index('Time')
     dataall=dataall.join(drucku)
-    #print(drucku)
+
     tls=dataall['PsychroT']
     tlfs=dataall['PsychroTf']
     rs=dataall['Feuchte']*100
@@ -91,25 +72,13 @@ def koks(year):
         #taupt.append(dew_point(i,j))
     for i,j in zip(tempus,rs):
         taupt.append(dew_pointa(i,j))
-    #print(len(druckus),len(tempuss))
-    #print(len(dataall["Temperatur"]),len(dataall.index))
-    #print(dataall["Temperatur"].isna().sum())
-    #print(dataall[pd.to_numeric(dataall['Temperatur'], errors='coerce').isna()])
-    #print(dataall.head())
+
     tauu=pd.DataFrame({'Td':taus, 'Time':dataall.index}).set_index('Time')
     tauupt=pd.DataFrame({'Tdp':taupt, 'Time':dataall.index}).set_index('Time')
     #print(tauu.head())
     dataall=dataall.join(tauu)
     dataall=dataall.join(tauupt)
-    #dataall=dataall.fillna(9999)
-    #print("Calculating finished")
 
-    #print(dataall.head())
-    #print(len(dataall))
-    #print(dataall.iloc[3658800])
-    #print(dataall["Druck"])
-    #dimensions
-    #print(dataall)
     koko= str(datetime.datetime.fromtimestamp(dataall.index[0]).strftime('%Y'))
     fn = "Messwerte_"+koko +".nc"
     try:
@@ -117,11 +86,9 @@ def koks(year):
     except:
         #print("file doesnt exist")
         pass
-    #print("Starte NetCDF")
+
     ds = Dataset(fn, 'w', format='NETCDF4')
-    #sd=ds.createGroup('Stationsdaten')
-    #dd=ds.createGroup('Dachdaten')
-    #ssd=ds.createGroup('Sonic')
+
     time = ds.createDimension('time', None)
     long= ds.createDimension('long', 1)
     lat= ds.createDimension('lat', 1)
@@ -168,10 +135,7 @@ def koks(year):
     windiro.units ='Degrees'
     windiro.long_name='wind_from_direction_50m'
 
-    #td=ds.createVariable('dewpoint', 'f4', ('time',),zlib=True,shuffle=True )
-    #td.units ='K'
-    #td.long_name = 'dew_point_temperature_calculated'
-    #
+
 
     dtd=ds.createVariable('dewpoint_calc', 'f4', ('time',),zlib=True,shuffle=True )
     dtd.units ='K'

@@ -7,8 +7,6 @@ import numpy as np
 import math
 from sklearn.metrics import mean_squared_error,mean_absolute_error
 
-
-from Model.funcs.trad import p_ro,sarima
 from Model.funcs.visualer_funcs import skill_score
 # Passe die folgenden Variablen entsprechend an
 forecast_var="temp" #Which variable to forecast
@@ -21,7 +19,7 @@ dt = datetime.datetime(forecast_year,1,1,0,0) #+ datetime.timedelta(hours=window
 
 nc_path = '../Data/stunden/'+str(forecast_year)+'_resample_stunden.nc' # Replace with the actual path to your NetCDF file
 
-#references=np.load("sarima/reference_temp_.npy").flatten()
+
 references_path="ruthe_arima.nc"#"forecast_sarima.nc"
 baseline_path="ruthe_baseline.nc"
 lstm_uni_path= "ruthe_lstm_single.nc"#"forecast_lstm_uni.nc"
@@ -77,14 +75,7 @@ def skills_calc(model):
 
 
 
-#np.save(file="reference.csv",arr=np.array(referencor))
 
-#sns.set_theme(style="darkgrid")
-
-
-
-
-#})
 print(math.sqrt(mean_squared_error(data["temp"], nhits["temp"])))
 temps=[]
 humids=[]
@@ -203,34 +194,13 @@ scores=pd.DataFrame({
 
 
 scores=scores.set_index("Models")
-#skills=skills.set_index("Models")
-# Plot the responses for different events and regions
-#sns.lineplot(x="Datum", y="SKILL",             data=skiller)
-
-#sns.lineplot(x="Datum", y='value', hue='variable',data=pd.melt(visualerdata, ['Datum']))
-#sns.lineplot(x="Datum", y='value', hue='variable',data=pd.melt(skiller, ['Datum']))
-
-#plt.show()
 
 
 def style_negative(v, props=''):
     return props if v < 0 else None
 def highlight_max(s, props=''):
     return np.where(s == np.nanmax(s.values), props, '')
-#scores.style \
- # .format(precision=3, thousands=".", decimal=",") \
-  #.format_index(str.upper, axis=1) \
-  #.applymap(style_negative, props='color:red;')
 
-#scores.apply(highlight_max, props='color:white;background-color:darkblue', axis=0)
-#plt.show()
-#skills
-#skills.style.format(precision=2)\
- #   .highlight_max().to_excel("skills_neu_fürs_paper.xlsx")
-
-#scores.style.format(precision=2)\
- #   .highlight_min().to_excel("scores.xlsx")
-    #.background_gradient(cmap="RdYlGn")
 print(scores)
 
 scores=round(scores,3)

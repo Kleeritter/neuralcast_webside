@@ -1,3 +1,4 @@
+# Import necessary libraries
 import pandas as pd
 from pmdarima import auto_arima
 import xarray as xr
@@ -5,60 +6,54 @@ import random
 from tqdm import tqdm
 from collections import Counter
 import yaml
-random.seed(42)
-nc_path = '../../Data/stunden/2022_resample_stunden.nc'#'../../Data/zusammengefasste_datei_2016-2019.nc' # Replace with the actual path to your NetCDF file
 
+# Set a random seed for reproducibility
+random.seed(42)
+
+# Define the path to the NetCDF file
+nc_path = '../../Data/stunden/2022_resample_stunden.nc'
+
+# Load the data from the NetCDF file into a DataFrame
 data = xr.open_dataset(nc_path).to_dataframe()
+
+# Define a function to find the best SARIMA parameters for forecasting
 def paramfinder(forecast_var, seasonal=True):
-    forecastvar =forecast_var#"diffuscmp11"
-    # Annahme: Ihre Zeitreihendaten sind im DataFrame df und die Zeitreihe ist in der Spalte "temp".
+    # Define the variable to forecast
+    forecastvar = forecast_var
+
+    # Extract the time series data
     y = data[forecastvar]
 
-    seasonal=seasonal
-
+    # Set parameters for SARIMA
+    seasonal = seasonal
     seasonal_period = 24
-
-    # Anzahl der Stunden in einem Block
     block_size = 72
-
-    # Mindestabstand zwischen den Blöcken
     min_block_distance = 24
-
-    # Anzahl der zufälligen Proben, die Sie erstellen möchten
     num_samples = 30
-
     maxiters = 40
-    # Liste zur Speicherung der besten Modelle für jeden Block
     best_models = []
 
-    # Schleife, um zufällige Proben zu erstellen und das beste Modell für jede Probe zu finden
+    # Iterate through samples to find the best model parameters
     for _ in tqdm(range(num_samples)):
-        # Zufälligen Startindex für den Block auswählen
         start_idx = random.randint(0, len(y) - block_size)
+        y_block = y[start_idx: start_idx + block_size]
 
-        # Auswählen des aktuellen Blocks
-        y_block = y[start_idx : start_idx + block_size]
+        # Use auto_arima to find the best SARIMA parameters
+        model = auto_arima(y_block, seasonal=seasonal, m=seasonal_period, stepwise=True, trace=False,
+                           start_p=0, max_p=3, start_q=0, max_q=3, start_d=0, start_D=0,
+                           start_P=0, max_P=3, start_Q=0, max_Q=3, max_D=3, max_d=3, maxiter=maxiters)
 
-        # Verwenden von auto_arima, um die besten SARIMA-Parameter automatisch zu ermitteln
-        model = auto_arima(y_block, seasonal=seasonal, m=seasonal_period, stepwise=True, trace=False, start_p=0, max_p=3, start_q=0, max_q=3,start_d=0,start_D=0,
-                           start_P=0, max_P=3, start_Q=0, max_Q=3, max_D=3,max_d=3,maxiter=maxiters)
-
-        # Die besten Parameter werden im 'model' Objekt gespeichert
         best_models.append((model.order, model.seasonal_order))
-        print( model.order ,model.seasonal_order,start_idx)
+        print(model.order, model.seasonal_order, start_idx)
 
-    # Berechnen des Durchschnitts der besten Modelle über alle Proben
+    # Calculate the average of the best models over all samples
     parameter_counts = Counter(best_models)
-
-    # Finden der am häufigsten vorkommenden Parameter
     most_common_non_seasonal_params = parameter_counts.most_common(1)[0][0][0]
     most_common_seasonal_params = parameter_counts.most_common(1)[0][0][1]
 
-
-    print("Durchschnittliche nicht-saisonale Parameter (p, d, q):", most_common_non_seasonal_params)
-    print("Durchschnittliche saisonale Parameter (P, D, Q, s):", most_common_seasonal_params)
-
-
+    # Print and save the most common parameters
+    print("Average non-seasonal parameters (p, d, q):", most_common_non_seasonal_params)
+    print("Average seasonal parameters (P, D, Q, s):", most_common_seasonal_params)
 
     output_params = {
         'non_seasonal_params': {
@@ -74,14 +69,14 @@ def paramfinder(forecast_var, seasonal=True):
         }
     }
 
-
-    with open('bestparams/best_sarima_params_'+forecastvar+'.yaml', 'w') as file:
+    # Save the best parameters in a YAML file
+    with open('bestparams/best_sarima_params_' + forecastvar + '.yaml', 'w') as file:
         yaml.dump(output_params, file)
     return
 
-
-#forecast_vars=["temp","humid", "globalrcmp11", "wind_10","wind_50", "gust_10", "gust_50"]
-#forecast_vars =["rain", "diffuscmp11", "rain", "wind_dir_50"]
+# Define a list of variables to forecast
 forecast_vars = ["press_sl"]
+
+# Iterate through the forecast variables and find their best SARIMA parameters
 for forecast_var in forecast_vars:
     paramfinder(forecast_var)

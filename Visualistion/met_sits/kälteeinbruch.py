@@ -44,7 +44,6 @@ rmse_data = pd.DataFrame({
     'RMSE': [calc_rmse(lstm_multi), calc_rmse(lstm_uni), calc_rmse(references), calc_rmse(nhits)]
 })
 
-# Erstelle einen FacetGrid für die Darstellung der RMSE-Werte
 #g = sns.FacetGrid(rmse_data, aspect=1.5, height=5)
 #sns.barplot(rmse_data["RMSE"], palette='pastel', order=['LSTM Multi', 'LSTM Uni', 'SARIMA', 'T_Nhits'])
 fig, ax = plt.subplots()

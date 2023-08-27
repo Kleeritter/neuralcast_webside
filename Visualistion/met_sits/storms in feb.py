@@ -64,20 +64,11 @@ date_format = mdates.DateFormatter('%d.%m')
 ax[1,1].xaxis.set_major_formatter(date_format)
 ax[1,1].legend( ['Line Up', 'Line Down'],loc='lower right', bbox_to_anchor=(1.2, 0.0),fancybox=True, shadow=True, ncol=1)
 
-# Anzahl der x-Ticks reduzieren
-# ax[1, 0].xaxis.set_major_locator(ticker.MaxNLocator(nbins=6))  # Du kannst die Anzahl nach Bedarf ändern
 
-# ax[1, 0].tick_params(rotation=45)
-# Ticks alle 2 Jahre anzeigen
 years_locator = mdates.DayLocator(interval=1)
 ax[1,0].xaxis.set_major_locator(years_locator)
 #plt.grid(True)
-#plt.legend(loc='upper left')
-#right_inset_ax = fig.add_axes([.15, .7, .1, .1])
-#right_inset_ax.bar(rmse_data["Model"],rmse_data["RMSE"])
-#sns.despine(offset=10, trim=True)
-#plt.text(calc_rmse(lstm_multi), fontsize=12, color='red')
-#plt.savefig("test.png")
+
 plt.tight_layout()
 plt.savefig("/home/alex/Dokumente/Bach/figures/storms.png", dpi=300)
 plt.show()

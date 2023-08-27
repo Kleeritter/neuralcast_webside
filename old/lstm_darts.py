@@ -24,13 +24,10 @@ logging.getLogger("lightning.pytorch.utilities.rank_zero").setLevel(logging.WARN
 
 
 logging.getLogger("lightning.pytorch.accelerators.cuda").setLevel(logging.WARNING)
-data=xr.open_dataset('../Data/zusammengefasste_datei_2016-2022.nc').to_dataframe()[[ "press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50","rain", "wind_10", "wind_50","wind_dir_50_sin", "temp","wind_dir_50_cos"]]#[['index','temp']].to_dataframe()
-#print(xr.open_dataset('../Data/zusammengefasste_datei_2016-2019.nc')[['index','temp']].isnull().any())
-#print(data.columns)
-#forecast_vars=["press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50","rain", "wind_10", "wind_50","wind_dir_50_sin","wind_dir_50_cos"]
+data=xr.open_dataset('../Data/zusammengefasste_datei_2016-2022.nc').to_dataframe()[["press_sl", "humid", "diffuscmp11", "globalrcmp11", "gust_10", "gust_50", "rain", "wind_10", "wind_50", "wind_dir_50_sin", "temp", "wind_dir_50_cos"]]#[['index','temp']].to_dataframe()
+
 forecast_vars=["rain"]
-#print(data.loc[datetime.datetime(2016,12,31,23,0)])
-#series= TimeSeries.from_xarray(data)
+
 def main(forecast_var):
     series=TimeSeries.from_dataframe(data, value_cols=forecast_var,freq="h")
 
@@ -46,7 +43,6 @@ def main(forecast_var):
         data['Datum'] = pd.to_datetime(data.index)
         data['Tag_des_Jahres'] = np.float32(data['Datum'].dt.dayofyear)
         scaler = Scaler()
-        #data["Tag_des_Jahres"] = scaler.fit_transform(data['Tag_des_Jahres'])
         past_covariates.append(TimeSeries.from_dataframe(data, value_cols="Tag_des_Jahres", freq="h"))
         past_covariates[0]=scaler.fit_transform(past_covariates[0])
         use_pasts=True
@@ -84,7 +80,7 @@ def main(forecast_var):
     # define objective function
     def objective(trial):
         # select input and output chunk lengths
-        #in_len = trial.suggest_int("in_len",32,672)#trial.suggest_int("in_len",24 , 672*2,24)
+
         in_len= trial.suggest_categorical("in_len", [672])
         weight_decay = trial.suggest_float('weight_decay', 1e-5, 1e-3, log=True)
 
@@ -94,7 +90,7 @@ def main(forecast_var):
         num_blocks = trial.suggest_int("num_blocks", 1, 5)
         num_layers = trial.suggest_int("num_layers", 2, 5)
         layer_widths = trial.suggest_int("layer_widths", 256, 1024+256,256)
-        batch_size = trial.suggest_int("batch_size", 32, 128)#trial.suggest_categorical("batch_size", [32, 64, 128, 256])
+        batch_size = trial.suggest_int("batch_size", 32, 128)
         # Other hyperparameters
         dropout = trial.suggest_float("dropout", 0.0, 0.4)
         lr = trial.suggest_float("lr", 5e-5, 1e-3, log=True)
@@ -126,8 +122,6 @@ def main(forecast_var):
             #'position': {'past': ['relative']},
           #  'transformer': Scaler()
 }
-        #else:
-        #    encoders = None
 
         # reproducibility
         torch.manual_seed(42)
@@ -150,13 +144,9 @@ def main(forecast_var):
             force_reset=True,
             save_checkpoints=True,
         )
-        #train, val = series.split_before(pd.Timestamp("2022-01-01 00:00") - datetime.timedelta(hours=in_len))
-        # when validating during training, we can use a slightly longer validation
-        # set which also contains the first input_chunk_length time steps
-        #val = scaler.transform(series[-(24 + in_len) :])
 
-        #print(train, val)
-        # train the model
+
+
         if use_pasts==True:
             model.fit(
                 series=train,

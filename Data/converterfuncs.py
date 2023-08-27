@@ -107,11 +107,9 @@ def csvreader(filelist):
     frames=[]
     stringlist = str(np.arange(0, len(filelist)))
     for i, k in zip(filelist, stringlist):
-        #print(i)
         try:
             j = pd.read_csv(i, sep=";")
         except:
-            print("schlong")
             print(i)
             pass
 
@@ -137,8 +135,7 @@ def csvreader(filelist):
         elif 'TimeDate' in j.columns:
             j.rename(columns={'TimeDate': 'Time'}, inplace=True)
         else:
-            #print("schlong")
-            #print(i)
+
             try:
                 j = pd.read_csv(i, header=None, delimiter=';',
                                 names=['Time', 'Global CM-11 (W/m2)', 'Korona (mV)', 'Global CMP-11 (W/m2)',
@@ -158,12 +155,10 @@ def csvreader(filelist):
                     except TypeError as err:
                         print("Der Fehler ist",i ,"mit",err)
 
-            #print(j.head())
-            #j.rename({j.columns[0]: 'Time', j.columns[1]: 'Global CM-11 (W/m2)', j.columns[2]: 'Korona (mV)',
-                     # j.columns[3]: 'Global CMP-11 (W/m2)', j.columns[4]: 'CMP-11 Diffus (W/m2)'})
+
 
             pass
-        #print(i)
+
         try:
             j['Time'] = pd.to_datetime(j['Time'], format='%d.%m.%y %H:%M:%S')
         except:

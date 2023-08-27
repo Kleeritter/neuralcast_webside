@@ -17,8 +17,7 @@ storage="/home/alex/Dokumente/storage"
 logs="/home/alex/Dokumente/lightning_logs"
 full='../../Data/zusammengefasste_datei_2016-2021.nc'
 file_path =full # Replace with the actual path to your NetCDF file
-# Setzen Sie die Zufallssaat für die GPU
-# Setze den Random Seed für PyTorch
+
 pl.seed_everything(42)
 
 # Setze den Random Seed für torch
