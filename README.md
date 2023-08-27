@@ -16,7 +16,7 @@ For a quick test, run the following command:
 python ./Model/run_lstm_multi.py
 ```
 ## Data
-The Data folder contains the means to extract the data from the original dataset, resample it and add derivate parameters.
+The Data folder contains the means to extract the data from the original dataset, resample it and add derivate parameters. The original Data can be found at:  https://seafile.cloud.uni-hannover.de/d/9edfaf2aeb9943bcaa8b/
 ## Model
 The Model folder contains all the Models used: SARIMA,univariate LSTM and multivariate LSTM.
 
