@@ -15,6 +15,8 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
     if location== "Herrenhausen":
         herrenhausen_data= pd.read_csv(path+"herrenhausen/"+year+"/hh"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";")
         herrenhausen_data.rename(columns={herrenhausen_data.columns[0]: "time"}, inplace=True)
+        herrenhausen_data["time"] = pd.to_datetime(herrenhausen_data["time"], format="%d.%m.%Y %H:%M:%S")#'%Y-%m-%d %H:%M:%S')
+
         print(herrenhausen_data.head())
 
         dach_data = pd.read_csv(path+"dach/"+year+"/kt"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";")
