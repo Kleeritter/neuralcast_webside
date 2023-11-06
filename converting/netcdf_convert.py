@@ -11,9 +11,11 @@ def attribute_transfer(xarray_dataset):
         attribute_data = yaml.safe_load(yaml_file)
 
     # Aktualisieren der Attribute der "temperatur"-Variablen
-    if 'ruhte_Temp' in attribute_data:
-        for key, value in attribute_data['ruhte_Temp'].items():
-            xarray_dataset['ruhte_Temp'].attrs[key] = value
+    vars= xarray_dataset.columns
+    for var in vars:
+        if var in attribute_data:
+            for key, value in attribute_data[var].items():
+                xarray_dataset[var].attrs[key] = value
     return xarray_dataset
 
 def convert_years(path="/data/datenarchiv/imuk/", year="2022"):
@@ -70,15 +72,22 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
         ruthe_data.rename(columns=new_column_names, inplace=True)
         print(ruthe_data.head())
 
-        mast_data= pd.read_csv(path+"ruthe/"+year+"/rt"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";", encoding="latin-1")
-        mast_data.rename(columns={mast_data.columns[0]: "time"}, inplace=True)
-        mast_data["time"] = pd.to_datetime(mast_data["time"], format="%d.%m.%Y %H:%M:%S")#'%Y-%m-%d %H:%M:%S')
-        mast_data.set_index('time', inplace=True)
-        new_column_names = {col: f'mast_{col.lstrip()}' for col in mast_data.columns}
-        mast_data.rename(columns=new_column_names, inplace=True)
-        print(mast_data.head())
+        try:
 
-        merged_data = pd.concat([ruthe_data, mast_data], axis=1)
+            mast_data= pd.read_csv(path+"ruthe/"+year+"/rt"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";", encoding="latin-1")
+            mast_data.rename(columns={mast_data.columns[0]: "time",mast_data.columns[1]: "CO2_15",mast_data.columns[2]: "CO2_10",mast_data.columns[3]: "CO2_2"}, inplace=True)
+            mast_data["time"] = pd.to_datetime(mast_data["time"], format="%d.%m.%Y %H:%M:%S")#'%Y-%m-%d %H:%M:%S')
+            mast_data.set_index('time', inplace=True)
+    
+            new_column_names = {col: f'mast_{col.lstrip()}' for col in mast_data.columns}
+            mast_data.rename(columns=new_column_names, inplace=True)
+            print(mast_data.head())
+
+            merged_data = pd.concat([ruthe_data, mast_data], axis=1)
+        except:
+            print("Mast not available")
+            merged_data=ruthe_data
+            pass
         merged_data.columns = merged_data.columns.str.replace(r'\s*\(.*\)', '', regex=True)
         merged_data.columns = merged_data.columns.str.replace(' ', '_')
 

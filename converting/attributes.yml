@@ -1,3 +1,64 @@
 ruhte_Temp:
-  einheit: Grad Celsius
-  quelle: Sensor
+  units: °C
+  longname: Temperature in Ruthe
+  standard_name: air_temperature
+
+ruhte_Feuchte:
+  units: "%"
+  longname: relative Humidity in Ruthe
+  standard_name: relative_humidity
+
+ruhte_Globalstrahlung:
+  units: W/m^2
+  longname: solar irradiance in Ruthe
+  standard_name: solar_irradiance
+
+ruhte_Lüfterdrehzahl:
+  units: Hz
+  longname: Lüfterdrehzahl in Ruthe
+
+ruhte_PyrDn:
+  units: W/m^2
+  longname: downwelling_shortwave_flux_in_air in Ruthe
+  standard_name: downwelling_shortwave_flux_in_air
+
+ruhte_PyrUp:
+  units: W/m^2
+  longname: pwelling_shortwave_flux_in_air in Ruthe
+  standard_name: upwelling_shortwave_flux_in_air
+
+ruhte_Regen:
+  units: Hits
+  longname: precipitation amount in Ruthe
+  standard_name: precipitation_amount
+
+
+mast_CO2_15:
+  units: ppm
+  longname: mass_fraction_of_carbon_dioxide_in_air in Ruthe at 15 m
+  standard_name: mass_fraction_of_carbon_dioxide_in_air
+
+mast_CO2_10:
+  units: ppm
+  longname: mass_fraction_of_carbon_dioxide_in_air in Ruthe at 10 m
+  standard_name: mass_fraction_of_carbon_dioxide_in_air
+
+mast_CO2_2:
+  units: ppm
+  longname: mass_fraction_of_carbon_dioxide_in_air in Ruthe at 2 m
+  standard_name: mass_fraction_of_carbon_dioxide_in_air
+
+mast_WindDir:
+  units: ppm
+  longname: wind_from_direction in Ruthe
+  standard_name: wind_from_direction
+
+mast_WindSpeed:
+  units: m/s
+  longname: wind_speed in Ruthe 
+  standard_name: wind_speed
+
+mast_WindMax:
+  units: m/s
+  longname: wind_speed_of_gust in Ruthe at 15 m
+  standard_name: wind_speed_of_gust
