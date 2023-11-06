@@ -17,7 +17,7 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
         print(herrenhausen_data.head())
 
         dach_data = pd.read_csv(path+"dach/"+year+"/kt"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";")
-        print(herrenhausen_data.head())
+        print(dach_data.head())
     else:
         ruthe_data= "ruthe"
 
