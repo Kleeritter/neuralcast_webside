@@ -19,7 +19,7 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
         dach_data = pd.read_csv(path+"dach/"+year+"/kt"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";")
         print(dach_data.head())
 
-        sonic_data = pd.read_csv(path+"sonic/"+year+"/sonic"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";")
+        sonic_data = pd.read_csv(path+"sonic/"+year+"/sonic"+year+month.zfill(2)+day.zfill(2)+".txt", delimiter=";")
         print(sonic_data.head())
     else:
         ruthe_data= "ruthe"
