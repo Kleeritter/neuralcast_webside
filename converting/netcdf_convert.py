@@ -36,6 +36,10 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
         new_column_names = {col: f'sonic_{col.lstrip()}' for col in sonic_data.columns}
         sonic_data.rename(columns=new_column_names, inplace=True)
         print(sonic_data.head())
+
+        merged_data = pd.concat([herrenhausen_data, dach_data, sonic_data], axis=1)
+        print(merged_data.head())
+
     else:
         ruthe_data= "ruthe"
 
