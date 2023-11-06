@@ -42,7 +42,8 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
 
         print(merged_data.head())
 
-        merged_data.to_xarray().to_netcdf("test.nc")
+        merged_data=merged_data.to_xarray()#.to_netcdf("test.nc")
+        print(merged_data.head())
 
     else:
         ruthe_data= "ruthe"
