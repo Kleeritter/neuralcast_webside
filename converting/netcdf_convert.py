@@ -30,7 +30,8 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
         sonic_data.rename(columns={sonic_data.columns[0]: "time"}, inplace=True)
         sonic_data["time"] = pd.to_datetime(sonic_data["time"], format="%d.%m.%Y %H:%M")#'%Y-%m-%d %H:%M:%S')
         sonic_data.set_index('time', inplace=True)
-        new_column_names = {col: f'sonic_{col}' for col in sonic_data.columns}
+        new_column_names = {col: f'sonic_{col.lstrip()}' for col in sonic_data.columns}
+
         sonic_data.rename(columns=new_column_names, inplace=True)
         print(sonic_data.head())
     else:
