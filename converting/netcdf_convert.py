@@ -17,7 +17,7 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
         herrenhausen_data.rename(columns={herrenhausen_data.columns[0]: "time"}, inplace=True)
         herrenhausen_data["time"] = pd.to_datetime(herrenhausen_data["time"], format="%d.%m.%Y %H:%M:%S")#'%Y-%m-%d %H:%M:%S')
         herrenhausen_data.set_index('time', inplace=True)
-        new_column_names = {col: f'{col.lstrip()}' for col in herrenhausen_data.columns}
+        new_column_names = {col: f'herrenhausen_{col.lstrip()}' for col in herrenhausen_data.columns}
         herrenhausen_data.rename(columns=new_column_names, inplace=True)
         print(herrenhausen_data.head())
 
@@ -25,7 +25,7 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
         dach_data.rename(columns={dach_data.columns[0]: "time"}, inplace=True)
         dach_data["time"] = pd.to_datetime(dach_data["time"], format="%d.%m.%Y %H:%M:%S")#'%Y-%m-%d %H:%M:%S')
         dach_data.set_index('time', inplace=True)
-        new_column_names = {col: f'{col.lstrip()}' for col in dach_data.columns}
+        new_column_names = {col: f'dach_{col.lstrip()}' for col in dach_data.columns}
         dach_data.rename(columns=new_column_names, inplace=True)
         print(dach_data.head())
 
