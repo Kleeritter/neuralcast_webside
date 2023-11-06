@@ -4,7 +4,7 @@ import yaml
 
 def attribute_transfer(xarray_dataset):
         # Pfad zur YAML-Datei
-    yaml_file_path = 'attributes/attributes_ruthe.yml'
+    yaml_file_path = 'Attributes/attributes_ruthe.yml'
 
     # YAML-Datei einlesen
     with open(yaml_file_path, 'r') as yaml_file:
