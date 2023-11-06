@@ -52,9 +52,27 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
         ruthe_data.rename(columns={ruthe_data.columns[0]: "time"}, inplace=True)
         ruthe_data["time"] = pd.to_datetime(ruthe_data["time"], format="%d.%m.%Y %H:%M:%S")#'%Y-%m-%d %H:%M:%S')
         ruthe_data.set_index('time', inplace=True)
-        new_column_names = {col: f'herrenhausen_{col.lstrip()}' for col in ruthe_data.columns}
+        new_column_names = {col: f'ruhte_{col.lstrip()}' for col in ruthe_data.columns}
         ruthe_data.rename(columns=new_column_names, inplace=True)
         print(ruthe_data.head())
+
+        mast_data= pd.read_csv(path+"ruthe/"+year+"/rt"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";", encoding="latin-1")
+        mast_data.rename(columns={mast_data.columns[0]: "time"}, inplace=True)
+        mast_data["time"] = pd.to_datetime(mast_data["time"], format="%d.%m.%Y %H:%M:%S")#'%Y-%m-%d %H:%M:%S')
+        mast_data.set_index('time', inplace=True)
+        new_column_names = {col: f'mast_{col.lstrip()}' for col in mast_data.columns}
+        mast_data.rename(columns=new_column_names, inplace=True)
+        print(mast_data.head())
+
+        merged_data = pd.concat([ruthe_data, mast_data], axis=1)
+        merged_data.columns = merged_data.columns.str.replace(r'\s*\(.*\)', '', regex=True)
+        merged_data.columns = merged_data.columns.str.replace(' ', '_')
+
+        print(merged_data.head())
+
+        merged_data=merged_data.to_xarray()#.to_netcdf("test.nc")
+        print(merged_data.head())
+        merged_data.to_netcdf("test_ruthe.nc")
 
     return
 
