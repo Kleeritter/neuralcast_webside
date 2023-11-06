@@ -38,6 +38,8 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
         print(sonic_data.head())
 
         merged_data = pd.concat([herrenhausen_data, dach_data, sonic_data], axis=1)
+        merged_data.columns = merged_data.columns.str.replace(r'\s*\(.*\)', '', regex=True)
+
         print(merged_data.head())
 
         merged_data.to_xarray().to_netcdf("test.nc")
