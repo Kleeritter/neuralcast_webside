@@ -4,7 +4,7 @@ import yaml
 
 def attribute_transfer(xarray_dataset):
         # Pfad zur YAML-Datei
-    yaml_file_path = 'attributes.yml'
+    yaml_file_path = 'attributes/attributes_ruthe.yml'
 
     # YAML-Datei einlesen
     with open(yaml_file_path, 'r') as yaml_file:
@@ -74,7 +74,7 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
 
         try:
 
-            mast_data= pd.read_csv(path+"ruthe/"+year+"/rt"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";", encoding="latin-1")
+            mast_data= pd.read_csv(path+"ruthemast/"+year+"/rm"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";", encoding="latin-1")
             mast_data.rename(columns={mast_data.columns[0]: "time",mast_data.columns[1]: "CO2_15",mast_data.columns[2]: "CO2_10",mast_data.columns[3]: "CO2_2"}, inplace=True)
             mast_data["time"] = pd.to_datetime(mast_data["time"], format="%d.%m.%Y %H:%M:%S")#'%Y-%m-%d %H:%M:%S')
             mast_data.set_index('time', inplace=True)
