@@ -13,12 +13,12 @@ herrenhausen_Regen:
   longname: precipitation amount in Herrenhausen
   standard_name: precipitation_amount
 
-herrenhausen_Wind:
+herrenhausen_Wind_Speed:
   units: m/s
   longname: wind_speed in Herrenhausen at 50m
   standard_name: wind_speed
 
-herrenhausen_WindMax:
+herrenhausen_Gust_Speed:
   units: m/s
   longname: wind_speed_of_gust in Ruthe at 50m
   standard_name: wind_speed_of_gust
@@ -43,17 +43,17 @@ herrenhausen_air_pressure:
   longname: air pressure in Herrenhausen (not reduced)
   standard_name: air_pressure
 
-sonic_WindMax:
+sonic_Wind_Speed:
+  units: m/s
+  longname: wind_speed in Ruthe at 10m
+  standard_name: wind_speed
+
+sonic_Gust_Speed:
   units: m/s
   longname: wind_speed_of_gust in Ruthe at 10m
   standard_name: wind_speed_of_gust
 
-sonic_WindMax:
-  units: m/s
-  longname: wind_speed_of_gust in Ruthe at 10m
-  standard_name: wind_speed_of_gust
-
-sonic_WindDir:
+sonic_Wind_Dir:
   units: ppm
   longname: wind_from_direction in Herrenhausen
   standard_name: wind_from_direction
@@ -73,13 +73,13 @@ dach_CO2_ppm:
 dach_CO2_Sensor:
   units: "?"
   longname: mass_fraction_of_carbon_dioxide_in_air in Herrenhausen
-  standard_name: mass_fraction_of_carbon_dioxide_in_air
+  #standard_name: mass_fraction_of_carbon_dioxide_in_air
 
 
 dach_Diffus_CMP-11:
   units: W/m^2
   longname: diffuse solar irradiance in Herrenhausen (CMP-11)
-  standard_name: solar_irradiance
+  #standard_name: solar_irradiance
 
 
 dach_Global_CMP-11:
@@ -91,17 +91,17 @@ dach_Global_CMP-11:
 dach_Geneigt_CMP-11:
   units: W/m^2
   longname: angled solar irradiance in Herrenhausen (CMP-11)
-  standard_name: solar_irradiance
+  #standard_name: solar_irradiance
 
 
 dach_Temp_AMUDIS_Box:
   units: °C
   longname: Temperature of the AMUDIS Box in Herrenhausen
-  standard_name: air_temperature
+  #standard_name: air_temperature
 
 
 dach_Temp_Bentham_Box:
   units: °C
   longname: Temperature of the Bentham Box in Herrenhausen
-  standard_name: air_temperature
+  #standard_name: air_temperature
 

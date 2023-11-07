@@ -33,7 +33,7 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
    
     if location== "Herrenhausen":
         herrenhausen_data= pd.read_csv(path+"herrenhausen/"+year+"/hh"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";")
-        herrenhausen_data.rename(columns={herrenhausen_data.columns[0]: "time"}, inplace=True)
+        herrenhausen_data.rename(columns={herrenhausen_data.columns[0]: "time",herrenhausen_data.columns[7]: "Wind_Speed",herrenhausen_data.columns[9]: "Gust_Speed"}, inplace=True)
         herrenhausen_data["time"] = pd.to_datetime(herrenhausen_data["time"], format="%d.%m.%Y %H:%M:%S")#'%Y-%m-%d %H:%M:%S')
         herrenhausen_data.set_index('time', inplace=True)
         new_column_names = {col: f'herrenhausen_{col.lstrip()}' for col in herrenhausen_data.columns}
@@ -49,7 +49,7 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
         print(dach_data.head())
 
         sonic_data = pd.read_csv(path+"sonic/"+year+"/sonic"+year+month.zfill(2)+day.zfill(2)+".txt", delimiter=";")
-        sonic_data.rename(columns={sonic_data.columns[0]: "time"}, inplace=True)
+        sonic_data.rename(columns={sonic_data.columns[0]: "time",sonic_data.columns[2]: "Wind_Speed",sonic_data.columns[3]: "Wind_Dir",sonic_data.columns[4]: "Gust_Speed"}, inplace=True)
         sonic_data["time"] = pd.to_datetime(sonic_data["time"], format="%d.%m.%Y %H:%M")#'%Y-%m-%d %H:%M:%S')
         sonic_data.set_index('time', inplace=True)
         new_column_names = {col: f'sonic_{col.lstrip()}' for col in sonic_data.columns}
