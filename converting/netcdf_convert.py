@@ -86,6 +86,7 @@ def convert_years(path="/data/datenarchiv/imuk/", year=2022, month=1,full=True, 
 
         daydata = pd.concat([oldday, daydata])
     merged_data=daydata.to_xarray()
+    merged_data.fillna(-9999)
     merged_data = attribute_transfer(merged_data, location=location)
     merged_data.to_netcdf(filename)
     return merged_data
@@ -126,19 +127,28 @@ def convert_day(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11"
 def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11", location="Herrenhausen"):
    
     if location== "Herrenhausen":
-        herrenhausen_data= pd.read_csv(path+"herrenhausen/"+year+"/hh"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";")
-        herrenhausen_data=herrenhausen_tools(herrenhausen_data)
+        try:
+            herrenhausen_data= pd.read_csv(path+"herrenhausen/"+year+"/hh"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";")
+            herrenhausen_data=herrenhausen_tools(herrenhausen_data)
+        except:
+            print("Herrenhausen Problem")
+        try:
+            dach_data = pd.read_csv(path+"dach/"+year+"/kt"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";")
+            dach_data = dach_tools(dach_data)
+        except:
+            print("Dach Problem")
 
-        dach_data = pd.read_csv(path+"dach/"+year+"/kt"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";")
-        dach_data = dach_tools(dach_data)
-  
-        sonic_data = pd.read_csv(path+"sonic/"+year+"/sonic"+year+month.zfill(2)+day.zfill(2)+".txt", delimiter=";")
-        sonic_data =sonic_tools(sonic_data)
-
-
-        merged_data = pd.concat([herrenhausen_data, dach_data, sonic_data], axis=1)
-        merged_data.columns = merged_data.columns.str.replace(r'\s*\(.*\)', '', regex=True)
-        merged_data.columns = merged_data.columns.str.replace(' ', '_')
+        try:
+            sonic_data = pd.read_csv(path+"sonic/"+year+"/sonic"+year+month.zfill(2)+day.zfill(2)+".txt", delimiter=";")
+            sonic_data =sonic_tools(sonic_data)
+        except:
+            print("Sonic Problem")
+        try:
+            merged_data = pd.concat([herrenhausen_data, dach_data, sonic_data], axis=1)
+            merged_data.columns = merged_data.columns.str.replace(r'\s*\(.*\)', '', regex=True)
+            merged_data.columns = merged_data.columns.str.replace(' ', '_')
+        except:
+            print("merge Problem")
 
 
         #merged_data=merged_data.to_xarray()#.to_netcdf("test.nc")
