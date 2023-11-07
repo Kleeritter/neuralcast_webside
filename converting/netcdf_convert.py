@@ -152,6 +152,7 @@ def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", da
             print(herrenhausen_data.head())
             print(dach_data.head())
             print(sonic_data.head())
+            print(len(herrenhausen_data.index),len(dach_data.index),len(sonic_data.index))
             pass
 
         merged_data.columns = merged_data.columns.str.replace(r'\s*\(.*\)', '', regex=True)
