@@ -1,0 +1,107 @@
+herrenhausen_Temperatur:
+  units: °C
+  longname: Temperature in Herrenhausen
+  standard_name: air_temperature
+
+herrenhausen_Feuchte:
+  units: "%"
+  longname: relative Humidity in Herrenhausen
+  standard_name: relative_humidity
+
+herrenhausen_Regen:
+  units: Hits
+  longname: precipitation amount in Herrenhausen
+  standard_name: precipitation_amount
+
+herrenhausen_Wind:
+  units: m/s
+  longname: wind_speed in Herrenhausen at 50m
+  standard_name: wind_speed
+
+herrenhausen_WindMax:
+  units: m/s
+  longname: wind_speed_of_gust in Ruthe at 50m
+  standard_name: wind_speed_of_gust
+
+herrenhausen_Globalstrahlung:
+  units: W/m^2
+  longname: solar irradiance in Herrenhausen (CM3)
+  standard_name: solar_irradiance
+
+herrenhausen_Psychro_T:
+  units: °C
+  longname: Dry Psychrometer temperature in Herrenhausen
+  standard_name: air_temperature
+
+herrenhausen_Psychro_Tf:
+  units: °C
+  longname: wet Psychrometer temperature in Herrenhausen
+  standard_name: wet_bulb_temperature
+
+herrenhausen_air_pressure:
+  units: hPa
+  longname: air pressure in Herrenhausen (not reduced)
+  standard_name: air_pressure
+
+sonic_WindMax:
+  units: m/s
+  longname: wind_speed_of_gust in Ruthe at 10m
+  standard_name: wind_speed_of_gust
+
+sonic_WindMax:
+  units: m/s
+  longname: wind_speed_of_gust in Ruthe at 10m
+  standard_name: wind_speed_of_gust
+
+sonic_WindDir:
+  units: ppm
+  longname: wind_from_direction in Herrenhausen
+  standard_name: wind_from_direction
+
+
+sonic_Temperatur:
+  units: °C
+  longname: Temperature in Herrenhausen(Ultrasonic)
+  standard_name: air_temperature
+
+
+dach_CO2_ppm:
+  units: ppm
+  longname: mass_fraction_of_carbon_dioxide_in_air in Herrenhausen
+  standard_name: mass_fraction_of_carbon_dioxide_in_air
+
+dach_CO2_Sensor:
+  units: "?"
+  longname: mass_fraction_of_carbon_dioxide_in_air in Herrenhausen
+  standard_name: mass_fraction_of_carbon_dioxide_in_air
+
+
+dach_Diffus_CMP-11:
+  units: W/m^2
+  longname: diffuse solar irradiance in Herrenhausen (CMP-11)
+  standard_name: solar_irradiance
+
+
+dach_Global_CMP-11:
+  units: W/m^2
+  longname:  solar irradiance in Herrenhausen (CMP-11)
+  standard_name: solar_irradiance
+
+
+dach_Geneigt_CMP-11:
+  units: W/m^2
+  longname: angled solar irradiance in Herrenhausen (CMP-11)
+  standard_name: solar_irradiance
+
+
+dach_Temp_AMUDIS_Box:
+  units: °C
+  longname: Temperature of the AMUDIS Box in Herrenhausen
+  standard_name: air_temperature
+
+
+dach_Temp_Bentham_Box:
+  units: °C
+  longname: Temperature of the Bentham Box in Herrenhausen
+  standard_name: air_temperature
+

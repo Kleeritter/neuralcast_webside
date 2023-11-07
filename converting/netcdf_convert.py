@@ -61,6 +61,7 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
 
         merged_data=merged_data.to_xarray()#.to_netcdf("test.nc")
         print(merged_data.head())
+        merged_data = attribute_transfer(merged_data)
         merged_data.to_netcdf("test.nc")
 
     else:
@@ -97,7 +98,6 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
         print(merged_data.head())
         print(merged_data.keys())
         merged_data = attribute_transfer(merged_data)
-        #merged_data['ruhte_Temp'].attrs["unit"] = "c"
         merged_data.to_netcdf("test_ruthe.nc")
 
     return
