@@ -66,15 +66,35 @@ def mast_tools(mast_data):
     new_column_names = {col: f'mast_{col.lstrip()}' for col in mast_data.columns}
     mast_data.rename(columns=new_column_names, inplace=True)
     return mast_data
-def convert_years(path="/data/datenarchiv/imuk/", year="2022"):
+def convert_years(path="/data/datenarchiv/imuk/", year=2022, month=1,full=True, startday="2022-01-01",endday="2022-03-01", location="Herrenhausen", filename="test_year.nc"):
+    if full:
+        start_date = str(year)+"-01-01"
+        end_date = str(year)+"-12-31"
 
-    return
+    else:
+        start_date = startday
+        end_date = endday
+    date_range = pd.date_range(start=start_date, end=end_date)
+    daydata = pd.DataFrame()
+    for day in date_range:
+        oldday=daydata
+        try:
+            daydata=convert_singleday(path=path,year=day.strftime('%Y'), month=day.strftime('%m'), day=day.strftime('%d'),location=location)
+        except:
+            print("Day ",day, " not available")
+            pass
 
-def convert_months(path="/data/datenarchiv/imuk/", year=2022, month=1,full=True, startday="",endday="", location="Herrenhausen"):
+        daydata = pd.concat([oldday, daydata])
+    merged_data=daydata.to_xarray()
+    merged_data = attribute_transfer(merged_data, location=location)
+    merged_data.to_netcdf(filename)
+    return merged_data
+
+def convert_months(path="/data/datenarchiv/imuk/", year=2022, month=1,full=True, startday="",endday="", location="Herrenhausen",export=True, filename="test_month.nc"):
     if full:
         num_days = cal.monthrange(year, month)[1]
         start=1
-        end= num_days
+        end= num_days+1
     else:
         start=startday
         end=endday
@@ -83,17 +103,27 @@ def convert_months(path="/data/datenarchiv/imuk/", year=2022, month=1,full=True,
     for day in range(start,end):
         oldday=daydata
         try:
-            daydata=convert_days(year=str(year), month=str(month), day=str(day),location=location)
+            daydata=convert_singleday(year=str(year), month=str(month), day=str(day),location=location)
         except:
             print("Day ",day, " not available")
             pass
 
         daydata = pd.concat([oldday, daydata])
+    if export:
+        merged_data=daydata.to_xarray()
+        merged_data = attribute_transfer(merged_data, location=location)
+        merged_data.to_netcdf(filename)
+    else:
+        merged_data=daydata
+    return merged_data
+def convert_day(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11", location="Herrenhausen", filename="test_day.nc"):
+    
+    daydata= convert_singleday(path=path,year=year,month=month,day=day,location=location)
     merged_data=daydata.to_xarray()
     merged_data = attribute_transfer(merged_data, location=location)
+    merged_data.to_netcdf(filename)
     return merged_data
-
-def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11", location="Herrenhausen"):
+def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11", location="Herrenhausen"):
    
     if location== "Herrenhausen":
         herrenhausen_data= pd.read_csv(path+"herrenhausen/"+year+"/hh"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";")
@@ -142,7 +172,9 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
 
 #convert_days()#location="ruthe")
 
-merged_data=convert_months()
-merged_data.to_netcdf("test_month.nc")
+#merged_data=convert_months()
+
+convert_years()
+
 
 
