@@ -2,9 +2,12 @@ import xarray as xr
 import pandas as pd
 import yaml
 
-def attribute_transfer(xarray_dataset):
+def attribute_transfer(xarray_dataset, location="Herrenhausen"):
         # Pfad zur YAML-Datei
-    yaml_file_path = 'Attributes/attributes_ruthe.yml'
+    if location== "Herrenhausen":
+        yaml_file_path = 'Attributes/attributes_herrenhausen.yml'
+    else:
+        yaml_file_path = 'Attributes/attributes_ruthe.yml'
 
     # YAML-Datei einlesen
     with open(yaml_file_path, 'r') as yaml_file:
@@ -97,7 +100,7 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
         merged_data=merged_data.to_xarray()#.to_netcdf("test.nc")
         print(merged_data.head())
         print(merged_data.keys())
-        merged_data = attribute_transfer(merged_data)
+        merged_data = attribute_transfer(merged_data, location="Ruthe")
         merged_data.to_netcdf("test_ruthe.nc")
 
     return

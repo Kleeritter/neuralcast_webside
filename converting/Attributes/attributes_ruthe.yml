@@ -32,7 +32,6 @@ ruhte_Regen:
   longname: precipitation amount in Ruthe
   standard_name: precipitation_amount
 
-
 mast_CO2_15:
   units: ppm
   longname: mass_fraction_of_carbon_dioxide_in_air in Ruthe at 15 m
