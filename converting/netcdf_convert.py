@@ -77,7 +77,7 @@ def convert_years(path="/data/datenarchiv/imuk/", year=2022, month=1,full=True, 
         end_date = endday
     date_range = pd.date_range(start=start_date, end=end_date)
     daydata = pd.DataFrame()
-    for day in tqdm( date_range):
+    for day in date_range:# tqdm( date_range):
         oldday=daydata
         try:
             daydata=convert_singleday(path=path,year=day.strftime('%Y'), month=day.strftime('%m'), day=day.strftime('%d'),location=location)
