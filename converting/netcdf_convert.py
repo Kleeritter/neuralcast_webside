@@ -146,8 +146,7 @@ def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", da
             print("Sonic Problem")
         try:
             merged_data = pd.concat([herrenhausen_data, dach_data, sonic_data], axis=1)
-            merged_data.columns = merged_data.columns.str.replace(r'\s*\(.*\)', '', regex=True)
-            merged_data.columns = merged_data.columns.str.replace(' ', '_')
+
         except:
             print("merge Problem")
             print(herrenhausen_data.head())
@@ -155,7 +154,8 @@ def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", da
             print(sonic_data.head())
             pass
 
-
+        merged_data.columns = merged_data.columns.str.replace(r'\s*\(.*\)', '', regex=True)
+        merged_data.columns = merged_data.columns.str.replace(' ', '_')
         #merged_data=merged_data.to_xarray()#.to_netcdf("test.nc")
         #merged_data = attribute_transfer(merged_data)
         #merged_data.to_netcdf("test.nc")
