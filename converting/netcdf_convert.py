@@ -30,6 +30,7 @@ def herrenhausen_tools(herrenhausen_data):
     herrenhausen_data.set_index('time', inplace=True)
     new_column_names = {col: f'herrenhausen_{col.lstrip()}' for col in herrenhausen_data.columns}
     herrenhausen_data.rename(columns=new_column_names, inplace=True)
+    herrenhausen_data.index.drop_duplicates(keep='last')
     return herrenhausen_data
 
 def dach_tools(dach_data):
@@ -38,6 +39,7 @@ def dach_tools(dach_data):
     dach_data.set_index('time', inplace=True)
     new_column_names = {col: f'dach_{col.lstrip()}' for col in dach_data.columns}
     dach_data.rename(columns=new_column_names, inplace=True)
+    dach_data.index.drop_duplicates(keep='last')
     return dach_data
 
 
@@ -47,6 +49,7 @@ def sonic_tools(sonic_data):
     sonic_data.set_index('time', inplace=True)
     new_column_names = {col: f'sonic_{col.lstrip()}' for col in sonic_data.columns}
     sonic_data.rename(columns=new_column_names, inplace=True)
+    sonic_data.index.drop_duplicates(keep='last')
     return sonic_data
 
 
