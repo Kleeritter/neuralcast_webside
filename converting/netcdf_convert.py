@@ -82,7 +82,7 @@ def convert_years(path="/data/datenarchiv/imuk/", year=2022, month=1,full=True, 
         try:
             daydata=convert_singleday(path=path,year=day.strftime('%Y'), month=day.strftime('%m'), day=day.strftime('%d'),location=location)
         except Exception as er:
-            print("Day ",day, " not available", er.message)
+            print("Day ",day, " not available", er)
             pass
 
         daydata = pd.concat([oldday, daydata])
