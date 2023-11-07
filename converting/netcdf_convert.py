@@ -2,7 +2,7 @@ import xarray as xr
 import pandas as pd
 import yaml
 import calendar as cal
-from tqdm import tqdm
+#from tqdm import tqdm
 
 def attribute_transfer(xarray_dataset, location="Herrenhausen"):
         # Pfad zur YAML-Datei
