@@ -1,6 +1,7 @@
 import xarray as xr
 import pandas as pd
 import yaml
+import calendar as cal
 
 def attribute_transfer(xarray_dataset, location="Herrenhausen"):
         # Pfad zur YAML-Datei
@@ -69,9 +70,28 @@ def convert_years(path="/data/datenarchiv/imuk/", year="2022"):
 
     return
 
-def convert_months(path="/data/datenarchiv/imuk/", year="2022", month="1"):
-    
-    return
+def convert_months(path="/data/datenarchiv/imuk/", year=2022, month=1,full=True, startday="",endday="", location="Herrenhausen"):
+    if full:
+        num_days = cal.monthrange(year, month)[1]
+        start=1
+        end= num_days
+    else:
+        start=startday
+        end=endday
+
+    daydata = pd.DataFrame()
+    for day in range(start,end):
+        oldday=daydata
+        try:
+            daydata=convert_days(year=str(year), month=str(month), day=str(day),location=location)
+        except:
+            print("Day ",day, " not available")
+            pass
+
+        daydata = pd.concat([oldday, daydata])
+
+
+    return daydata
 
 def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11", location="Herrenhausen"):
    
@@ -82,7 +102,6 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
         dach_data = pd.read_csv(path+"dach/"+year+"/kt"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";")
         dach_data = dach_tools(dach_data)
   
-
         sonic_data = pd.read_csv(path+"sonic/"+year+"/sonic"+year+month.zfill(2)+day.zfill(2)+".txt", delimiter=";")
         sonic_data =sonic_tools(sonic_data)
 
@@ -94,7 +113,7 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
 
         merged_data=merged_data.to_xarray()#.to_netcdf("test.nc")
         merged_data = attribute_transfer(merged_data)
-        merged_data.to_netcdf("test.nc")
+        #merged_data.to_netcdf("test.nc")
 
     else:
         ruthe_data= pd.read_csv(path+"ruthe/"+year+"/rt"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";", encoding="latin-1")
@@ -116,11 +135,14 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
 
         merged_data=merged_data.to_xarray()#.to_netcdf("test.nc")
         merged_data = attribute_transfer(merged_data, location="Ruthe")
-        merged_data.to_netcdf("test_ruthe.nc")
+        #merged_data.to_netcdf("test_ruthe.nc")
 
-    return
+    return merged_data
 
 
-convert_days()#location="ruthe")
+#convert_days()#location="ruthe")
+
+merged_data=convert_months()
+merged_data.to_netcdf("test_month.nc")
 
 
