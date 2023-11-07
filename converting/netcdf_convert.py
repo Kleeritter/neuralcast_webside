@@ -2,6 +2,7 @@ import xarray as xr
 import pandas as pd
 import yaml
 import calendar as cal
+from tqdm import tqdm
 
 def attribute_transfer(xarray_dataset, location="Herrenhausen"):
         # Pfad zur YAML-Datei
@@ -76,7 +77,7 @@ def convert_years(path="/data/datenarchiv/imuk/", year=2022, month=1,full=True, 
         end_date = endday
     date_range = pd.date_range(start=start_date, end=end_date)
     daydata = pd.DataFrame()
-    for day in date_range:
+    for day in tqdm( date_range):
         oldday=daydata
         try:
             daydata=convert_singleday(path=path,year=day.strftime('%Y'), month=day.strftime('%m'), day=day.strftime('%d'),location=location)
