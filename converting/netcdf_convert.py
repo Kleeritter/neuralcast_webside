@@ -81,8 +81,8 @@ def convert_years(path="/data/datenarchiv/imuk/", year=2022, month=1,full=True, 
         oldday=daydata
         try:
             daydata=convert_singleday(path=path,year=day.strftime('%Y'), month=day.strftime('%m'), day=day.strftime('%d'),location=location)
-        except:
-            print("Day ",day, " not available")
+        except Exception as er:
+            print("Day ",day, " not available", er.message)
             pass
 
         daydata = pd.concat([oldday, daydata])
@@ -150,6 +150,7 @@ def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", da
             merged_data.columns = merged_data.columns.str.replace(' ', '_')
         except Exception as er:
             print("merge Problem", er.message)
+            pass
 
 
         #merged_data=merged_data.to_xarray()#.to_netcdf("test.nc")
