@@ -103,6 +103,6 @@ def convert_days(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11
     return
 
 
-convert_days(location="ruthe")
+convert_days()#location="ruthe")
 
 
