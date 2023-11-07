@@ -186,7 +186,7 @@ def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", da
 
 #merged_data=convert_months()
 
-convert_years()
+convert_years(year=2020)
 
 
 
