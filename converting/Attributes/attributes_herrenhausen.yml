@@ -38,7 +38,7 @@ herrenhausen_Psychro_Tf:
   longname: wet Psychrometer temperature in Herrenhausen
   standard_name: wet_bulb_temperature
 
-herrenhausen_air_pressure:
+herrenhausen_Druck:
   units: hPa
   longname: air pressure in Herrenhausen (not reduced)
   standard_name: air_pressure
