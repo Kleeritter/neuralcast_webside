@@ -130,13 +130,13 @@ def convert_day(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11"
     return merged_data
 def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11", location="Herrenhausen"):
 
-    def read_and_process_data(folder, prefix, year, month, day, file_extension, tools_function):
+    def read_and_process_data(folder, prefix, year, month, day, file_extension, tools_function, encoding="utf8"):
         try:
             file_path = path + folder + year + "/" + prefix + year + month.zfill(2) + day.zfill(2) + file_extension
             if file_extension == ".csv":
-                data = pd.read_csv(file_path, delimiter=";")
+                data = pd.read_csv(file_path, delimiter=";",encoding=encoding)
             elif file_extension == ".txt":
-                data = pd.read_csv(file_path, delimiter=";")  # Annahme: Tabulator als Trennzeichen in der TXT-Datei
+                data = pd.read_csv(file_path, delimiter=";",encoding=encoding)  # Annahme: Tabulator als Trennzeichen in der TXT-Datei
             else:
                 raise ValueError("Ungültige Datei-Erweiterung")
 
@@ -162,8 +162,8 @@ def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", da
 
 
     else:
-        ruthe_data=  read_and_process_data("ruthe/", "rt", year, month, day, ".csv", ruthe_tools)
-        mast_data =read_and_process_data("ruthemast/", "rm", year, month, day, ".csv", mast_tools)
+        ruthe_data=  read_and_process_data("ruthe/", "rt", year, month, day, ".csv", ruthe_tools, encoding="latin-1")
+        mast_data =read_and_process_data("ruthemast/", "rm", year, month, day, ".csv", mast_tools,encoding="latin-1")
         data_list = [ruthe_data, mast_data]
         merged_data = pd.concat([data for data in data_list if data is not None], axis=1)
         """
