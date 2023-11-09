@@ -152,6 +152,11 @@ def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", da
 
         except:
             print("merge Problem")
+            try:
+                merged_data = pd.concat([herrenhausen_data, dach_data], axis=1)
+            except:
+                merged_data =herrenhausen_data
+                pass
             print(herrenhausen_data.head())
             print(dach_data.head())
             print(sonic_data.head())
