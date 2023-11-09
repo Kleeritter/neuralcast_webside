@@ -29,8 +29,8 @@ def main():
     
     startday= today.strftime('%Y') +"-01-01"
     endday = today.strftime('%Y-%m-%d')
-    outputpath_herrenhausen = args.outputpath+today.strftime('%Y')+"/"+today.strftime('%Y')+"_ongoning_herrenhausen.nc"
-    outputpath_ruthe = args.outputpath+today.strftime('%Y')+"/"+today.strftime('%Y')+"_ongoning_ruthe.nc"
+    outputpath_herrenhausen = args.outputpath+today.strftime('%Y')+"/"+today.strftime('%Y')+"_herrenhausen.nc"
+    outputpath_ruthe = args.outputpath+today.strftime('%Y')+"/"+today.strftime('%Y')+"_ruthe.nc"
     # Überprüfen und Verzeichnisse erstellen
     os.makedirs(os.path.dirname(outputpath_herrenhausen), exist_ok=True)
     os.makedirs(os.path.dirname(outputpath_ruthe), exist_ok=True)
