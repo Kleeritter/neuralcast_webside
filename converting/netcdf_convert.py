@@ -136,7 +136,7 @@ def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", da
             if file_extension == ".csv":
                 data = pd.read_csv(file_path, delimiter=";")
             elif file_extension == ".txt":
-                data = pd.read_csv(file_path, delimiter="\t")  # Annahme: Tabulator als Trennzeichen in der TXT-Datei
+                data = pd.read_csv(file_path, delimiter=";")  # Annahme: Tabulator als Trennzeichen in der TXT-Datei
             else:
                 raise ValueError("Ungültige Datei-Erweiterung")
 
