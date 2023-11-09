@@ -25,7 +25,7 @@ def main():
      #   full=False
 
     path = args.inputpath
-    today = date_object = datetime.strptime("2023-01-01", '%Y-%m-%d')
+    today = date_object = datetime.strptime("2023-09-01", '%Y-%m-%d')
     #date.today()
     startday= today.strftime('%Y') +"-01-01"
     endday = today.strftime('%Y-%m-%d')
@@ -56,8 +56,8 @@ def main():
         num_days=cal.monthrange(int(previos_month.year), int(previos_month.month))[1]
         startday= previos_month.strftime('%Y-%m') +"-01"
         endday = previos_month.strftime('%Y-%m') +"-"+str(num_days)
-        outputpath_herrenhausens = args.outputpath+previos_month.strftime('%Y')+"/"+previos_month.strftime('%m')+"/"+previos_month.strftime('%Y-%d')+"_herrenhausen.nc"
-        outputpath_ruthes = args.outputpath+previos_month.strftime('%Y')+"/"+previos_month.strftime('%m')+"/"+previos_month.strftime('%Y-%d')+"_ruthe.nc"
+        outputpath_herrenhausens = args.outputpath+previos_month.strftime('%Y')+"/"+previos_month.strftime('%m')+"/"+previos_month.strftime('%Y-%m')+"_herrenhausen.nc"
+        outputpath_ruthes = args.outputpath+previos_month.strftime('%Y')+"/"+previos_month.strftime('%m')+"/"+previos_month.strftime('%Y-%m')+"_ruthe.nc"
         os.makedirs(os.path.dirname(outputpath_herrenhausens), exist_ok=True)
         os.makedirs(os.path.dirname(outputpath_ruthes), exist_ok=True)
         convert_years(path=path, full=False, startday=startday,endday=endday, location="Herrenhausen", filename=outputpath_herrenhausens)
@@ -69,13 +69,14 @@ def main():
         previos_month = today.replace(month=today.month-1)
         num_days=cal.monthrange(int(previos_month.year), int(previos_month.month))[1]
         startday= previos_month.strftime('%Y-%m') +"-01"
-        endday = previos_month.strftime('%Y-%m') +str(num_days)
-        outputpath_herrenhausen = args.outputpath+previos_month.strftime('%Y')+"/"+previos_month.strftime('%m')+"/"+previos_month.strftime('%Y-%d')+"_herrenhausen.nc"
-        outputpath_herrenhausen = args.outputpath+previos_month.strftime('%Y')+"/"+previos_month.strftime('%m')+"/"+previos_month.strftime('%Y-%d')+"_ruthe.nc"
-        os.makedirs(os.path.dirname(outputpath_herrenhausen), exist_ok=True)
-        os.makedirs(os.path.dirname(outputpath_ruthe), exist_ok=True)
-        convert_years(path=path, full=False, startday=startday,endday=endday, location="Herrenhausen", filename=outputpath_herrenhausen)
-        convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthe)
+        endday = previos_month.strftime('%Y-%m') +"-"+str(num_days)
+        outputpath_herrenhausens = args.outputpath+previos_month.strftime('%Y')+"/"+previos_month.strftime('%m')+"/"+previos_month.strftime('%Y-%m')+"_herrenhausen.nc"
+        outputpath_ruthes = args.outputpath+previos_month.strftime('%Y')+"/"+previos_month.strftime('%m')+"/"+previos_month.strftime('%Y-%m')+"_ruthe.nc"
+        os.makedirs(os.path.dirname(outputpath_herrenhausens), exist_ok=True)
+        os.makedirs(os.path.dirname(outputpath_ruthes), exist_ok=True)
+        convert_years(path=path, full=False, startday=startday,endday=endday, location="Herrenhausen", filename=outputpath_herrenhausens)
+        convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthes)
+
 
     else:
         pass
