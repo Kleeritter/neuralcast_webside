@@ -48,7 +48,7 @@ def main():
     convert_years(path=path, full=False, startday=startday,endday=endday, location="Herrenhausen", filename=outputpath_herrenhausens)
     convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthes)
 
-    if today.strftime('%m') =="01" and today.strftime('%d') =="01" :
+    if today.strftime('%m') =="01" and today.strftime('%d') =="01" and today.strftime('%H') =="00" and today.strftime('%M') =="00" :
         print("Year completed. Start archiving")
         previos_year = today.replace(year=today.year-1)
         startday= previos_year.strftime('%Y') +"-01-01"
@@ -73,7 +73,7 @@ def main():
         convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthes)
 
 
-    elif today.strftime('%d') =="01" :
+    elif today.strftime('%d') =="01"  and today.strftime('%H') =="00" and today.strftime('%M') =="00":
         print("Month completed. Start archiving")
         previos_month = today.replace(month=today.month-1)
         num_days=cal.monthrange(int(previos_month.year), int(previos_month.month))[1]
