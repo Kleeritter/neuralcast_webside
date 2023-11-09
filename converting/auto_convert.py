@@ -41,14 +41,14 @@ def main():
 
     if today.strftime('%m') =="01" and today.strftime('%d') =="01" :
         print("Year completed. Start archiving")
-        previos_year = today.replace(year=current.year-1)
+        previos_year = today.replace(year=today.year-1)
         startday= previos_year.strftime('%Y') +"-01-01"
         endday = previos_year.strftime('%Y') +"-12-31"
         outputpath_herrenhausen = args.outputpath+today.strftime('%Y')+"/"+today.strftime('%Y')+"_herrenhausen.nc"
         outputpath_ruthe = args.outputpath+today.strftime('%Y')+"/"+today.strftime('%Y')+"_ruthe.nc"
         convert_years(path=path, full=False, startday=startday,endday=endday, location="Herrenhausen", filename=outputpath_herrenhausen)
         convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthe)
-        previos_month = today.replace(monht=current.month-1)
+        previos_month = today.replace(month=today.month-1)
         num_days=cal.monthrange(int(previos_month.year), int(previos_month.month))[1]
         startday= previos_month.strftime('%Y-%m') +"-01"
         endday = previos_month.strftime('%Y-%m') +str(num_days)
@@ -62,7 +62,7 @@ def main():
 
     elif today.strftime('%d') =="01" :
         print("Month completed. Start archiving")
-        previos_month = today.replace(monht=current.month-1)
+        previos_month = today.replace(month=today.month-1)
         num_days=cal.monthrange(int(previos_month.year), int(previos_month.month))[1]
         startday= previos_month.strftime('%Y-%m') +"-01"
         endday = previos_month.strftime('%Y-%m') +str(num_days)
