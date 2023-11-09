@@ -147,7 +147,6 @@ def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", da
             return None
     if location== "Herrenhausen":
             # Verwendung der Funktionen
-            # Verwendung der Funktionen
             herrenhausen_data = read_and_process_data("herrenhausen/", "hh", year, month, day, ".csv", herrenhausen_tools)
             dach_data = read_and_process_data("dach/", "kt", year, month, day, ".csv", dach_tools)
             sonic_data = read_and_process_data("sonic/", "sonic", year, month, day, ".txt", sonic_tools)
@@ -157,49 +156,17 @@ def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", da
             data_list = [herrenhausen_data, dach_data, sonic_data]
             merged_data = pd.concat([data for data in data_list if data is not None], axis=1)
    
-            """
-            try:
-                herrenhausen_data= pd.read_csv(path+"herrenhausen/"+year+"/hh"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";")
-                herrenhausen_data=herrenhausen_tools(herrenhausen_data)
-            except:
-                print("Herrenhausen Problem")
-                
-            try:
-                dach_data = pd.read_csv(path+"dach/"+year+"/kt"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";")
-                dach_data = dach_tools(dach_data)
-            except:
-                print("Dach Problem")
-                pass
-
-            try:
-                sonic_data = pd.read_csv(path+"sonic/"+year+"/sonic"+year+month.zfill(2)+day.zfill(2)+".txt", delimiter=";")
-                sonic_data =sonic_tools(sonic_data)
-            except:
-                print("Sonic Problem")
-                pass
-            try:
-                merged_data = pd.concat([herrenhausen_data, dach_data, sonic_data], axis=1)
-
-            except:
-                print("merge Problem")
-                try:
-                    merged_data = pd.concat([herrenhausen_data, dach_data], axis=1)
-                except:
-                    merged_data =herrenhausen_data
-                    pass
-                #print(herrenhausen_data.head())
-                #print(dach_data.head())
-                #print(sonic_data.head())
-                print(len(herrenhausen_data.index),len(dach_data.index),len(sonic_data.index))
-                pass
-            """
+           
             merged_data.columns = merged_data.columns.str.replace(r'\s*\(.*\)', '', regex=True)
             merged_data.columns = merged_data.columns.str.replace(' ', '_')
-        #merged_data=merged_data.to_xarray()#.to_netcdf("test.nc")
-        #merged_data = attribute_transfer(merged_data)
-        #merged_data.to_netcdf("test.nc")
+
 
     else:
+        ruthe_data=  read_and_process_data("ruthe/", "rt", year, month, day, ".csv", ruthe_tools)
+        mast_data =read_and_process_data("ruthemast/", "rm", year, month, day, ".csv", mast_tools)
+        data_list = [ruthe_data, mast_data]
+        merged_data = pd.concat([data for data in data_list if data is not None], axis=1)
+        """
         ruthe_data= pd.read_csv(path+"ruthe/"+year+"/rt"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";", encoding="latin-1")
         ruthe_data =ruthe_tools(ruthe_data)
   
@@ -214,6 +181,7 @@ def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", da
             print("Mast not available")
             merged_data=ruthe_data
             pass
+        """
         merged_data.columns = merged_data.columns.str.replace(r'\s*\(.*\)', '', regex=True)
         merged_data.columns = merged_data.columns.str.replace(' ', '_')
 
