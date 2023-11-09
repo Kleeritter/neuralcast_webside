@@ -136,17 +136,20 @@ def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", da
             herrenhausen_data=herrenhausen_tools(herrenhausen_data)
         except:
             print("Herrenhausen Problem")
+            pass
         try:
             dach_data = pd.read_csv(path+"dach/"+year+"/kt"+year+month.zfill(2)+day.zfill(2)+".csv", delimiter=";")
             dach_data = dach_tools(dach_data)
         except:
             print("Dach Problem")
+            pass
 
         try:
             sonic_data = pd.read_csv(path+"sonic/"+year+"/sonic"+year+month.zfill(2)+day.zfill(2)+".txt", delimiter=";")
             sonic_data =sonic_tools(sonic_data)
         except:
             print("Sonic Problem")
+            pass
         try:
             merged_data = pd.concat([herrenhausen_data, dach_data, sonic_data], axis=1)
 
