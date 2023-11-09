@@ -161,3 +161,5 @@ cython_debug/
 #.idea/
 
 converting/test_year.nc
+converting/test/2023-01-01-2023-11-09_ruthe.nc
+converting/test/2023-01-01-2023-11-09_herrenhausen.nc

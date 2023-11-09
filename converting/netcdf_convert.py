@@ -157,9 +157,9 @@ def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", da
             except:
                 merged_data =herrenhausen_data
                 pass
-            print(herrenhausen_data.head())
-            print(dach_data.head())
-            print(sonic_data.head())
+            #print(herrenhausen_data.head())
+            #print(dach_data.head())
+            #print(sonic_data.head())
             print(len(herrenhausen_data.index),len(dach_data.index),len(sonic_data.index))
             pass
 
