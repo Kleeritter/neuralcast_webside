@@ -3,10 +3,10 @@ conda activate stadtwetter
 #export PYTHONPATH=$PYTHONPATH:/localdata/weathermaps/imuk
 
 path_input=/data/datenarchiv/imuk/
-year= 2022
-full= "True"
-startday= "2022-01-01"
-endday= "2022-03-01"
+year=2022
+full="True"
+startday="2022-01-01"
+endday="2022-03-01"
 location="Herrenhausen"
 filename="test_year.nc"
 #path_output=/localdata/weathermaps/webside/gross
