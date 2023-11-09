@@ -48,7 +48,7 @@ def main():
         outputpath_ruthe = args.outputpath+today.strftime('%Y')+"/"+today.strftime('%Y')+"_ruthe.nc"
         convert_years(path=path, full=False, startday=startday,endday=endday, location="Herrenhausen", filename=outputpath_herrenhausen)
         convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthe)
-        previos_month = today.replace(month=12)
+        previos_month = previos_year.replace(month=12)
         num_days=cal.monthrange(int(previos_month.year), int(previos_month.month))[1]
         startday= previos_month.strftime('%Y-%m') +"-01"
         endday = previos_month.strftime('%Y-%m') +"-"+str(num_days)
