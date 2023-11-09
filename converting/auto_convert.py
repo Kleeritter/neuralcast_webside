@@ -51,7 +51,7 @@ def main():
         previos_month = today.replace(month=12)
         num_days=cal.monthrange(int(previos_month.year), int(previos_month.month))[1]
         startday= previos_month.strftime('%Y-%m') +"-01"
-        endday = previos_month.strftime('%Y-%m') +str(num_days)
+        endday = previos_month.strftime('%Y-%m') +"-"+str(num_days)
         outputpath_herrenhausen = args.outputpath+previos_month.strftime('%Y')+"/"+previos_month.strftime('%m')+"/"+previos_month.strftime('%Y-%d')+"_herrenhausen.nc"
         outputpath_herrenhausen = args.outputpath+previos_month.strftime('%Y')+"/"+previos_month.strftime('%m')+"/"+previos_month.strftime('%Y-%d')+"_ruthe.nc"
         os.makedirs(os.path.dirname(outputpath_herrenhausen), exist_ok=True)
