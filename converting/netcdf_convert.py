@@ -130,9 +130,16 @@ def convert_day(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11"
     return merged_data
 def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11", location="Herrenhausen"):
 
-    def read_and_process_data(folder, prefix, year, month, day, tools_function):
+    def read_and_process_data(folder, prefix, year, month, day, file_extension, tools_function):
         try:
-            data = pd.read_csv(path + folder + year + "/" + prefix + year + month.zfill(2) + day.zfill(2) + ".csv", delimiter=";")
+            file_path = path + folder + year + "/" + prefix + year + month.zfill(2) + day.zfill(2) + file_extension
+            if file_extension == ".csv":
+                data = pd.read_csv(file_path, delimiter=";")
+            elif file_extension == ".txt":
+                data = pd.read_csv(file_path, delimiter="\t")  # Annahme: Tabulator als Trennzeichen in der TXT-Datei
+            else:
+                raise ValueError("Ungültige Datei-Erweiterung")
+
             data = tools_function(data)
             return data
         except Exception as e:
@@ -140,9 +147,11 @@ def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", da
             return None
     if location== "Herrenhausen":
             # Verwendung der Funktionen
-            herrenhausen_data = read_and_process_data("herrenhausen/", "hh", year, month, day, herrenhausen_tools)
-            dach_data = read_and_process_data("dach/", "kt", year, month, day, dach_tools)
-            sonic_data = read_and_process_data("sonic/", "sonic", year, month, day, sonic_tools)
+            # Verwendung der Funktionen
+            herrenhausen_data = read_and_process_data("herrenhausen/", "hh", year, month, day, ".csv", herrenhausen_tools)
+            dach_data = read_and_process_data("dach/", "kt", year, month, day, ".csv", dach_tools)
+            sonic_data = read_and_process_data("sonic/", "sonic", year, month, day, ".txt", sonic_tools)
+
 
             # Zusammenführen der Daten
             data_list = [herrenhausen_data, dach_data, sonic_data]
