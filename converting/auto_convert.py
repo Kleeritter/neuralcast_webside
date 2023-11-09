@@ -32,8 +32,8 @@ def main():
     #location=args.location
     #os.chdir(dir_Produkt)
     #convert_years(path="/data/datenarchiv/imuk/", year=2022,full=True, startday="2022-01-01",endday="2022-03-01", location="Herrenhausen", filename="test_year.nc")
-    convert_years(path=path, year=year,full=False, startday=startday,endday=endday, location="Herrenhausen", filename=outputpath_herrenhausen)
-    convert_years(path=path, year=year,full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthe)
+    convert_years(path=path, full=False, startday=startday,endday=endday, location="Herrenhausen", filename=outputpath_herrenhausen)
+    convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthe)
 
 
 if __name__ == "__main__":
