@@ -25,7 +25,8 @@ def main():
      #   full=False
 
     path = args.inputpath
-    today = date.today()
+    today = date_object = datetime.strptime("2023-01-01", '%Y-%m-%d')
+    #date.today()
     startday= today.strftime('%Y') +"-01-01"
     endday = today.strftime('%Y-%m-%d')
     outputpath_herrenhausen = args.outputpath+today.strftime('%Y')+"/"+today.strftime('%Y')+"_ongoning_herrenhausen.nc"
