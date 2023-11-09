@@ -3,8 +3,8 @@ conda activate stadtwetter
 #export PYTHONPATH=$PYTHONPATH:/localdata/weathermaps/imuk
 
 path_input=/data/datenarchiv/imuk/
-path_output_herrenhausen=""
-path_output_ruthe=""
+path_output_herrenhausen="test/"
+path_output_ruthe="test/"
 #path_output=/localdata/weathermaps/webside/gross
 
 
