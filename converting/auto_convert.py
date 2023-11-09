@@ -2,7 +2,7 @@ from netcdf_convert import *
 import argparse
 import os
 
-from datetime import date, timedelta
+from datetime import date, timedelta,datetime
 def main():
     ##Parsing Variable Values
     ##Parsing Variable Values
