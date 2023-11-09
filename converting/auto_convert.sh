@@ -3,7 +3,7 @@ conda activate stadtwetter
 #export PYTHONPATH=$PYTHONPATH:/localdata/weathermaps/imuk
 
 path_input=/data/datenarchiv/imuk/
-path_output="test/"
+path_output=/data/stadtwetter/netcdf_daten/
 #path_output=/localdata/weathermaps/webside/gross
 
 

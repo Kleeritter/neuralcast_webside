@@ -25,8 +25,8 @@ def main():
      #   full=False
 
     path = args.inputpath
-    today = date_object = datetime.strptime("2023-09-01", '%Y-%m-%d')
-    #date.today()
+    today  = date.today()#datetime.strptime("2023-09-01", '%Y-%m-%d')
+    
     startday= today.strftime('%Y') +"-01-01"
     endday = today.strftime('%Y-%m-%d')
     outputpath_herrenhausen = args.outputpath+today.strftime('%Y')+"/"+today.strftime('%Y')+"_ongoning_herrenhausen.nc"
@@ -34,10 +34,19 @@ def main():
     # Überprüfen und Verzeichnisse erstellen
     os.makedirs(os.path.dirname(outputpath_herrenhausen), exist_ok=True)
     os.makedirs(os.path.dirname(outputpath_ruthe), exist_ok=True)
-
+    print("start Year")
     #convert_years(path="/data/datenarchiv/imuk/", year=2022,full=True, startday="2022-01-01",endday="2022-03-01", location="Herrenhausen", filename="test_year.nc")
     convert_years(path=path, full=False, startday=startday,endday=endday, location="Herrenhausen", filename=outputpath_herrenhausen)
     convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthe)
+
+    print("start Month")
+    startday= today.strftime('%Y-%m') +"-01"
+    outputpath_herrenhausens = args.outputpath+today.strftime('%Y')+"/"+today.strftime('%m')+"/"+today.strftime('%Y-%m')+"_herrenhausen.nc"
+    outputpath_ruthes = args.outputpath+today.strftime('%Y')+"/"+today.strftime('%m')+"/"+today.strftime('%Y-%m')+"_ruthe.nc"
+    os.makedirs(os.path.dirname(outputpath_herrenhausens), exist_ok=True)
+    os.makedirs(os.path.dirname(outputpath_ruthes), exist_ok=True)
+    convert_years(path=path, full=False, startday=startday,endday=endday, location="Herrenhausen", filename=outputpath_herrenhausens)
+    convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthes)
 
     if today.strftime('%m') =="01" and today.strftime('%d') =="01" :
         print("Year completed. Start archiving")
