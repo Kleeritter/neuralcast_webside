@@ -6,10 +6,10 @@ path_input=/data/datenarchiv/imuk/
 year=2022
 full="False"
 startday="2007-01-01"
-endday="2022-12-31"
+endday="2007-12-31"
 location="Herrenhausen"
 #filename="test_year.nc"
-filename="/data/stadtwetter/netcdf_daten/test_all.nc"
+filename="/data/stadtwetter/netcdf_daten/archiv/2007.nc"
 #path_output=/localdata/weathermaps/webside/gross
 
 
