@@ -9,7 +9,7 @@ startday="2010-01-01"
 endday="2010-12-31"
 location="Herrenhausen"
 #filename="test_year.nc"
-filename="/data/stadtwetter/netcdf_daten/archiv/2009.nc"
+filename="/data/stadtwetter/netcdf_daten/archiv/2010.nc"
 #path_output=/localdata/weathermaps/webside/gross
 
 
