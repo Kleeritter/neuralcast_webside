@@ -5,11 +5,11 @@ conda activate stadtwetter
 path_input=/data/datenarchiv/imuk/
 year=2022
 full="False"
-startday="2010-01-01"
-endday="2010-12-31"
+startday="2011-01-01"
+endday="2011-12-31"
 location="Herrenhausen"
 #filename="test_year.nc"
-filename="/data/stadtwetter/netcdf_daten/archiv/2010.nc"
+filename="/data/stadtwetter/netcdf_daten/archiv/2011.nc"
 #path_output=/localdata/weathermaps/webside/gross
 
 
