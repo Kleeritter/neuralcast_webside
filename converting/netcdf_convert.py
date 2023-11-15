@@ -5,6 +5,8 @@ import calendar as cal
 #from tqdm import tqdm
 
 def attribute_transfer(xarray_dataset, location="Herrenhausen"):
+   # import os
+   # os.chdir("/Users/alex/Code/neuralcast_webside/converting")
         # Pfad zur YAML-Datei
     if location== "Herrenhausen":
         yaml_file_path = 'Attributes/attributes_herrenhausen.yml'
@@ -22,6 +24,7 @@ def attribute_transfer(xarray_dataset, location="Herrenhausen"):
             for key, value in attribute_data[var].items():
                 xarray_dataset[var].attrs[key] = value
     return xarray_dataset
+
 
 
 def herrenhausen_tools(herrenhausen_data, format="%d.%m.%Y %H:%M:%S"):
@@ -89,6 +92,10 @@ def convert_years(path="/data/datenarchiv/imuk/", year=2022, month=1,full=True, 
             pass
 
         daydata = pd.concat([oldday, daydata])
+    minutenspanne = pd.date_range(start=daydata.index.min(), end=daydata.index.max(), freq='1T')
+    daydata = pd.DataFrame(index=minutenspanne).join(daydata)
+    daydata = daydata[daydata.columns[~(daydata.columns.str.contains('Unnamed') | daydata.columns.str.contains(r'\.\d'))]]
+
     merged_data=daydata.to_xarray()
     merged_data.fillna(-9999)
     merged_data = attribute_transfer(merged_data, location=location)
@@ -129,7 +136,7 @@ def convert_day(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11"
     merged_data.to_netcdf(filename)
     return merged_data
 def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", day="11", location="Herrenhausen"):
-
+   
     def read_and_process_data(folder, prefix, year, month, day, file_extension, tools_function, encoding="utf8"):
         try:
             file_path = path + folder + year + "/" + prefix + year + month.zfill(2) + day.zfill(2) + file_extension
@@ -141,12 +148,18 @@ def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", da
                 raise ValueError("Ungültige Datei-Erweiterung")
 
             data = tools_function(data)
+            data = data.apply(pd.to_numeric, errors='coerce')
+
+
             return data
         except Exception as e:
             try: 
                 data = tools_function(data, format="%d.%m.%y %H:%M:%S")
             except:
-                print(f"{prefix} Problem: {e}")
+                try: 
+                    data = tools_function(data, format="%d.%m.%Y %H:%M")
+                except:
+                    print(f"{prefix} Problem: {e}")
             return None
     if location== "Herrenhausen":
             # Verwendung der Funktionen
@@ -199,7 +212,7 @@ def convert_singleday(path="/data/datenarchiv/imuk/", year="2022", month="1", da
 
 #merged_data=convert_months()
 
-convert_years(year=2022, full=False)
+#convert_years(year=2022, full=False)
 #convert_day(year="2022",month="10",day="11")
 
 
