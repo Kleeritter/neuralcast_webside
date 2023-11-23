@@ -43,6 +43,14 @@ def dach_tools(dach_data,  format="%d.%m.%Y %H:%M:%S"):
     new_column_names = {col: f'dach_{col.lstrip()}' for col in dach_data.columns}
     dach_data.rename(columns=new_column_names, inplace=True)
     dach_data=dach_data[~dach_data.index.duplicated(keep='last')]
+    #print(dach_data.columns)
+    if "dach_CMP-11 Diffus (W/m2)" in dach_data.columns:
+        dach_data.rename(columns={"dach_CMP-11 Diffus (W/m2)":"dach_Diffus_CMP-11"}, inplace=True)
+    #else if
+
+    #else:
+     #   pass
+
     return dach_data
 
 
@@ -95,8 +103,18 @@ def convert_years(path="/data/datenarchiv/imuk/", year=2022, month=1,full=True, 
     minutenspanne = pd.date_range(start=daydata.index.min(), end=daydata.index.max(), freq='1T')
     daydata = pd.DataFrame(index=minutenspanne).join(daydata)
     daydata = daydata[daydata.columns[~(daydata.columns.str.contains('Unnamed') | daydata.columns.str.contains(r'\.\d'))]]
+    daydata=daydata[~daydata.index.duplicated(keep='last')]
+
 
     merged_data=daydata.to_xarray()
+    spaltennamen =["dach_CO2_ppm","dach_CO2_Sensor","dach_Diffus_CMP-11","dach_Geneigt_CM-11","dach_Global_CMP-11",
+    "dach_Temp_AMUDIS_Box","dach_Temp_Bentham_Box","herrenhausen_Druck","herrenhausen_Feuchte","herrenhausen_Gust_Speed"
+    ,"herrenhausen_Psychro_T","herrenhausen_Psychro_Tf","herrenhausen_Pyranometer_CM3","herrenhausen_Regen","herrenhausen_Temperatur","herrenhausen_Wind_Speed",
+    "sonic_Gust_Speed","sonic_Temperatur","sonic_Wind_Dir","sonic_Wind_Speed"]
+    for spaltenname in spaltennamen:
+        if spaltenname  not in merged_data.data_vars:
+            merged_data[spaltenname] = xr.DataArray( )  # Hinzufügen der neuen Spalte mit NaN-Werten
+
     merged_data.fillna(-9999)
     merged_data = attribute_transfer(merged_data, location=location)
     merged_data.to_netcdf(filename)
