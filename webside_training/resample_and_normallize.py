@@ -9,9 +9,7 @@ def resample(netcdf_filepath, outputfile):
     ds=wind_split(netcdf_filepath)
     #ds = xr.open_dataset(netcdf_filepath)
     time_index = pd.to_datetime(ds['time'].values, unit='s')
-    vars =["dach_CO2_ppm","dach_CO2_Sensor","dach_Diffus_CMP-11","dach_Geneigt_CM-11","dach_Global_CMP-11",
-    "dach_Temp_AMUDIS_Box","dach_Temp_Bentham_Box","herrenhausen_Druck","herrenhausen_Feuchte","herrenhausen_Gust_Speed"
-    ,"herrenhausen_Psychro_T","herrenhausen_Psychro_Tf","herrenhausen_Pyranometer_CM3","herrenhausen_Regen","herrenhausen_Temperatur","herrenhausen_Wind_Speed",
+    vars =["dach_CO2_ppm","dach_Diffus_CMP-11","dach_Geneigt_CM-11","dach_Global_CMP-11","herrenhausen_Druck","herrenhausen_Feuchte","herrenhausen_Gust_Speed","herrenhausen_Pyranometer_CM3","herrenhausen_Regen","herrenhausen_Temperatur","herrenhausen_Wind_Speed",
     "sonic_Gust_Speed","sonic_Temperatur","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos","sonic_Wind_Speed"]
     
     values = ds[vars].isel(time=time_index.minute % 60 == 0)
