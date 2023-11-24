@@ -104,6 +104,7 @@ def convert_years(path="/data/datenarchiv/imuk/", year=2022, month=1,full=True, 
     daydata = pd.DataFrame(index=minutenspanne).join(daydata)
     daydata = daydata[daydata.columns[~(daydata.columns.str.contains('Unnamed') | daydata.columns.str.contains(r'\.\d'))]]
     daydata=daydata[~daydata.index.duplicated(keep='last')]
+    daydata.index.names = ['time']
 
 
     merged_data=daydata.to_xarray()
