@@ -4,13 +4,13 @@ def resample(netcdf_filepath, outputfile):
     import glob
     import numpy as np
     from scipy.interpolate import interp1d
-
-    ds = xr.open_dataset(netcdf_filepath)
+    ds=wind_split(netcdf_filepath)
+    #ds = xr.open_dataset(netcdf_filepath)
     time_index = pd.to_datetime(ds['index'].values, unit='s')
     vars =["dach_CO2_ppm","dach_CO2_Sensor","dach_Diffus_CMP-11","dach_Geneigt_CM-11","dach_Global_CMP-11",
     "dach_Temp_AMUDIS_Box","dach_Temp_Bentham_Box","herrenhausen_Druck","herrenhausen_Feuchte","herrenhausen_Gust_Speed"
     ,"herrenhausen_Psychro_T","herrenhausen_Psychro_Tf","herrenhausen_Pyranometer_CM3","herrenhausen_Regen","herrenhausen_Temperatur","herrenhausen_Wind_Speed",
-    "sonic_Gust_Speed","sonic_Temperatur","sonic_Wind_Dir","sonic_Wind_Speed"]
+    "sonic_Gust_Speed","sonic_Temperatur","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos","sonic_Wind_Speed"]
     
     values = ds[vars].isel(index=time_index.minute % 60 == 0)
 
@@ -19,7 +19,7 @@ def resample(netcdf_filepath, outputfile):
 
     for var_name, var in values.variables.items():
             if var_name != "index" and values[var_name].isnull().all() != True:
-                if var_name == "rain":
+                if var_name == "herrenhausen_Regen":
                     hourly_var = ds[var_name].resample(index='1H', origin="epoch").sum()
                     dfs[var_name] = hourly_var
                 elif var_name == "wind_dir_50":
@@ -34,16 +34,64 @@ def resample(netcdf_filepath, outputfile):
 
     print(dfs)
     df_cleaned = dfs.interpolate(method='linear')
-    if "wind_dir_50" in vars:
-        df_cleaned.loc[df_cleaned['wind_dir_50'] < 0, 'wind_dir_50'] = 0
+    #if "wind_dir_50" in vars:
+     #   df_cleaned.loc[df_cleaned['wind_dir_50'] < 0, 'wind_dir_50'] = 0
     df_cleaned.to_xarray().to_netcdf(outputfile)
     ds.close()
 
     return
+def load_hyperparameters(file_path):
+    import yaml
+    with open(file_path, 'r') as file:
+        hyperparameters = yaml.safe_load(file)
+    return hyperparameters
+
+def wind_split(file):
+    import os
+    import xarray as xr
+    import math
+    import pandas as pd
+    import yaml
+
+    # Open the NetCDF file and convert it to a DataFrame
+    data = xr.open_dataset(file).to_dataframe()
+
+    # Calculate sine and cosine of wind direction and add as new columns
+    data["sonic_Wind_Dir_sin"] = data["sonic_Wind_Dir"].apply(lambda x: math.sin(math.radians(x)))
+    data["sonic_Wind_Dir_cos"] = data["sonic_Wind_Dir"].apply(lambda x: math.cos(math.radians(x)))
+
+    # Convert the DataFrame back to xarray format and save it to the same NetCDF file
+   
+    return  data.to_xarray()
 
 
-def normalize():
+def normalize(netcdf_filepath, outputfile):
+    import xarray as xr
+    import pandas as pd
+    import glob
+    import numpy as np
+    import yaml
+    from sklearn.preprocessing import MinMaxScaler
 
+    ds = xr.open_dataset(netcdf_filepath)
+    data= ds.to_dataframe()
+    for column in data.columns:
+            values = data[column].values.reshape(-1, 1)
+
+            scaler = MinMaxScaler(feature_range=(0, 1))
+            param_path ='webside_training/params_for_normal_webside.yaml'  # "../../Data/params_for_normal.yaml"
+            params = load_hyperparameters(param_path)
+
+            mins = params[column]['min']#params["Min_" + column]
+            maxs = params[column]['max']#["Max_" + column]
+            train_values = [mins, maxs]
+            X_train_minmax = scaler.fit_transform(np.array(train_values).reshape(-1, 1))
+            scaled_values = scaler.transform(values)
+            data[column] = scaled_values.flatten()
+    data.to_xarray().to_netcdf(outputfile)
+    ds.close()
     return 
 
-resample("converting/viktor/2016.nc", "test.nc")
+#resample("converting/viktor/2016.nc", "test.nc")
+
+normalize("test.nc","test_normal.nc")
