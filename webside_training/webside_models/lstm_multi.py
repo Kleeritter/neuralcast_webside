@@ -20,7 +20,7 @@ np.random.seed(42)
 class LSTM_MULTI_Dataset(Dataset):
     def __init__(self, file_path,forecast_horizont=24,window_size=24,forecast_var="temp"):
         # Load data from NetCDF file and preprocess
-        self.data = xr.open_dataset(file_path)[cor_vars].to_dataframe()
+        self.data = xr.open_dataset(file_path).to_dataframe()
         self.length = len(self.data[forecast_var]) - window_size
         # Set dataset parameters
         self.forecast_horizont = forecast_horizont
@@ -44,22 +44,29 @@ class LSTM_MULTI_Dataset(Dataset):
         target = np.array(target).reshape((self.forecast_horizont,))
         window_data = torch.from_numpy(np.array(window_data)).float()#[:, np.newaxis]).float()
         target = torch.from_numpy(target).float()
-
+        #print(window_data.shape)
         return window_data, target
 
 
 # Define a PyTorch Lightning module for multivariate temperature forecasting
 
 class LSTM_MULTI_Model(pl.LightningModule):
-    def __init__(self, window_size=24, forecast_horizont=24, num_layers=1, hidden_size=40, learning_rate=0.001, weight_decay=0.001, weight_initializer="None", numvars=12):
+    def __init__(self, window_size=24, forecast_horizont=24, num_layers=1, num_lin_layers=2,num_lstm_layers=2,lin_layer_dim=48,hidden_size=40, learning_rate=0.001, weight_decay=0.001, weight_initializer="None", numvars=12):
         super().__init__()
         self.num_layers = num_layers
         self.hidden_size = hidden_size
         self.learning_rate = learning_rate
         self.weight_decay = weight_decay
+        self.num_lin_layers =num_lin_layers
+        self.num_lstm_layers =num_lstm_layers
+        self.lin_layer_dim =lin_layer_dim
         self.lstm = torch.nn.LSTM(input_size=numvars, hidden_size=hidden_size, num_layers=num_layers,batch_first=True)
-        self.linear = torch.nn.Linear(hidden_size, 2*forecast_horizont)
-        self.linear2 = torch.nn.Linear(2*forecast_horizont, forecast_horizont)
+        if num_lstm_layers==2:
+            self.lstm2 = torch.nn.LSTM(input_size=hidden_size, hidden_size=hidden_size, num_layers=num_layers,batch_first=True)
+        self.first_linear =torch.nn.Linear(hidden_size, lin_layer_dim)
+        self.linears = torch.nn.ModuleList([torch.nn.Linear(lin_layer_dim, lin_layer_dim) for _ in range(1,num_lin_layers)])
+        self.final_linear = torch.nn.Linear(lin_layer_dim, forecast_horizont)
+
 
         self.weight_initializer = weight_initializer
         self.apply(self.initialize_weights)
@@ -83,8 +90,14 @@ class LSTM_MULTI_Model(pl.LightningModule):
 
     def forward(self, x):
         lstm_output, _ = self.lstm(x)
-        middle = self.linear(lstm_output[:, -1, :])
-        output = self.linear2(middle[:, -1, :])
+        if self.num_lstm_layers==2:
+            lstm_output, _  = self.lstm2(lstm_output)
+        linear_output = self.first_linear(lstm_output[:, -1, :])
+        for linear_layer_index in range(len(self.linears)):
+            linear_output = self.linears[linear_layer_index](linear_output[:, :])
+        output = self.final_linear(linear_output[:, :])
+        #middle = self.linear(lstm_output[:, -1, :])
+        #output = self.linear2(middle[:, :])
 
         return output
 
