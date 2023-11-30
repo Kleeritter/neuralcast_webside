@@ -1,6 +1,7 @@
 from netcdf_convert import *
 import argparse
 import os
+from webside_training.resample_and_normallize import resample,normalize
 
 from datetime import date, timedelta,datetime
 def main():
