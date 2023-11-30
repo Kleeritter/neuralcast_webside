@@ -80,8 +80,8 @@ def main():
     print ("start 72 cycle")
     startday= (today - timedelta(hours=72)).strftime('%Y-%m-%d')
     endday = today.strftime('%Y-%m-%d')
-    outputpath_herrenhausen = args.outputpath+today.strftime('%Y')+"/"+today.strftime('%m')+"/"+today.strftime('%d')+"/latest_herrenhausen.nc"
-    outputpath_herrenhausen = args.outputpath+today.strftime('%Y')+"/"+today.strftime('%m')+"/"+today.strftime('%d')+"/latest_ruthe.nc"
+    outputpath_herrenhausen = args.outputpath+"latest_herrenhausen.nc"
+    outputpath_ruthe = args.outputpath+"latest_ruthe.nc"
     # Überprüfen und Verzeichnisse erstellen
     os.makedirs(os.path.dirname(outputpath_herrenhausen), exist_ok=True)
     os.makedirs(os.path.dirname(outputpath_ruthe), exist_ok=True)
