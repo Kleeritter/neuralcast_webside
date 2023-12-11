@@ -48,7 +48,7 @@ def train(forecast_var,forecast_horizont,Ruthe=False):
     if Ruthe:
         torch.save(model.state_dict(), 'Ruthe/lstm_multi_red/models/best_model_state_'+forecast_var+'_'+str(window_size)+'_'+str(forecast_horizont)+'.pt')
     else:
-        torch.save(model.state_dict(), 'converting/webside_training/saved_models/multi/best_model_state_'+forecast_var+'.pt')
+        torch.save(model.state_dict(), 'converting/2webside_training/saved_models/multi/best_model_state_'+forecast_var+'.pt')
     return
 
 
