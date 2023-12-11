@@ -31,7 +31,7 @@ def train(forecast_var,forecast_horizont,Ruthe=False):
 
     # Set up TensorBoardLogger and trainer
     logger = loggers.TensorBoardLogger(save_dir=logs+'/lstm_multi/' + forecast_var, name='lstm_optimierer')
-    trainer = pl.Trainer(logger=logger, max_epochs=20, accelerator="auto", devices="auto",
+    trainer = pl.Trainer(logger=logger, max_epochs=200, accelerator="auto", devices="auto",
                          deterministic=True, enable_progress_bar=True, callbacks=[EarlyStopping(monitor='val_loss', patience=5, mode='min')])
 
 
@@ -48,7 +48,7 @@ def train(forecast_var,forecast_horizont,Ruthe=False):
     if Ruthe:
         torch.save(model.state_dict(), 'Ruthe/lstm_multi_red/models/best_model_state_'+forecast_var+'_'+str(window_size)+'_'+str(forecast_horizont)+'.pt')
     else:
-        torch.save(model.state_dict(), 'converting/2webside_training/saved_models/multi/best_model_state_'+forecast_var+'.pt')
+        torch.save(model.state_dict(), 'converting/webside_training/saved_models/multi/best_model_state_'+forecast_var+'.pt')
     return
 
 
