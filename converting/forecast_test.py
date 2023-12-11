@@ -11,6 +11,10 @@ def neural_forecast(variable):
     from datetime import timedelta
     import numpy as np
     import matplotlib.pyplot as plt
+
+    from sklearn.preprocessing import MinMaxScaler
+
+
     dataset = xr.open_dataset('/Users/alex/Code/neuralcast_webside/latest_herrenhausen_normal.nc')
     # Die Zeitdimension extrahieren
     time_dimension = dataset['time']
@@ -33,7 +37,16 @@ def neural_forecast(variable):
     print(forecasts)
     dataprint= np.append(sliced_dataset.herrenhausen_Temperatur.values,forecasts)
     print(dataprint)
-    plt.plot(dataprint)
+
+    # Beispielwerte
+    dataa = np.arange(-20.0, 45.0)  # Annahme: Ein eindimensionaler Datensatz
+
+
+    scalera = MinMaxScaler()
+    scalera.fit(dataa.reshape(-1, 1))
+    denormalized_values = scalera.inverse_transform(dataprint.reshape(-1, 1)).flatten()
+
+    plt.plot(denormalized_values)
     plt.show()
    
     return
