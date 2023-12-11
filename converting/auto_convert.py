@@ -1,31 +1,19 @@
 from netcdf_convert import *
 import argparse
 import os
+from webside_training.resample_and_normallize import resample,normalize
 
 from datetime import date, timedelta,datetime
 def main():
-    ##Parsing Variable Values
-    ##Parsing Variable Values
+
     parser = argparse.ArgumentParser()
-    #parser.add_argument("")
     parser.add_argument('inputpath')
-    #parser.add_argument('year')  #
-    #parser.add_argument('full')
-    #parser.add_argument('startday')
-    #parser.add_argument('endday')
-    #parser.add_argument('location')
     parser.add_argument('outputpath')
 
-
-    args = parser.parse_args()  # gv[480#210    #480
-    #year = int(args.year)
-    #if args.full == "True":
-     #   full= True
-    #else:
-     #   full=False
+    args = parser.parse_args() 
 
     path = args.inputpath
-    today  = date.today()#datetime.strptime("2023-09-01", '%Y-%m-%d')
+    today  = date.today()
     
     startday= today.strftime('%Y') +"-01-01"
     endday = today.strftime('%Y-%m-%d')
@@ -90,7 +78,25 @@ def main():
     else:
         pass
 
+    print ("start 72 cycle")
+    startday= (today - timedelta(hours=72)).strftime('%Y-%m-%d')
+    endday = today.strftime('%Y-%m-%d')
+    outputpath_herrenhausen = args.outputpath+"latest_herrenhausen.nc"
+    outputpath_ruthe = args.outputpath+"latest_ruthe.nc"
+    # Überprüfen und Verzeichnisse erstellen
+    os.makedirs(os.path.dirname(outputpath_herrenhausen), exist_ok=True)
+    os.makedirs(os.path.dirname(outputpath_ruthe), exist_ok=True)
+    convert_years(path=path, full=False, startday=startday,endday=endday, location="Herrenhausen", filename=outputpath_herrenhausen)
+    convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthe)
+    outputpath_herrenhausen_res = args.outputpath+"latest_herrenhausen_res.nc"
+    outputpath_herrenhausen_normal = args.outputpath+"latest_herrenhausen_normal.nc"
+    outputpath_ruthe_res = args.outputpath+"latest_ruthe_res.nc"
+    outputpath_ruthe_normal = args.outputpath+"latest_ruth_normal.nc"
 
+    resample(outputpath_herrenhausen, outputpath_herrenhausen_res)
+    normalize(outputpath_herrenhausen_res,outputpath_herrenhausen_normal)
+    resample(outputpath_ruthe, outputpath_ruthe_res)
+    normalize(outputpath_ruthe_res,outputpath_ruthe_normal)
 
 
 if __name__ == "__main__":
