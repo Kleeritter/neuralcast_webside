@@ -80,7 +80,7 @@ def normalize(netcdf_filepath, outputfile):
             values = data[column].values.reshape(-1, 1)
 
             scaler = MinMaxScaler(feature_range=(0, 1))
-            param_path ='../webside_training/params_for_normal_webside.yaml'  # "../../Data/params_for_normal.yaml"
+            param_path ='converting/webside_training/params_for_normal_webside.yaml'  # "../../Data/params_for_normal.yaml"
             params = load_hyperparameters(param_path)
 
             mins = params[column]['min']#params["Min_" + column]
@@ -93,12 +93,18 @@ def normalize(netcdf_filepath, outputfile):
     data.to_xarray().to_netcdf(outputfile)
     ds.close()
     return 
-years=np.arange(2016,2023)
+#years=np.arange(2016,2023)
 
-for year in years:
-        print(year)
-        filename = "converting/viktor/"+str(year)+".nc"
-        outputname_resample = "converting/webside_data/resampled/"+str(year)+".nc"
-        outputname_normal = "converting/webside_data/normalized/"+str(year)+".nc"
-        resample(filename, outputname_resample)
-        normalize(outputname_resample,outputname_normal)
+#for year in years:
+ #       print(year)
+        #filename = "converting/viktor/"+str(year)+".nc"
+        #outputname_resample = "converting/webside_data/resampled/"+str(year)+".nc"
+        #outputname_normal = "converting/webside_data/normalized/"+str(year)+".nc"
+        #resample(filename, outputname_resample)
+        #normalize(outputname_resample,outputname_normal)
+
+#filename = "latest_herrenhausen.nc"
+#outputname_resample = "latest_herrenhausen_resample.nc"
+#outputname_normal = "latest_herrenhausen_normal.nc"
+#resample(filename, outputname_resample)
+#normalize(outputname_resample,outputname_normal)
