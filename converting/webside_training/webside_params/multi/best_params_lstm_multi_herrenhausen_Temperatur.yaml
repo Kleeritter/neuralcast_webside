@@ -1,10 +1,10 @@
 batchsize: 72
-hidden_size: 32
-learning_rate: 0.0002618836422556036
+hidden_size: 128
+learning_rate: 0.0004618836422556036
 lin_layer_dim: 32
 lin_layer_num: 4
 lstm_layer_num: 2
-num_layers: 1
-weight_decay: 3.214174649108876e-05
-weight_initializer: normal
+num_layers: 2
+weight_decay: 1.214174649108876e-05
+weight_initializer: kaiming
 window_size: 24

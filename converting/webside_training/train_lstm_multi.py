@@ -9,12 +9,12 @@ import yaml
 from  tqdm  import tqdm
 
 
-file_path = "webside_training/normal_2016-2022.nc"
+file_path = "converting/webside_training/normal_2016-2022.nc"
 logs ="/home/alex/Dokumente/lightning_logs"
 
 def train(forecast_var,forecast_horizont,Ruthe=False):
     # Load best hyperparameters from file
-    with open('webside_training/webside_params/multi/best_params_lstm_multi_'+forecast_var+'.yaml') as file:
+    with open('converting/webside_training/webside_params/multi/best_params_lstm_multi_herrenhausen_Temperatur.yaml') as file :#'webside_training/webside_params/multi/best_params_lstm_multi_'+forecast_var+'.yaml') as file:
         best_params = yaml.load(file, Loader=yaml.FullLoader)
 
     # Create the dataset using TemperatureDataset_multi class
@@ -48,7 +48,7 @@ def train(forecast_var,forecast_horizont,Ruthe=False):
     if Ruthe:
         torch.save(model.state_dict(), 'Ruthe/lstm_multi_red/models/best_model_state_'+forecast_var+'_'+str(window_size)+'_'+str(forecast_horizont)+'.pt')
     else:
-        torch.save(model.state_dict(), 'webside_training/saved_models/multi/best_model_state_'+forecast_var+'.pt')
+        torch.save(model.state_dict(), 'converting/webside_training/saved_models/multi/best_model_state_'+forecast_var+'.pt')
     return
 
 
