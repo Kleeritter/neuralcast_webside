@@ -8,6 +8,8 @@ def attribute_transfer(xarray_dataset, location="Herrenhausen"):
    # import os
    # os.chdir("/Users/alex/Code/neuralcast_webside/converting")
         # Pfad zur YAML-Datei
+    import os
+    print(os.getcwd())
     if location== "Herrenhausen":
         yaml_file_path = 'Attributes/attributes_herrenhausen.yml'
     else:
