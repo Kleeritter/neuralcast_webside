@@ -81,7 +81,7 @@ def normalize(netcdf_filepath, outputfile):
             values = data[column].values.reshape(-1, 1)
 
             scaler = MinMaxScaler(feature_range=(0, 1))
-            print(os.getcwd())
+            #print(os.getcwd())
             param_path ='webside_training/params_for_normal_webside.yaml'  # "../../Data/params_for_normal.yaml"
             params = load_hyperparameters(param_path)
 
