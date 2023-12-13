@@ -1,4 +1,4 @@
-. ~/.bashrc
+bash /home/stadtwetter/.bashrc
 #conda init bash
 conda activate Stadtwetter
 #export PYTHONPATH=$PYTHONPATH:/localdata/weathermaps/imuk
