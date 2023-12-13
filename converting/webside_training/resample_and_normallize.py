@@ -72,6 +72,7 @@ def normalize(netcdf_filepath, outputfile):
     import glob
     import numpy as np
     import yaml
+    import os 
     from sklearn.preprocessing import MinMaxScaler
 
     ds = xr.open_dataset(netcdf_filepath)
