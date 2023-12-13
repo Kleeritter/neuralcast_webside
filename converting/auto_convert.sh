@@ -1,6 +1,6 @@
 source /home/stadtwetter/.bashrc
 #conda init bash
-conda activate Stadtwetter
+/home/stadtwetter/miniforge3/bin/conda activate Stadtwetter
 #export PYTHONPATH=$PYTHONPATH:/localdata/weathermaps/imuk
 
 path_input=/data/datenarchiv/imuk/
