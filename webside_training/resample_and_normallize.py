@@ -16,13 +16,12 @@ def resample(netcdf_filepath, outputfile, v=2):
         ds["herrenhausen_Temperatur"]= ds["herrenhausen_Temperatur"] +273.15
         ds["herrenhausen_Feuchte"]= ds["herrenhausen_Feuchte"]
         ds["derived_Taupunkt"]= dew_pointa( ds["herrenhausen_Temperatur"], ds["herrenhausen_Feuchte"])
+        if ds["derived_Taupunkt"].isnull==True:
+            ds["derived_Taupunkt"]=0
         print(ds["derived_Taupunkt"])
-        #ds = press_reduction_international(ds) #ds["derived_Press_sl"]= pressreduction_international(ds["herrenhausen_Druck"],51,ds["herrenhausen_Temperatur"])     
-        #ds["derived_Press_sl"]= #ds.apply(press_reduction_international,axis=1)
+       
         ds["derived_Press_sl"]= pressreduction_international(ds["herrenhausen_Druck"],51,ds["herrenhausen_Temperatur"]) *100
-            # Calculate resampled variables
-        
-        #ds["rain"] = ds["rain"] + 1
+
     else:
         vars =["dach_CO2_ppm","dach_Diffus_CMP-11","dach_Geneigt_CM-11","dach_Global_CMP-11","herrenhausen_Druck","herrenhausen_Feuchte","herrenhausen_Gust_Speed","herrenhausen_Pyranometer_CM3","herrenhausen_Regen","herrenhausen_Temperatur","herrenhausen_Wind_Speed",
         "sonic_Gust_Speed","sonic_Temperatur","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos","sonic_Wind_Speed"]
