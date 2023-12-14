@@ -11,7 +11,7 @@ def resample(netcdf_filepath, outputfile, v=2):
     time_index = pd.to_datetime(ds['time'].values, unit='s')
     if v==1:
         vars= ["herrenhausen_Temperatur","herrenhausen_Druck","herrenhausen_Feuchte","dach_Diffus_CMP-11","dach_Global_CMP-11","herrenhausen_Gust_Speed", "sonic_Gust_Speed","herrenhausen_Regen","herrenhausen_Wind_Speed",
-       "sonic_Wind_Speed","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos","derived_Regen_event","derived_Press_sl","derived_Taupunkt"]#,"derived_Taupunkt3h","derived_Temp3h", "derived_Press3h",,"derived_rainsum3h","derived_vertwind" ]
+       "sonic_Wind_Speed","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos","derived_Press_sl","derived_Taupunkt"]#,"derived_Taupunkt3h","derived_Temp3h", "derived_Press3h",,"derived_rainsum3h","derived_vertwind" ]
 
         ds["herrenhausen_Temperatur"]= ds["herrenhausen_Temperatur"] +273.15
         ds["herrenhausen_Feuchte"]= ds["herrenhausen_Feuchte"]
