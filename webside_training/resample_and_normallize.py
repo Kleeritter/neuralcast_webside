@@ -27,7 +27,7 @@ def resample(netcdf_filepath, outputfile, v=2):
 
         # Calculate additional variables
         ds["derived_vertwind"] = ds["sonic_Wind_Speed"] - ds["herrenhausen_Wind_Speed"]
-        ds["derived_Regen_event"] = ds["herrenhausen_Regen"].rolling('3H').apply(lambda x: 1 if x.sum() > 0 else 0).fillna(0)
+        ds["derived_Regen_event"] = ds["herrenhausen_Regen"].to_dataframe().rolling('3H').apply(lambda x: 1 if x.sum() > 0 else 0).fillna(0)
         #ds["rain"] = ds["rain"] + 1
     else:
         vars =["dach_CO2_ppm","dach_Diffus_CMP-11","dach_Geneigt_CM-11","dach_Global_CMP-11","herrenhausen_Druck","herrenhausen_Feuchte","herrenhausen_Gust_Speed","herrenhausen_Pyranometer_CM3","herrenhausen_Regen","herrenhausen_Temperatur","herrenhausen_Wind_Speed",
