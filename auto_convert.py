@@ -1,4 +1,4 @@
-from Converting.netcdf_convert import *
+from .Converting.netcdf_convert import *
 import argparse
 import os
 from webside_training.resample_and_normallize import resample,normalize
