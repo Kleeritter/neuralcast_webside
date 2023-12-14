@@ -102,9 +102,9 @@ def normalize(netcdf_filepath, outputfile, v=2):
             scaler = MinMaxScaler(feature_range=(0, 1))
             #print(os.getcwd())
             if v==1:
-                param_path ='../webside_training/params_for_normal_webside.yaml'  # "../../Data/params_for_normal.yaml"
+                param_path ='../webside_training/params_for_normal_imuknet.yaml'  # "../../Data/params_for_normal.yaml"
             else:
-                param_path ='../webside_training/params_for_normal_webside.yaml'  # "../../Data/params_for_normal.yaml"
+                param_path ='../webside_training/params_for_normal_imuknet2.yaml'  # "../../Data/params_for_normal.yaml"
             params = load_hyperparameters(param_path)
 
             mins = params[column]['min']#params["Min_" + column]
