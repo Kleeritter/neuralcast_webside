@@ -152,7 +152,7 @@ def press_reduction_international(df):
     
     # Berechne pmsl für jede Zeile im DataFrame
     #df['derived_Press_sls'] = round(df.apply(lambda row: row["herrenhausen_Druck"] * (1 - ((kappa - 1) / kappa) * ((M * g * (-1 * height)) / (r * row["herrenhausen_Temperatur"])) )**(kappa / (kappa - 1)), axis=1), 2)
-    df['derived_Press_sl'] = df.apply(lambda row: round(row["herrenhausen_Druck"] * (1 - ((kappa - 1) / kappa) * ((M * g * (-1 * height)) / (r * row["herrenhausen_Temperatur"])) )**(kappa / (kappa - 1)), 2), axis=1)
+    df['derived_Press_sl'] = df.apply(lambda row: round(row["herrenhausen_Druck"] * (1 - ((kappa - 1) / kappa) * ((M * g * (-1 * height)) / (r * row["herrenhausen_Temperatur"])) )**(kappa / (kappa - 1)), 2))
     return df
 #years=np.arange(2016,2023)
 
