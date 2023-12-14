@@ -124,7 +124,7 @@ def normalize(netcdf_filepath, outputfile, v=2):
     ds.close()
     return 
 def resample_var(data, var, sum=False):
-    data=data.to_dataframe()
+   # data=data.to_dataframe()
     if sum:
         sample = data[var].rolling('3H').sum().fillna(0)
     else:
@@ -151,7 +151,7 @@ def pressreduction_international(p,height,t):
     return pmsl
 
 def resamrain(data):
-    data= data.to_dataframe()
+    #data= data.to_dataframe()
     rr = data["herrenhausen_Regen"].rolling('3H').apply(lambda x: 1 if x.sum() > 0 else 0).fillna(0)
     return rr
 
