@@ -15,6 +15,7 @@ def resample(netcdf_filepath, outputfile, v=2):
 
         ds["herrenhausen_Temperatur"]= ds["herrenhausen_Temperatur"] +273.15
         ds["herrenhausen_Feuchte"]= ds["herrenhausen_Feuchte"]
+        ds["herrenhausen_Regen"]= ds["herrenhausen_Regen"]*0.01
         ds["derived_Taupunkt"]= dew_pointa( ds["herrenhausen_Temperatur"], ds["herrenhausen_Feuchte"])
         ds["derived_Taupunkt"]= ds['derived_Taupunkt'].where(~np.all(np.isnan(ds['derived_Taupunkt']), axis=0), 0)
 
