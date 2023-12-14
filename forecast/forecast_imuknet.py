@@ -52,7 +52,7 @@ def neural_forecast(variable):
     return
 
 
-def multilstm_full(modell,data,forecast_horizon,forecast_var="herrenhausen_Temperatur",hyper_params_path=""):
+def multilstm_full(modell,data,forecast_horizon,forecast_var="herrenhausen_Temperatur",hyper_params_path="",corvars=corvars):
     from webside_training.webside_models.lstm_multi import LSTM_MULTI_Model
     from webside_training.resample_and_normallize import load_hyperparameters
     import numpy as np
@@ -70,7 +70,7 @@ def multilstm_full(modell,data,forecast_horizon,forecast_var="herrenhausen_Tempe
     
     model.load_state_dict(checkpoint)  # ['state_dict'])
     model.eval()
-    sliding_window = data.to_dataframe()
+    sliding_window = data.to_dataframe()[corvars]
     sliding_window = np.expand_dims(sliding_window, axis=0)
 
     input_data = torch.from_numpy(np.array(sliding_window)).float()
