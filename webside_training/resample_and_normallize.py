@@ -160,9 +160,11 @@ def press_reduction_international(row):
     g = 9.81
     r = 8.314
     height=51
-    
-    # Berechne pmsl für jede Zeile im DataFrame
-    return round( row["herrenhausen_Druck"] * (1 - ((kappa - 1) / kappa) * ((M * g * (-1 * height)) / (r * row["herrenhausen_Temperatur"])) )**(kappa / (kappa - 1)), 2)
+    result = round(
+        row["herrenhausen_Druck"] * (1 - ((kappa - 1) / kappa) * ((M * g * (-1 * height)) / (r * row["herrenhausen_Temperatur"])) )**(kappa / (kappa - 1)), 2
+    )
+    return result
+    #return round( row["herrenhausen_Druck"] * (1 - ((kappa - 1) / kappa) * ((M * g * (-1 * height)) / (r * row["herrenhausen_Temperatur"])) )**(kappa / (kappa - 1)), 2)
 #years=np.arange(2016,2023)
 
 #for year in years:
