@@ -20,6 +20,10 @@ def resample(netcdf_filepath, outputfile, v=2):
 
        
         ds["derived_Press_sl"]= pressreduction_international(ds["herrenhausen_Druck"],51,ds["herrenhausen_Temperatur"]) *100
+        ds["derived_Press_sl"]= ds['derived_Press_sl'].where(~np.all(np.isnan(ds['derived_Press_sl']), axis=0), 0)
+        ds["herrenhausen_Temperatur"]= ds['herrenhausen_Temperatur'].where(~np.all(np.isnan(ds['herrenhausen_Temperatur']), axis=0), 0)
+        ds["herrenhausen_Regen"]= ds['herrenhausen_Regen'].where(~np.all(np.isnan(ds['herrenhausen_Regen']), axis=0), 0)
+
 
     else:
         vars =["dach_CO2_ppm","dach_Diffus_CMP-11","dach_Geneigt_CM-11","dach_Global_CMP-11","herrenhausen_Druck","herrenhausen_Feuchte","herrenhausen_Gust_Speed","herrenhausen_Pyranometer_CM3","herrenhausen_Regen","herrenhausen_Temperatur","herrenhausen_Wind_Speed",
