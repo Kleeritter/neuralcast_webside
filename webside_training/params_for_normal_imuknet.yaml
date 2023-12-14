@@ -1,0 +1,96 @@
+dach_CO2_ppm:
+    min: 350
+    max: 800
+dach_CO2_Sensor:
+    min: 5
+    max: 20
+dach_Diffus_CMP-11:
+    min: -9.3
+    max: 862.02
+dach_Geneigt_CM-11:
+    min: -50
+    max: 2000
+dach_Global_CMP-11:
+    min: -10.5
+    max: 1222.5
+dach_Temp_AMUDIS_Box:
+    min: -10
+    max: 50
+dach_Temp_Bentham_Box:
+    min: -10
+    max: 50
+herrenhausen_Druck:
+    min: 950
+    max: 1070
+herrenhausen_Feuchte:
+    min: 0.19
+    max: 0.99
+herrenhausen_Gust_Speed:
+    min: 0
+    max: 21.2
+herrenhausen_Psychro_T:
+    min: -50
+    max: 100
+herrenhausen_Psychro_Tf:
+    min: -50
+    max: 100
+herrenhausen_Pyranometer_CM3:
+    min: 30
+    max: 40
+herrenhausen_Regen:
+    min: 0
+    max: 27.78
+herrenhausen_Temperatur:
+    min: 258.15
+    max: 312.89
+herrenhausen_Wind_Speed:
+    min: 0
+    max: 15.15
+sonic_Gust_Speed:
+    min: 0.2
+    max: 29.6
+sonic_Temperatur:
+    min: -20
+    max: 45
+sonic_Wind_Dir_sin:
+    min: -1
+    max: 1
+sonic_Wind_Dir_cos:
+    min: -1
+    max: 1
+sonic_Wind_Speed:
+    min: 0.12
+    max: 21.56
+
+
+derived_Regen_event:
+    min: 0
+    max: 1
+
+derived_Taupunkt3h:
+    min: -2.91
+    max: 3.43
+
+derived_Temp3h:
+    min: -4.3
+    max: 4.1
+
+derived_Press3h:
+    min: -345.33
+    max: 427.73
+
+derived_Press_sl:
+    min: 97529.8
+    max: 104770.55
+
+derived_Taupunkt:
+    min: 256.32
+    max: 295.12
+
+derived_rainsum3h:
+    min: 0
+    max: 37.69
+
+derived_vertwind:
+    min: -2.59
+    max: 9.45

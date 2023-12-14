@@ -11,9 +11,22 @@ def resample(netcdf_filepath, outputfile, v=2):
     time_index = pd.to_datetime(ds['time'].values, unit='s')
     if v==1:
         vars= ["herrenhausen_Temperatur","herrenhausen_Druck","herrenhausen_Feuchte","dach_Diffus_CMP-11","dach_Global_CMP-11","herrenhausen_Gust_Speed", "sonic_Gust_Speed","herrenhausen_Regen","herrenhausen_Wind_Speed",
-       "sonic_Wind_Speed","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos"]
+       "sonic_Wind_Speed","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos","derived_Regen_event","derived_Taupunkt3h","derived_Temp3h", "derived_Press3h","derived_Press_sl","derived_Taupunkt","derived_rainsum3h","derived_vertwind" ]
 
         ds["herrenhausen_Temperatur"]= ds["herrenhausen_Temperatur"] +273.15
+        ds["derived_Taupunkt"]= dew_pointa( ds["herrenhausen_Temperatur"], ds["herrenhausen_Feuchte"])
+        ds["derived_Press_sl"]= pressreduction_international(ds["derived_Press_sl"],51,ds["derived_Press_sl"])     
+
+            # Calculate resampled variables
+        ds["derived_Taupunkt3h"] = resample_var(ds, "derived_Taupunkt")
+        ds["derived_Press3h"] = resample_var(ds, "derived_Press_sl")
+        ds["derived_rainsum3h"] = resample_var(ds, "herrenhausen_Regen", sum=True)
+        ds["derived_Temp3h"] = resample_var(ds, "herrenhausen_Temperatur")
+
+        # Calculate additional variables
+        ds["derived_vertwind"] = ds["sonic_Wind_Speed"] - ds["herrenhausen_Wind_Speed"]
+        ds["derived_Regen_event"] = ds["herrenhausen_Regen"].rolling('3H').apply(lambda x: 1 if x.sum() > 0 else 0).fillna(0)
+        #ds["rain"] = ds["rain"] + 1
     else:
         vars =["dach_CO2_ppm","dach_Diffus_CMP-11","dach_Geneigt_CM-11","dach_Global_CMP-11","herrenhausen_Druck","herrenhausen_Feuchte","herrenhausen_Gust_Speed","herrenhausen_Pyranometer_CM3","herrenhausen_Regen","herrenhausen_Temperatur","herrenhausen_Wind_Speed",
         "sonic_Gust_Speed","sonic_Temperatur","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos","sonic_Wind_Speed"]
@@ -104,6 +117,31 @@ def normalize(netcdf_filepath, outputfile, v=2):
     data.to_xarray().to_netcdf(outputfile)
     ds.close()
     return 
+def resample_var(data, var, sum=False):
+    if sum:
+        sample = data[var].rolling('3H').sum().fillna(0)
+    else:
+        sample = data[var].rolling('3H').mean().diff().fillna(0)
+    return sample
+
+
+def dew_pointa(T, RH):
+    import numpy as np
+    """Berechnet den Taupunkt in Grad Celsius mit der Goff-Gratch-Gleichung."""
+    a = 7.5
+    b = 237.3
+    alpha = ((a * T) / (b + T)) + np.log10(RH)
+    T_dp = (b * alpha) / (a - alpha)
+    return T_dp
+
+def pressreduction_international(p,height,t):
+    kappa=1.402
+    M=0.02896
+    g= 9.81
+    r=8.314
+    pmsl= round(p*(1-((kappa -1)/kappa) *((M*g*(-1*height))/(r*t)))**(kappa/(kappa -1)),2)
+    return pmsl
+
 #years=np.arange(2016,2023)
 
 #for year in years:
