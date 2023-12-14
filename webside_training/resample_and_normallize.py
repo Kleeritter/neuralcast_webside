@@ -15,7 +15,7 @@ def resample(netcdf_filepath, outputfile, v=2):
 
         ds["herrenhausen_Temperatur"]= ds["herrenhausen_Temperatur"] +273.15
         ds["derived_Taupunkt"]= dew_pointa( ds["herrenhausen_Temperatur"], ds["herrenhausen_Feuchte"])
-        ds["derived_Press_sl"]= pressreduction_international(ds["derived_Press_sl"],51,ds["derived_Press_sl"])     
+        ds["derived_Press_sl"]= pressreduction_international(ds["herrenhausen_Druck"],51,ds["derived_Press_sl"])     
 
             # Calculate resampled variables
         ds["derived_Taupunkt3h"] = resample_var(ds, "derived_Taupunkt")
