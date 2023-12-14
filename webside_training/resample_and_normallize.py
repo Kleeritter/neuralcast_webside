@@ -23,6 +23,8 @@ def resample(netcdf_filepath, outputfile, v=2):
         ds["derived_Press_sl"]= ds['derived_Press_sl'].where(~np.all(np.isnan(ds['derived_Press_sl']), axis=0), 0)
         ds["herrenhausen_Temperatur"]= ds['herrenhausen_Temperatur'].where(~np.all(np.isnan(ds['herrenhausen_Temperatur']), axis=0), 0)
         ds["herrenhausen_Regen"]= ds['herrenhausen_Regen'].where(~np.all(np.isnan(ds['herrenhausen_Regen']), axis=0), 0)
+        ds["sonic_Wind_Speed"]= ds['sonic_Wind_Speed'].where(~np.all(np.isnan(ds['sonic_Wind_Speed']), axis=0), 0)
+        ds["herrenhausen_Wind_Speed"]= ds['herrenhausen_Wind_Speed'].where(~np.all(np.isnan(ds['herrenhausen_Wind_Speed']), axis=0), 0)
 
 
     else:
