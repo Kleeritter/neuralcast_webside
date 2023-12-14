@@ -15,8 +15,8 @@ def resample(netcdf_filepath, outputfile, v=2):
 
         ds["herrenhausen_Temperatur"]= ds["herrenhausen_Temperatur"] +273.15
         ds["derived_Taupunkt"]= dew_pointa( ds["herrenhausen_Temperatur"], ds["herrenhausen_Feuchte"])
-        ds = press_reduction_international(ds) #ds["derived_Press_sl"]= pressreduction_international(ds["herrenhausen_Druck"],51,ds["herrenhausen_Temperatur"])     
-
+        #ds = press_reduction_international(ds) #ds["derived_Press_sl"]= pressreduction_international(ds["herrenhausen_Druck"],51,ds["herrenhausen_Temperatur"])     
+        ds["derived_Press_sl"]= ds.apply(press_reduction_international,axis=1)
             # Calculate resampled variables
         ds["derived_Taupunkt3h"] = resample_var(ds, "derived_Taupunkt")
         ds["derived_Press3h"] = resample_var(ds, "derived_Press_sl")
@@ -143,7 +143,7 @@ def dew_pointa(T, RH):
     #pmsl= round(p*(1-((kappa -1)/kappa) *((M*g*(-1*height))/(r*t)))**(kappa/(kappa -1)),2)
     return pmsl
 
-def press_reduction_international(df):
+#def press_reduction_international(df):
     kappa = 1.402
     M = 0.02896
     g = 9.81
@@ -154,6 +154,17 @@ def press_reduction_international(df):
     df['derived_Press_sl'] = round(df.apply(lambda row: row[herrenhausen_Druck] * (1 - ((kappa - 1) / kappa) * ((M * g * (-1 * height)) / (r * row["herrenhausen_Temperatur"])) )**(kappa / (kappa - 1))), 2)
     #df['derived_Press_sl'] = df.apply(lambda row: round(row["herrenhausen_Druck"] * (1 - ((kappa - 1) / kappa) * ((M * g * (-1 * height)) / (r * row["herrenhausen_Temperatur"])) )**(kappa / (kappa - 1)), 2))
     return df
+def press_reduction_international(row):
+    kappa = 1.402
+    M = 0.02896
+    g = 9.81
+    r = 8.314
+    height=51
+    
+    # Berechne pmsl für jede Zeile im DataFrame
+    rowing = round( row["herrenhausen_Druck"] * (1 - ((kappa - 1) / kappa) * ((M * g * (-1 * height)) / (r * row["herrenhausen_Temperatur"])) )**(kappa / (kappa - 1)), 2)
+    #df['derived_Press_sl'] = df.apply(lambda row: round(row["herrenhausen_Druck"] * (1 - ((kappa - 1) / kappa) * ((M * g * (-1 * height)) / (r * row["herrenhausen_Temperatur"])) )**(kappa / (kappa - 1)), 2))
+    return rowing
 #years=np.arange(2016,2023)
 
 #for year in years:

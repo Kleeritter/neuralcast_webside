@@ -58,7 +58,7 @@ def neural_forecast(variable):
 
 
 def multilstm_full(modell,data,forecast_horizon,forecast_var="herrenhausen_Temperatur",hyper_params_path="",corvars=[]):
-    from webside_training.webside_models.lstm_multi import LSTM_MULTI_Model
+    from imuknet.funcs.lstm_multi import LSTM_MULTI_Model
     from webside_training.resample_and_normallize import load_hyperparameters
     import numpy as np
     import torch
