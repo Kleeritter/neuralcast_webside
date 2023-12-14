@@ -1,6 +1,6 @@
 import numpy as np
 
-def resample(netcdf_filepath, outputfile):
+def resample(netcdf_filepath, outputfile, v=2):
     import xarray as xr
     import pandas as pd
     import glob
@@ -9,8 +9,14 @@ def resample(netcdf_filepath, outputfile):
     ds=wind_split(netcdf_filepath)
     #ds = xr.open_dataset(netcdf_filepath)
     time_index = pd.to_datetime(ds['time'].values, unit='s')
-    vars =["dach_CO2_ppm","dach_Diffus_CMP-11","dach_Geneigt_CM-11","dach_Global_CMP-11","herrenhausen_Druck","herrenhausen_Feuchte","herrenhausen_Gust_Speed","herrenhausen_Pyranometer_CM3","herrenhausen_Regen","herrenhausen_Temperatur","herrenhausen_Wind_Speed",
-    "sonic_Gust_Speed","sonic_Temperatur","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos","sonic_Wind_Speed"]
+    if v==1:
+        vars= ["herrenhausen_Temperatur","herrenhausen_Druck","herrenhausen_Feuchte","dach_Diffus_CMP-11","dach_Global_CMP-11","herrenhausen_Gust_Speed", "sonic_Gust_Speed","herrenhausen_Regen","herrenhausen_Wind_Speed",
+       "sonic_Wind_Speed","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos"]
+
+        ds["herrenhausen_Temperatur"]= ds["herrenhausen_Temperatur"] +273.15
+    else:
+        vars =["dach_CO2_ppm","dach_Diffus_CMP-11","dach_Geneigt_CM-11","dach_Global_CMP-11","herrenhausen_Druck","herrenhausen_Feuchte","herrenhausen_Gust_Speed","herrenhausen_Pyranometer_CM3","herrenhausen_Regen","herrenhausen_Temperatur","herrenhausen_Wind_Speed",
+        "sonic_Gust_Speed","sonic_Temperatur","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos","sonic_Wind_Speed"]
     
     values = ds[vars].isel(time=time_index.minute % 60 == 0)
 
@@ -66,7 +72,7 @@ def wind_split(file):
     return  data.to_xarray()
 
 
-def normalize(netcdf_filepath, outputfile):
+def normalize(netcdf_filepath, outputfile, v=2):
     import xarray as xr
     import pandas as pd
     import glob
@@ -82,7 +88,10 @@ def normalize(netcdf_filepath, outputfile):
 
             scaler = MinMaxScaler(feature_range=(0, 1))
             #print(os.getcwd())
-            param_path ='../webside_training/params_for_normal_webside.yaml'  # "../../Data/params_for_normal.yaml"
+            if v==1:
+                param_path ='../webside_training/params_for_normal_webside.yaml'  # "../../Data/params_for_normal.yaml"
+            else:
+                param_path ='../webside_training/params_for_normal_webside.yaml'  # "../../Data/params_for_normal.yaml"
             params = load_hyperparameters(param_path)
 
             mins = params[column]['min']#params["Min_" + column]

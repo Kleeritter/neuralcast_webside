@@ -91,16 +91,28 @@ def main():
     os.makedirs(os.path.dirname(outputpath_ruthe), exist_ok=True)
     convert_years(path=path, full=False, startday=startday,endday=endday, location="Herrenhausen", filename=outputpath_herrenhausen)
     convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthe)
-    outputpath_herrenhausen_res = args.outputpath+"latest_herrenhausen_res.nc"
-    outputpath_herrenhausen_normal = args.outputpath+"latest_herrenhausen_normal.nc"
-    outputpath_ruthe_res = args.outputpath+"latest_ruthe_res.nc"
-    outputpath_ruthe_normal = args.outputpath+"latest_ruth_normal.nc"
 
-    resample(outputpath_herrenhausen, outputpath_herrenhausen_res)
-    normalize(outputpath_herrenhausen_res,outputpath_herrenhausen_normal)
-    resample(outputpath_ruthe, outputpath_ruthe_res)
-    normalize(outputpath_ruthe_res,outputpath_ruthe_normal)
+    print("start resampling imuknet1")
+    outputpath_herrenhausen_res = args.outputpath+"latest_herrenhausen_res_imuknet1.nc"
+    outputpath_herrenhausen_normal = args.outputpath+"latest_herrenhausen_normal_imuknet1.nc"
+    outputpath_ruthe_res = args.outputpath+"latest_ruthe_res_imuknet1.nc"
+    outputpath_ruthe_normal = args.outputpath+"latest_ruth_normal_imuknet1.nc"
 
+    resample(outputpath_herrenhausen, outputpath_herrenhausen_res,v=1)
+    normalize(outputpath_herrenhausen_res,outputpath_herrenhausen_normal,v=1)
+    resample(outputpath_ruthe, outputpath_ruthe_res,v=1)
+    normalize(outputpath_ruthe_res,outputpath_ruthe_normal,v=1)
+
+    print("start resampling imuknet2")
+    outputpath_herrenhausen_res = args.outputpath+"latest_herrenhausen_res_imuknet2.nc"
+    outputpath_herrenhausen_normal = args.outputpath+"latest_herrenhausen_normal_imuknet2.nc"
+    outputpath_ruthe_res = args.outputpath+"latest_ruthe_res_imuknet2.nc"
+    outputpath_ruthe_normal = args.outputpath+"latest_ruth_normal_imuknet2.nc"
+
+    resample(outputpath_herrenhausen, outputpath_herrenhausen_res,v=2)
+    normalize(outputpath_herrenhausen_res,outputpath_herrenhausen_normal,v=2)
+    resample(outputpath_ruthe, outputpath_ruthe_res,v=2)
+    normalize(outputpath_ruthe_res,outputpath_ruthe_normal,v=2)
 
 if __name__ == "__main__":
     main()
