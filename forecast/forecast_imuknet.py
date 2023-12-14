@@ -33,7 +33,12 @@ def neural_forecast(variable):
     print(sliced_dataset.herrenhausen_Temperatur.values)
     modelpath= "converting/webside_training/saved_models/multi/best_model_state_herrenhausen_Temperatur.pt"
     hyper_params_path= "converting/webside_training/webside_params/multi/best_params_lstm_multi_herrenhausen_Temperatur.yaml"
-    forecasts= multilstm_full(modell=modelpath,data=sliced_dataset,forecast_horizon=24,forecast_var="herrehausen_Temperatur",hyper_params_path=hyper_params_path)
+    
+    corvars= ["herrenhausen_Temperatur","derived_Press_sl","herrenhausen_Feuchte","dach_Diffus_CMP-11","dach_Global_CMP-11","herrenhausen_Gust_Speed", "sonic_Gust_Speed","herrenhausen_Regen","herrenhausen_Wind_Speed",
+       "sonic_Wind_Speed","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos","derived_Taupunkt","derived_Taupunkt3h","derived_Press3h", "derived_rainsum3h","derived_vertwind","derived_Regen_event" ]
+    
+    
+    forecasts= multilstm_full(modell=modelpath,data=sliced_dataset,forecast_horizon=24,forecast_var="herrehausen_Temperatur",hyper_params_path=hyper_params_path, corvars=corvars)
     print(forecasts)
     dataprint= np.append(sliced_dataset.herrenhausen_Temperatur.values,forecasts)
     print(dataprint)
@@ -52,7 +57,7 @@ def neural_forecast(variable):
     return
 
 
-def multilstm_full(modell,data,forecast_horizon,forecast_var="herrenhausen_Temperatur",hyper_params_path="",corvars=corvars):
+def multilstm_full(modell,data,forecast_horizon,forecast_var="herrenhausen_Temperatur",hyper_params_path="",corvars=[]):
     from webside_training.webside_models.lstm_multi import LSTM_MULTI_Model
     from webside_training.resample_and_normallize import load_hyperparameters
     import numpy as np

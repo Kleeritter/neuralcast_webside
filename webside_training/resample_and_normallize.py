@@ -15,7 +15,7 @@ def resample(netcdf_filepath, outputfile, v=2):
 
         ds["herrenhausen_Temperatur"]= ds["herrenhausen_Temperatur"] +273.15
         ds["derived_Taupunkt"]= dew_pointa( ds["herrenhausen_Temperatur"], ds["herrenhausen_Feuchte"])
-        ds["derived_Press_sl"]= pressreduction_international(ds["herrenhausen_Druck"],51,ds["herrenhausen_Temperatur"])     
+        ds = press_reduction_international(ds) #ds["derived_Press_sl"]= pressreduction_international(ds["herrenhausen_Druck"],51,ds["herrenhausen_Temperatur"])     
 
             # Calculate resampled variables
         ds["derived_Taupunkt3h"] = resample_var(ds, "derived_Taupunkt")
@@ -134,14 +134,26 @@ def dew_pointa(T, RH):
     T_dp = (b * alpha) / (a - alpha)
     return T_dp
 
-def pressreduction_international(p,height,t):
+#def pressreduction_international(ds,p,height,t):
     kappa=1.402
     M=0.02896
     g= 9.81
     r=8.314
-    pmsl= round(p*(1-((kappa -1)/kappa) *((M*g*(-1*height))/(r*t)))**(kappa/(kappa -1)),2)
+    pmsml = round(ds.apply(lambda row: row[p_column] * (1 - ((kappa - 1) / kappa) * ((M * g * (-1 * row[height_column])) / (r * row[t_column])) )**(kappa / (kappa - 1)), axis=1), 2)
+    #pmsl= round(p*(1-((kappa -1)/kappa) *((M*g*(-1*height))/(r*t)))**(kappa/(kappa -1)),2)
     return pmsl
 
+def press_reduction_international(df):
+    kappa = 1.402
+    M = 0.02896
+    g = 9.81
+    r = 8.314
+    height=51
+    
+    # Berechne pmsl für jede Zeile im DataFrame
+    df['derived_Press_sls'] = round(df.apply(lambda row: row["herrenhausen_Druck"] * (1 - ((kappa - 1) / kappa) * ((M * g * (-1 * height)) / (r * row["herrenhausen_Temperatur"])) )**(kappa / (kappa - 1)), axis=1), 2)
+    
+    return df
 #years=np.arange(2016,2023)
 
 #for year in years:
