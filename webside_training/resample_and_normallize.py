@@ -16,9 +16,8 @@ def resample(netcdf_filepath, outputfile, v=2):
         ds["herrenhausen_Temperatur"]= ds["herrenhausen_Temperatur"] +273.15
         ds["herrenhausen_Feuchte"]= ds["herrenhausen_Feuchte"]
         ds["derived_Taupunkt"]= dew_pointa( ds["herrenhausen_Temperatur"], ds["herrenhausen_Feuchte"])
-        if ds["derived_Taupunkt"].isnull==True:
-            ds["derived_Taupunkt"]=0
-        print(ds["derived_Taupunkt"])
+        ds["derived_Taupunkt"]= ds['derived_Taupunkt'].where(~np.all(np.isnan(data['derived_Taupunkt']), axis=0), 0)
+
        
         ds["derived_Press_sl"]= pressreduction_international(ds["herrenhausen_Druck"],51,ds["herrenhausen_Temperatur"]) *100
 
