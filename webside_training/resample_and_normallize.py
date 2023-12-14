@@ -120,6 +120,7 @@ def normalize(netcdf_filepath, outputfile, v=2):
     ds.close()
     return 
 def resample_var(data, var, sum=False):
+    data=data.to_dataframe()
     if sum:
         sample = data[var].rolling('3H').sum().fillna(0)
     else:
