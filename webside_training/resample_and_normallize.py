@@ -27,7 +27,7 @@ def resample(netcdf_filepath, outputfile, v=2):
 
         # Calculate additional variables
         ds["derived_vertwind"] = ds["sonic_Wind_Speed"] - ds["herrenhausen_Wind_Speed"]
-        ds["derived_Regen_event"] = ds["herrenhausen_Regen"].to_dataframe().rolling('3H').apply(lambda x: 1 if x.sum() > 0 else 0).fillna(0)
+        ds["derived_Regen_event"] = resamrain(ds)
         #ds["rain"] = ds["rain"] + 1
     else:
         vars =["dach_CO2_ppm","dach_Diffus_CMP-11","dach_Geneigt_CM-11","dach_Global_CMP-11","herrenhausen_Druck","herrenhausen_Feuchte","herrenhausen_Gust_Speed","herrenhausen_Pyranometer_CM3","herrenhausen_Regen","herrenhausen_Temperatur","herrenhausen_Wind_Speed",
@@ -146,29 +146,10 @@ def pressreduction_international(p,height,t):
     pmsl= p*(1-((kappa -1)/kappa) *((M*g*(-1*height))/(r*t)))**(kappa/(kappa -1))
     return pmsl
 
-#def press_reduction_international(df):
-  #  kappa = 1.402
-   # M = 0.02896
-   # g = 9.81
-    #r = 8.314
-    #height=51
-    
-    # Berechne pmsl für jede Zeile im DataFrame
-    #df['derived_Press_sl'] = round(df.apply(lambda row: row[herrenhausen_Druck] * (1 - ((kappa - 1) / kappa) * ((M * g * (-1 * height)) / (r * row["herrenhausen_Temperatur"])) )**(kappa / (kappa - 1))), 2)
-    #df['derived_Press_sl'] = df.apply(lambda row: round(row["herrenhausen_Druck"] * (1 - ((kappa - 1) / kappa) * ((M * g * (-1 * height)) / (r * row["herrenhausen_Temperatur"])) )**(kappa / (kappa - 1)), 2))
-    #return df
-#def press_reduction_international(row):
- #   kappa = 1.402
-  #  M = 0.02896
-   # g = 9.81
-   # r = 8.314
- #   height=51
- #   result = round(
- #       row["herrenhausen_Druck"] * (1 - ((kappa - 1) / kappa) * ((M * g * (-1 * height)) / (r * row["herrenhausen_Temperatur"])) )**(kappa / (kappa - 1)), 2
- #   )
- #   return result
-    #return round( row["herrenhausen_Druck"] * (1 - ((kappa - 1) / kappa) * ((M * g * (-1 * height)) / (r * row["herrenhausen_Temperatur"])) )**(kappa / (kappa - 1)), 2)
-#years=np.arange(2016,2023)
+def resamrain(data):
+    data= data.to_dataframe()
+    rr = data["herrenhausen_Regen"].rolling('3H').apply(lambda x: 1 if x.sum() > 0 else 0).fillna(0)
+    return rr
 
 #for year in years:
  #       print(year)
