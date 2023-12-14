@@ -14,20 +14,14 @@ def resample(netcdf_filepath, outputfile, v=2):
        "sonic_Wind_Speed","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos","derived_Regen_event","derived_Taupunkt3h","derived_Temp3h", "derived_Press3h","derived_Press_sl","derived_Taupunkt","derived_rainsum3h","derived_vertwind" ]
 
         ds["herrenhausen_Temperatur"]= ds["herrenhausen_Temperatur"] +273.15
+        ds["herrenhausen_Feuchte"]= ds["herrenhausen_Feuchte"]
         ds["derived_Taupunkt"]= dew_pointa( ds["herrenhausen_Temperatur"], ds["herrenhausen_Feuchte"])
         print(ds["derived_Taupunkt"])
         #ds = press_reduction_international(ds) #ds["derived_Press_sl"]= pressreduction_international(ds["herrenhausen_Druck"],51,ds["herrenhausen_Temperatur"])     
         #ds["derived_Press_sl"]= #ds.apply(press_reduction_international,axis=1)
-        ds["derived_Press_sl"]= pressreduction_international(ds["herrenhausen_Druck"],51,ds["herrenhausen_Temperatur"]) 
+        ds["derived_Press_sl"]= pressreduction_international(ds["herrenhausen_Druck"],51,ds["herrenhausen_Temperatur"]) *100
             # Calculate resampled variables
-        ds["derived_Taupunkt3h"] = resample_var(ds, "derived_Taupunkt")
-        ds["derived_Press3h"] = resample_var(ds, "derived_Press_sl")
-        ds["derived_rainsum3h"] = resample_var(ds, "herrenhausen_Regen", sum=True)
-        ds["derived_Temp3h"] = resample_var(ds, "herrenhausen_Temperatur")
-
-        # Calculate additional variables
-        ds["derived_vertwind"] = ds["sonic_Wind_Speed"] - ds["herrenhausen_Wind_Speed"]
-        ds["derived_Regen_event"] = resamrain(ds)
+        
         #ds["rain"] = ds["rain"] + 1
     else:
         vars =["dach_CO2_ppm","dach_Diffus_CMP-11","dach_Geneigt_CM-11","dach_Global_CMP-11","herrenhausen_Druck","herrenhausen_Feuchte","herrenhausen_Gust_Speed","herrenhausen_Pyranometer_CM3","herrenhausen_Regen","herrenhausen_Temperatur","herrenhausen_Wind_Speed",
@@ -53,9 +47,19 @@ def resample(netcdf_filepath, outputfile, v=2):
                     #ds[var_name] = hourly_var
                     dfs[var_name] = hourly_var
 
+
     print(dfs)
     df_cleaned = dfs.interpolate(method='linear')
     df_cleaned.index.names = ['time']
+    if v==1: 
+        df_cleaned["derived_Taupunkt3h"] = resample_var(df_cleaned, "derived_Taupunkt")
+        df_cleaned["derived_Press3h"] = resample_var(df_cleaned, "derived_Press_sl")
+        df_cleaned["derived_rainsum3h"] = resample_var(df_cleaned, "herrenhausen_Regen", sum=True)
+        df_cleaned["derived_Temp3h"] = resample_var(df_cleaned, "herrenhausen_Temperatur")
+
+        # Calculate additional variables
+        df_cleaned["derived_vertwind"] = df_cleaned["sonic_Wind_Speed"] - df_cleaned["herrenhausen_Wind_Speed"]
+        df_cleaned["derived_Regen_event"] = resamrain(df_cleaned)
     #if "wind_dir_50" in vars:
      #   df_cleaned.loc[df_cleaned['wind_dir_50'] < 0, 'wind_dir_50'] = 0
     df_cleaned.to_xarray().to_netcdf(outputfile)
