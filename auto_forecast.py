@@ -26,7 +26,7 @@ def main():
     print("start Multi")
     dataset="test_data/latest_herrenhausen_normal_imuknet1.nc"
     outputfile = output+"/forecast_test.nc"
-    neural_forecast(dataset=dataset,outputfile=outputfile, time_start= time_start)
+    neural_forecast_multi(dataset=dataset,outputfile=outputfile, time_start= time_start)
     #### Multi Forecast Ende ###
     
     ### Imuknet1 Forecast Ende ###
