@@ -36,7 +36,7 @@ def neural_forecast_var_multi(variable, dataset):
     # Die Daten in der Zeitdimension slicen
     sliced_dataset = dataset.sel(time=slice(start_time, current_time))
     dataset.close()
-    print(sliced_dataset.herrenhausen_Temperatur.values)
+    #print(sliced_dataset.herrenhausen_Temperatur.values)
 
     var_pars = load_hyperparameters(params_path)
     
@@ -50,7 +50,7 @@ def neural_forecast_var_multi(variable, dataset):
 
     ### Modell aufrufen und Vorhersage erstellen ###
     forecasts= multilstm_full(modell=modelpath,data=sliced_dataset,forecast_horizon=24,forecast_var=variable,hyper_params_path=hyper_params_path, corvars=corvars)
-    print(forecasts)
+    #print(forecasts)
     #dataprint= np.append(sliced_dataset.herrenhausen_Temperatur.values,forecasts)
     #print(dataprint)
     ### Modell aufrufen und Vorhersage erstellen ###
