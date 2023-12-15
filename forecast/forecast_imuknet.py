@@ -169,7 +169,7 @@ def neural_forecast_var_single(variable, dataset):
     # Die Daten in der Zeitdimension slicen
     sliced_dataset = dataset.sel(time=slice(start_time, current_time))
     dataset.close()
-    print(sliced_dataset.herrenhausen_Temperatur.values)
+    #print(sliced_dataset.herrenhausen_Temperatur.values)
 
     var_pars = load_hyperparameters(params_path)
     
@@ -178,7 +178,7 @@ def neural_forecast_var_single(variable, dataset):
 
     ### Modell aufrufen und Vorhersage erstellen ###
     forecasts= lstm_single(modell=modelpath,data=sliced_dataset,forecast_horizon=24,forecast_var=variable,hyper_params_path=hyper_params_path, variable=variable)
-    print(forecasts)
+    #print(forecasts)
     #dataprint= np.append(sliced_dataset.herrenhausen_Temperatur.values,forecasts)
     #print(dataprint)
     ### Modell aufrufen und Vorhersage erstellen ###
@@ -245,7 +245,7 @@ def lstm_single(modell,data,forecast_horizon,forecast_var="herrenhausen_Temperat
 
 
     input_data = torch.from_numpy(np.array(sliding_window)).float()
-    print(input_data.shape)
+    #print(input_data.shape)
     with torch.no_grad():
         predicted_value = model(input_data)
     predicted_values = np.array(predicted_value).flatten()
