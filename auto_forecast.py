@@ -1,52 +1,38 @@
-def neural_forecast(variable):
-    import xarray as xr
-    import torch
-    from torch.utils.data import Dataset, DataLoader
-    import torch.nn as nn
-    import pytorch_lightning as pl
-    import numpy as np
-    import random
-    import xarray as xr
-    from scipy import stats
-    from datetime import timedelta
-    import numpy as np
-    import matplotlib.pyplot as plt
+from forecast.forecast_imuknet import neural_forecast_multi,neural_forecast_single
+import argparse
+import os
+from datetime import date, timedelta,datetime
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('inputpath')
+    parser.add_argument('outputpath')
 
-    from sklearn.preprocessing import MinMaxScaler
+    args = parser.parse_args() 
 
-
-    dataset = xr.open_dataset('/Users/alex/Code/neuralcast_webside/latest_herrenhausen_normal.nc')
-    # Die Zeitdimension extrahieren
-    time_dimension = dataset['time']
-    #print(time_dimension)
-
-    # Das aktuelle Zeitpunkt erhalten (letzter Zeitpunkt in der Datei)
-    current_time = time_dimension[-1].values
-
-    # Die Startzeitpunkt für die letzten 72 Stunden berechnen
-   #start_time = current_time - timedelta(hours=24)
-    start_time = current_time - np.timedelta64(23, 'h')
-
-    # Die Daten in der Zeitdimension slicen
-    sliced_dataset = dataset.sel(time=slice(start_time, current_time))
-    dataset.close()
-    print(sliced_dataset.herrenhausen_Temperatur.values)
-    modelpath= "converting/webside_training/saved_models/multi/best_model_state_herrenhausen_Temperatur.pt"
-    hyper_params_path= "converting/webside_training/webside_params/multi/best_params_lstm_multi_herrenhausen_Temperatur.yaml"
-    forecasts= multilstm_full(modell=modelpath,data=sliced_dataset,forecast_horizon=24,forecast_var="herrehausen_Temperatur",hyper_params_path=hyper_params_path)
-    print(forecasts)
-    dataprint= np.append(sliced_dataset.herrenhausen_Temperatur.values,forecasts)
-    print(dataprint)
-
-    # Beispielwerte
-    dataa = np.arange(-20.0, 45.0)  # Annahme: Ein eindimensionaler Datensatz
+    path = args.inputpath
+    output =args.outputpath
+    today  = datetime.now()
 
 
-    scalera = MinMaxScaler()
-    scalera.fit(dataa.reshape(-1, 1))
-    denormalized_values = scalera.inverse_transform(dataprint.reshape(-1, 1)).flatten()
+    time_start = today.strftime('%d.%m.%Y %H:00')
+    print(time_start)
+    ### Imuknet1 Forecast###
+    print("start Imuknet1")
+    print("start Single")
+    dataset= path+"/latest_herrenhausen_normal_imuknet1.nc"
+    outputfile = output+"/forecast_test_single.nc"
+    neural_forecast_single(dataset=dataset,outputfile=outputfile, time_start=time_start)
+    #### Multi Forecast ###
+    print("start Multi")
+    dataset="test_data/latest_herrenhausen_normal_imuknet1.nc"
+    outputfile = output+"/forecast_test.nc"
+    neural_forecast(dataset=dataset,outputfile=outputfile, time_start= time_start)
+    #### Multi Forecast Ende ###
+    
+    ### Imuknet1 Forecast Ende ###
 
-    plt.plot(denormalized_values)
-    plt.show()
-   
+
     return
+
+if __name__ == "__main__":
+    main()
