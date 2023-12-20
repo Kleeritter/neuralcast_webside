@@ -35,7 +35,7 @@ def resample(netcdf_filepath, outputfile, v=2):
     
     values = ds[vars].isel(time=time_index.minute % 60 == 0)
 
-    hourly_range= pd.date_range(start=time_index.min(), end=time_index.max()+timedelta(hours=1), freq='1H')
+    hourly_range= pd.date_range(start=time_index.min(), end=time_index.max(), freq='1H')
     dfs = pd.DataFrame(index=hourly_range)
 
     for var_name, var in values.variables.items():
