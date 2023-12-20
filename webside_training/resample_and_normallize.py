@@ -6,6 +6,7 @@ def resample(netcdf_filepath, outputfile, v=2):
     import glob
     import numpy as np
     from scipy.interpolate import interp1d
+    from datetime import timedelta
     ds=wind_split(netcdf_filepath)
     #ds = xr.open_dataset(netcdf_filepath)
     time_index = pd.to_datetime(ds['time'].values, unit='s')
@@ -34,7 +35,7 @@ def resample(netcdf_filepath, outputfile, v=2):
     
     values = ds[vars].isel(time=time_index.minute % 60 == 0)
 
-    hourly_range= pd.date_range(start=time_index.min(), end=time_index.max(), freq='1H')
+    hourly_range= pd.date_range(start=time_index.min(), end=time_index.max()+timedelta(hours=1), freq='1H')
     dfs = pd.DataFrame(index=hourly_range)
 
     for var_name, var in values.variables.items():
