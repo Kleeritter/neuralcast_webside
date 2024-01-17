@@ -20,7 +20,7 @@ def main():
     #print(origin)
     #os.chdir(origin +"/neuralcast_webside")
     #time_start = today.strftime('%d.%m.%Y %H:00')
-    print(time_start)
+    #print(time_start)
     ### Imuknet1 Forecast###
     print("start Imuknet1")
   
