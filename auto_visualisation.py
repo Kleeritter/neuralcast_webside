@@ -30,8 +30,7 @@ def main():
     
     for forecast_var in forecastvars:
         visualize_var(forecast_var=forecast_var,measured_data_path=args.inputpath_measured, forecast_multi_path=args.inputpath_forecast_multi,forecast_single_path=args.inputpath_forecast_single,outputpath=args.outputpath)
-
-
+        print(forecast_var+ " completed")
 
     return
 

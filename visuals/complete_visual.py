@@ -32,5 +32,4 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
 
 
     fig.write_html(outputpath + forecast_var + ".html")
-
-return
+    return
