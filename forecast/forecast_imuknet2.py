@@ -3,6 +3,7 @@ def neural_forecast(variable):
     import torch
     from torch.utils.data import Dataset, DataLoader
     import torch.nn as nn
+    import torchvision
     import pytorch_lightning as pl
     import numpy as np
     import random
