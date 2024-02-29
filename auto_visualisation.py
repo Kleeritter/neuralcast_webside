@@ -10,11 +10,19 @@ def main():
     parser.add_argument('inputpath_forecast_single')
     parser.add_argument('inputpath_forecast_multi')
     parser.add_argument('outputpath')
+    parser.add_argument('debug')
 
     args = parser.parse_args() 
 
     output =args.outputpath
     today  = datetime.now()
+    debug = int(args.debug)
+    print(debug)
+    if debug==0:
+        print("DEBUG")
+        today = datetime(2024, 2, 27,2)  # Set the desired date
+    else:
+        today  = date.today()
 
     #origin =os.getcwd()
     #print(origin)

@@ -9,18 +9,18 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('inputpath')
     parser.add_argument('outputpath')
-    #parser.add_argument('debug')
+    parser.add_argument('debug')
 
 
     args = parser.parse_args() 
 
     path = args.inputpath
 
-    #if args.debug :
-      #  today =
-    #else:
-     #   today  = date.today()
-    today  = date.today()
+    if args.debug == 0:
+        today = datetime(2024, 2, 26)  # Set the desired date
+    else:
+        today  = date.today()
+    #today  = date.today()
     startday= today.strftime('%Y') +"-01-01"
     endday = today.strftime('%Y-%m-%d')
     outputpath_herrenhausen = args.outputpath+today.strftime('%Y')+"/"+today.strftime('%Y')+"_herrenhausen.nc"
