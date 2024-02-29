@@ -2,7 +2,7 @@ def neural_forecast_var_multi(variable, dataset):
     import xarray as xr
     import torch
     from torch.utils.data import Dataset, DataLoader
-    import torchvision
+    #import torchvision
     import torch.nn as nn
     import pytorch_lightning as pl
     import numpy as np
@@ -137,7 +137,7 @@ def neural_forecast_var_single(variable, dataset):
     import torch
     from torch.utils.data import Dataset, DataLoader
     import torch.nn as nn
-    import torchvision
+    #import torchvision
     import pytorch_lightning as pl
     import numpy as np
     import random

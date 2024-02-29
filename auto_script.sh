@@ -38,7 +38,7 @@ path_input_forecast_single="/data/stadtwetter/Vorhersage/forecast_test_single_mu
 path_input_forecast_multi="/data/stadtwetter/Vorhersage/forecast_test.nc"
 
 path_output="/data/stadtwetter/Vorhersage/grafiken/test/"
-debug=0  # true
+debug=1  # true
 
 "${python_root}/miniforge3/envs/Stadtwetter/bin/python3" "${path_root}/auto_visualisation.py" $path_input_measured $path_input_forecast_single $path_input_forecast_multi $path_output $debug
 echo " Visuals finished"
