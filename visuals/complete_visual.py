@@ -30,7 +30,7 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
 
     df_single = df_single[forecast_var+"_"+last_forecast_hour][-24:]
     selected_columns = dataset_forecast_single.to_dataframe().filter(regex=f'^{forecast_var}')#[:-24]
-    print(selected_columns)
+    #print(selected_columns)
     
     #selected_columns.loc[len(selected_columns) - 24:, forecast_var+"_"+last_forecast_hour] = pd.NA
     selected_columns.iloc[(-24+ int(last_forecast_hour)):, selected_columns.columns.get_loc(forecast_var+"_"+last_forecast_hour)] = pd.NA
