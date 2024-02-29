@@ -9,7 +9,7 @@ def attribute_transfer(xarray_dataset, location="Herrenhausen"):
     import os
 
     if location== "Herrenhausen":
-        yaml_file_path = 'Attributes/attributes_herrenhausen_res.yml'
+        yaml_file_path = '/home/stadtwetter/neuralcast_webside/webside_training/Attributes/attributes_herrenhausen_res.yml'
     else:
         yaml_file_path = 'Attributes/attributes_ruthe.yml'
 
