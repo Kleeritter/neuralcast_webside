@@ -13,10 +13,10 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
     #print(dataset.head())
     df = dataset.to_dataframe()
     # Den Index um eine Stunde verschieben
-    new_index = df.index + pd.DateOffset(hours=1)
+    #new_index = df.index + pd.DateOffset(hours=1)
 
     # DataFrame mit dem verschobenen Index erstellen
-    df = df.set_index(new_index)[forecast_var]
+    #df = df.set_index(new_index)[forecast_var]
     #print(df)
     df= df[-48:]
     #df_multi =dataset_forecast_multi.to_dataframe()[forecast_var]
