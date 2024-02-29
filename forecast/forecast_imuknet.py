@@ -166,7 +166,7 @@ def neural_forecast_var_single(variable, dataset):
     current_time = time_dimension[-1].values
 
     # Die Startzeitpunkt für die letzten 72 Stunden berechnen
-    start_time = current_time - np.timedelta64(24, 'h')
+    start_time = current_time - np.timedelta64(23, 'h')
 
     print(start_time)
 
