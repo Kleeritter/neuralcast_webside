@@ -168,7 +168,7 @@ def neural_forecast_var_single(variable, dataset):
     # Die Startzeitpunkt für die letzten 72 Stunden berechnen
     start_time = current_time - np.timedelta64(23, 'h')
 
-    print(start_time)
+    print(current_time)
 
     # Die Daten in der Zeitdimension slicen
     sliced_dataset = dataset.sel(time=slice(start_time, current_time))
