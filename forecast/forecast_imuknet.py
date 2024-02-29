@@ -209,9 +209,10 @@ def neural_forecast_single(dataset, outputfile, time_start,today):
     import pandas as pd 
     from datetime import datetime
     import os
+    import numpy as np
 
     variable_list=["herrenhausen_Temperatur", "derived_Press_sl","herrenhausen_Feuchte", "dach_Diffus_CMP-11","dach_Global_CMP-11","herrenhausen_Gust_Speed",
-     "sonic_Gust_Speed","herrenhausen_Regen", "herrenhausen_Wind_Speed", "sonic_Wind_Speed","sonic_Wind_Dir_sin", "sonic_Wind_Dir_cos"]
+     "sonic_Gust_Speed","herrenhausen_Regen", "herrenhausen_Wind_Speed", "sonic_Wind_Speed","sonic_Wind_Dir_sin", "sonic_Wind_Dir_cos", "sonic_Wind_Dir"]
 
 
     numered_variable_names = [f"{variable}_{today.strftime('%H')}" for variable in variable_list]
@@ -231,12 +232,25 @@ def neural_forecast_single(dataset, outputfile, time_start,today):
 
 
     for variable, numvar in zip(variable_list, numered_variable_names):
-        #print(variable)
-            # Generiere die Variable mit der Funktion
-        variable_data = neural_forecast_var_single(variable=variable, dataset=dataset)
+        if variable!= "sonic_Wind_Dir":
+            #print(variable)
+                # Generiere die Variable mit der Funktion
+            variable_data = neural_forecast_var_single(variable=variable, dataset=dataset)
 
-        # Füge die Variable zum Xarray-Dataset hinzu und weise die Zeitdimension zu
-        ds[numvar] = (("time",), variable_data)
+            # Füge die Variable zum Xarray-Dataset hinzu und weise die Zeitdimension zu
+            ds[numvar] = (("time",), variable_data)
+        else:
+            ds[numvar] = np.arctan2(ds[numered_variable_names[-3]], ds[numered_variable_names[-2]])
+
+                # Umrechnung von Radiant in Grad
+            ds[numvar] = np.degrees(ds[numvar])
+            # Korrektur negativer Gradzahlen
+            ds[numvar] = (ds[numvar] + 360) % 360
+            ds.drop_vars([numered_variable_names[-3], numered_variable_names[-2]])
+
+    # Berechnung der Windrichtung aus den sin- und cos-Werten
+# Berechnung der Windrichtung aus den sin- und cos-Werten
+
 
     if dold is not None:
         # Concatenate the new dataset (ds) with the old dataset (dold) along the time dimension

@@ -1,4 +1,29 @@
 import numpy as np
+import yaml
+import xarray as xr
+
+def attribute_transfer(xarray_dataset, location="Herrenhausen"):
+   # import os
+   # os.chdir("/Users/alex/Code/neuralcast_webside/converting")
+        # Pfad zur YAML-Datei
+    import os
+
+    if location== "Herrenhausen":
+        yaml_file_path = '../Converting/Attributes/attributes_herrenhausen_res.yml'
+    else:
+        yaml_file_path = '../Converting/Attributes/attributes_ruthe.yml'
+
+    # YAML-Datei einlesen
+    with open(yaml_file_path, 'r') as yaml_file:
+        attribute_data = yaml.safe_load(yaml_file)
+
+    # Aktualisieren der Attribute der "temperatur"-Variablen
+    vars= xarray_dataset.keys()
+    for var in vars:
+        if var in attribute_data:
+            for key, value in attribute_data[var].items():
+                xarray_dataset[var].attrs[key] = value
+    return xarray_dataset
 
 def resample(netcdf_filepath, outputfile, v=2):
     import xarray as xr
@@ -12,7 +37,7 @@ def resample(netcdf_filepath, outputfile, v=2):
     time_index = pd.to_datetime(ds['time'].values, unit='s')
     if v==1:
         vars= ["herrenhausen_Temperatur","herrenhausen_Druck","herrenhausen_Feuchte","dach_Diffus_CMP-11","dach_Global_CMP-11","herrenhausen_Gust_Speed", "sonic_Gust_Speed","herrenhausen_Regen","herrenhausen_Wind_Speed",
-       "sonic_Wind_Speed","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos","derived_Press_sl","derived_Taupunkt"]#,"derived_Taupunkt3h","derived_Temp3h", "derived_Press3h",,"derived_rainsum3h","derived_vertwind" ]
+       "sonic_Wind_Speed","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos","derived_Press_sl","derived_Taupunkt","sonic_Wind_Dir"]#,"derived_Taupunkt3h","derived_Temp3h", "derived_Press3h",,"derived_rainsum3h","derived_vertwind" ]
 
         ds["herrenhausen_Temperatur"]= ds["herrenhausen_Temperatur"] +273.15
         ds["herrenhausen_Feuchte"]= ds["herrenhausen_Feuchte"]
@@ -31,7 +56,7 @@ def resample(netcdf_filepath, outputfile, v=2):
 
     else:
         vars =["dach_CO2_ppm","dach_Diffus_CMP-11","dach_Geneigt_CM-11","dach_Global_CMP-11","herrenhausen_Druck","herrenhausen_Feuchte","herrenhausen_Gust_Speed","herrenhausen_Pyranometer_CM3","herrenhausen_Regen","herrenhausen_Temperatur","herrenhausen_Wind_Speed",
-        "sonic_Gust_Speed","sonic_Temperatur","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos","sonic_Wind_Speed"]
+        "sonic_Gust_Speed","sonic_Temperatur","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos","sonic_Wind_Speed", "sonic_Wind_Dir"]
     
     values = ds[vars].isel(time=time_index.minute % 60 == 0)
 
@@ -68,7 +93,10 @@ def resample(netcdf_filepath, outputfile, v=2):
         df_cleaned["derived_Regen_event"] = resamrain(df_cleaned)
     #if "wind_dir_50" in vars:
      #   df_cleaned.loc[df_cleaned['wind_dir_50'] < 0, 'wind_dir_50'] = 0
-    df_cleaned.to_xarray().to_netcdf(outputfile)
+    
+    df_cleaned=df_cleaned.to_xarray()
+    
+    df_cleaned = attribute_transfer(df_cleaned).to_netcdf(outputfile)
     ds.close()
 
     return
@@ -107,7 +135,15 @@ def normalize(netcdf_filepath, outputfile, v=2):
     from sklearn.preprocessing import MinMaxScaler
 
     ds = xr.open_dataset(netcdf_filepath)
+    try:
+        ds= ds.drop_vars("sonic_Wind_Dir")
+    except:
+        pass
     data= ds.to_dataframe()
+    cols =["dach_CO2_ppm","dach_Diffus_CMP-11","dach_Geneigt_CM-11","dach_Global_CMP-11","herrenhausen_Druck","herrenhausen_Feuchte","herrenhausen_Gust_Speed","herrenhausen_Pyranometer_CM3","herrenhausen_Regen","herrenhausen_Temperatur","herrenhausen_Wind_Speed",
+        "sonic_Gust_Speed","sonic_Temperatur","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos","sonic_Wind_Speed"]
+    print(data.columns)
+
     for column in data.columns:
             values = data[column].values.reshape(-1, 1)
 

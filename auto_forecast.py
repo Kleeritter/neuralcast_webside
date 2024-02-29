@@ -16,7 +16,7 @@ def main():
     #debug=0
     if debug==0:
         print("DEBUG")
-        today = datetime(2024, 2, 27,2)  # Set the desired date
+        today = datetime(2024, 2, 25,3)  # Set the desired date
     else:
         today  = date.today()
 
