@@ -172,6 +172,7 @@ def neural_forecast_var_single(variable, dataset):
 
     # Die Daten in der Zeitdimension slicen
     sliced_dataset = dataset.sel(time=slice(start_time, current_time))
+    print(sliced_dataset)
     dataset.close()
     #print(sliced_dataset.herrenhausen_Temperatur.values)
 
