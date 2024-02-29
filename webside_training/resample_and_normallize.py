@@ -9,9 +9,9 @@ def attribute_transfer(xarray_dataset, location="Herrenhausen"):
     import os
 
     if location== "Herrenhausen":
-        yaml_file_path = '../Converting/Attributes/attributes_herrenhausen_res.yml'
+        yaml_file_path = 'Attributes/attributes_herrenhausen_res.yml'
     else:
-        yaml_file_path = '../Converting/Attributes/attributes_ruthe.yml'
+        yaml_file_path = 'Attributes/attributes_ruthe.yml'
 
     # YAML-Datei einlesen
     with open(yaml_file_path, 'r') as yaml_file:
