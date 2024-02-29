@@ -18,7 +18,7 @@ def main():
         print("DEBUG")
         today = datetime(2024, 2, 25,3)  # Set the desired date
     else:
-        today  = date.today()
+        today  = datetime.now()
 
     origin =os.getcwd()
     print(origin)
