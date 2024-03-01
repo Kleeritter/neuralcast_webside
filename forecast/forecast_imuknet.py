@@ -219,6 +219,9 @@ def neural_forecast_single(dataset, outputfile, time_start,today):
 
 
     numered_variable_names = [f"{variable}_{today.strftime('%H')}" for variable in variable_list]
+    time_start = today.strftime('%d.%m.%Y %H:00')
+
+    print(time_start)
 
     try:
         dold = xr.open_dataset(outputfile)
