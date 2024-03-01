@@ -219,7 +219,7 @@ def neural_forecast_single(dataset, outputfile, time_start,today):
 
 
     numered_variable_names = [f"{variable}_{today.strftime('%H')}" for variable in variable_list]
-    time_start = today.strftime('%d.%m.%Y %H:00')
+    time_start = today.strftime('%Y-%m.%d %H:00')
 
     print(time_start)
 
