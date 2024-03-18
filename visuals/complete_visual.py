@@ -45,7 +45,7 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
     fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df["ImuKnet Single"],
                              mode='lines+markers', name="ImuKnet Single"))
     fig.add_trace(go.Scatter(x=df_single_old.index, y=means,
-                             mode='lines+markers', name="Vorherige Vorhersagen",color="smoker"))
+                             mode='lines+markers', name="Vorherige Vorhersagen"))
 
 
     fig.add_trace(  go.Scatter(        name='Upper Bound',        x=df_single_old.index,        y=maxs,        mode='lines',        marker=dict(color="#444"),        line=dict(width=0),        showlegend=False    ))
