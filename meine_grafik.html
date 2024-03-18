@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plotly Grafik</title>
+    <!-- Einbinden der Plotly-Bibliothek -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <!-- Container für die Plotly-Grafik -->
+    <div id="plot-container"></div>
+
+    <!-- Skript wird erst nach dem vollständigen Laden des DOM ausgeführt -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Lade das JSON-Objekt der Plotly-Grafik
+            fetch('meine_grafik.json')
+                .then(response => response.json())
+                .then(data => {
+                    // Render die Plotly-Grafik im 'plot-container' Div
+                    Plotly.react('plot-container', data.data, data.layout);
+                })
+                .catch(error => console.error('Fehler beim Laden der JSON-Datei:', error));
+        });
+    </script>
+</body>
+</html>

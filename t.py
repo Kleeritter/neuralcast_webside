@@ -1,17 +1,26 @@
-import pandas as pd
+import plotly.graph_objs as go
+import plotly.io as pio
+import json
 
-# Beispiel DataFrames
-df1 = pd.DataFrame({'ID': [1, 2, 3], 'Name': ['Alice', 'Bob', 'Charlie']})
-df2 = pd.DataFrame({'ID': [2, 3, 5], 'Name': [25, 30, 22]})
+# Daten für die Grafik
+x = [1, 2, 3, 4, 5]
+y = [10, 11, 12, 13, 14]
 
-# Merge mit unterschiedlichen Suffixen für die Spaltennamen
-# Setze die 'ID'-Spalte als Index
-df1.set_index('ID', inplace=True)
-df2.set_index('ID', inplace=True)
+# Erstellen des Plotly-Traces
+trace = go.Scatter(x=x, y=y)
 
-# Merge mit unterschiedlichen Suffixen für die Spaltennamen
-merged_df = pd.merge(df1, df2, left_index=True, right_index=True, how='outer', suffixes=('_df1', '_df2'))
+# Erstellen des Layouts
+layout = go.Layout(title='Meine Plotly Grafik')
 
-# Anzeigen des resultierenden DataFrames
-print(merged_df)
+# Erstellen des Figure-Objekts
+fig = go.Figure(data=[trace], layout=layout)
 
+# Konvertiere die Plotly-Grafik in JSON
+fig_json = pio.to_json(fig)
+
+# Speichere das JSON-Objekt in einer Datei
+with open('meine_grafik.json', 'w') as json_file:
+    json.dump(fig_json, json_file)
+
+
+fig.show()
