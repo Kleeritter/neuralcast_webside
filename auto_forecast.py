@@ -16,7 +16,7 @@ def main():
     #debug=0
     if debug==0:
         print("DEBUG")
-        today = datetime(2024, 2, 25,3)  # Set the desired date
+        today = datetime(2024, 3, 19,3)  # Set the desired date
     else:
         today  = datetime.now()
 
@@ -35,8 +35,8 @@ def main():
     #### Multi Forecast ###
     print("start Multi")
     dataset=path+"/latest_herrenhausen_normal_imuknet1.nc"
-    outputfile = output+"/forecast_test.nc"
-    neural_forecast_multi(dataset=dataset,outputfile=outputfile, time_start= time_start)
+    outputfile = output+"/forecast_test_multi_multiday.nc"
+    neural_forecast_multi(dataset=dataset,outputfile=outputfile, time_start= time_start,today=today)
     #### Multi Forecast Ende ###
     
     ### Imuknet1 Forecast Ende ###

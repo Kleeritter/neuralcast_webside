@@ -113,23 +113,73 @@ def load_hyperparameters(file_path):
     return hyperparameters
 
 
-def neural_forecast_multi(dataset, outputfile, time_start):
+def neural_forecast_multi(dataset, outputfile, time_start,today):
     import xarray as xr
     import pandas as pd 
     from datetime import datetime
+    import numpy as np
+    import os
     ds = xr.Dataset()#[("time",pd.date_range(start='1/1/2018', periods=24,freq="1H"))])
     ds["time"] = pd.date_range(start=time_start, periods=24,freq="1H")
+    #variable_list=["herrenhausen_Temperatur", "derived_Press_sl","herrenhausen_Feuchte", "dach_Diffus_CMP-11","dach_Global_CMP-11","herrenhausen_Gust_Speed",
+     #"sonic_Gust_Speed","herrenhausen_Regen", "herrenhausen_Wind_Speed", "sonic_Wind_Speed","sonic_Wind_Dir_sin", "sonic_Wind_Dir_cos"]
+    
+
     variable_list=["herrenhausen_Temperatur", "derived_Press_sl","herrenhausen_Feuchte", "dach_Diffus_CMP-11","dach_Global_CMP-11","herrenhausen_Gust_Speed",
-     "sonic_Gust_Speed","herrenhausen_Regen", "herrenhausen_Wind_Speed", "sonic_Wind_Speed","sonic_Wind_Dir_sin", "sonic_Wind_Dir_cos"]
-    for variable in variable_list:
-        #print(variable)
-               # Generiere die Variable mit der Funktion
-        variable_data = neural_forecast_var_multi(variable=variable, dataset=dataset)
+     "sonic_Gust_Speed","herrenhausen_Regen", "herrenhausen_Wind_Speed", "sonic_Wind_Speed","sonic_Wind_Dir_sin", "sonic_Wind_Dir_cos", "sonic_Wind_Dir"]
+
+    numered_variable_names = [f"{variable}_{today.strftime('%H')}" for variable in variable_list]
+    time_start = today.strftime('%Y-%m-%d %H:00')
+
+    print(time_start)
+
+    try:
+        dold = xr.open_dataset(outputfile)
+        os.remove(outputfile)
+    except FileNotFoundError:
+        dold = None
+        print(f"The file {outputfile} does not exist. Creating a new dataset.")
+
+    ds = xr.Dataset()#[("time",pd.date_range(start='1/1/2018', periods=24,freq="1H"))])
+    ds["time"] = pd.date_range(start=time_start, periods=24,freq="1H")
+
+    ds.attrs["last_forecast_hour"] = today.strftime('%H')
+
+
+
+    for variable, numvar in zip(variable_list, numered_variable_names):
+        if variable!= "sonic_Wind_Dir":
+            variable_data = neural_forecast_var_multi(variable=variable, dataset=dataset)
+            ds[numvar] = (("time",), variable_data)
+        else:
+            ds[numvar] = np.arctan2(ds[numered_variable_names[-3]], ds[numered_variable_names[-2]])
+            ds[numvar] = np.degrees(ds[numvar])
+            # Korrektur negativer Gradzahlen
+            ds[numvar] = (ds[numvar] + 360) % 360
+            ds.drop_vars([numered_variable_names[-3], numered_variable_names[-2]])
+
+    # Berechnung der Windrichtung aus den sin- und cos-Werten
+# Berechnung der Windrichtung aus den sin- und cos-Werten
+
+
+    if dold is not None:
+        # Concatenate the new dataset (ds) with the old dataset (dold) along the time dimension
+        combined_ds  = ds.combine_first(dold)#xr.concat([dold, ds], dim="time")
+    else:
+        combined_ds = ds
+
+    combined_ds.to_netcdf(outputfile)
+
+    print(combined_ds)
+
+    
+   # for variable in variable_list:
+       # variable_data = neural_forecast_var_multi(variable=variable, dataset=dataset)
 
         # Füge die Variable zum Xarray-Dataset hinzu und weise die Zeitdimension zu
-        ds[variable] = (("time",), variable_data)
+        #ds[variable] = (("time",), variable_data)
 
-    ds.to_netcdf(outputfile)
+   # ds.to_netcdf(outputfile)
     return
 
 def neural_forecast_var_single(variable, dataset):
@@ -239,16 +289,10 @@ def neural_forecast_single(dataset, outputfile, time_start,today):
 
     for variable, numvar in zip(variable_list, numered_variable_names):
         if variable!= "sonic_Wind_Dir":
-            #print(variable)
-                # Generiere die Variable mit der Funktion
             variable_data = neural_forecast_var_single(variable=variable, dataset=dataset)
-
-            # Füge die Variable zum Xarray-Dataset hinzu und weise die Zeitdimension zu
             ds[numvar] = (("time",), variable_data)
         else:
             ds[numvar] = np.arctan2(ds[numered_variable_names[-3]], ds[numered_variable_names[-2]])
-
-                # Umrechnung von Radiant in Grad
             ds[numvar] = np.degrees(ds[numvar])
             # Korrektur negativer Gradzahlen
             ds[numvar] = (ds[numvar] + 360) % 360

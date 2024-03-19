@@ -10,9 +10,17 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
     dataset = xr.open_dataset(measured_data_path)
     dataset_forecast_single = xr.open_dataset(forecast_single_path)
 
+    dataset_multi = xr.open_dataset(forecast_multi_path)
+
+    ### Measured Values
+
     df = dataset.to_dataframe()
 
     df= df[forecast_var][-48:]
+
+    ### Single Forecast
+
+
 
     last_forecast_hour = dataset_forecast_single.attrs["last_forecast_hour"]
     df_single =dataset_forecast_single.to_dataframe()
@@ -31,27 +39,63 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
     mins = df_single_old.min(axis=1).values
     maxs = df_single_old.max(axis=1).values
     means = df_single_old.mean(axis=1).values
-    print("Minimumwerte:", mins)
-    print("Maximumwerte:", maxs)
-    print("Means:", means)
-    merged_df = pd.merge(df, df_single, on='time',how='outer', suffixes=('_a', '_b'))
+    #print("Minimumwerte:", mins)
+    #print("Maximumwerte:", maxs)
+    #print("Means:", means)
 
+
+
+    #### Multi Forecast
+    last_forecast_hour_multi = dataset_multi.attrs["last_forecast_hour"]
+    df_multi =dataset_multi.to_dataframe()
+
+
+    df_multi = df_multi[forecast_var+"_"+last_forecast_hour_multi][-24:] 
+    selected_columns = dataset_multi.to_dataframe().filter(regex=f'^{forecast_var}')[-72:-24]
+
+    df_multi_old = selected_columns
+
+    # Minimum- und Maximumwerte für jeden Index extrahieren
+    mins_multi = df_multi_old.min(axis=1).values
+    maxs_multi = df_multi_old.max(axis=1).values
+    means_multi = df_multi_old.mean(axis=1).values
+
+
+    ### Plotting
+
+
+
+
+
+    merged_df = pd.merge(df, df_single, on='time',how='outer', suffixes=('_a', '_single',))
+    print(merged_df)
     merged_df=merged_df.rename(columns={forecast_var: "Messwerte", forecast_var+"_"+last_forecast_hour: "ImuKnet Single"})
     merged_df = merged_df.join(df_single_old)
+    merged_df = pd.merge(merged_df, df_multi, on='time',how='outer', suffixes=('', '_multi',))
+    merged_df=merged_df.rename(columns={forecast_var+"_"+last_forecast_hour +"_multi": "ImuKnet Multi"})
 
+    print(merged_df)
     fig = go.Figure()
 
     fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df['Messwerte'], mode='lines+markers', name='Messwerte'))
-    fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df["ImuKnet Single"],
-                             mode='lines+markers', name="ImuKnet Single"))
-    fig.add_trace(go.Scatter(x=df_single_old.index, y=means,
-                             mode='lines+markers', name="Vorherige Vorhersagen"))
+    fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df["ImuKnet Single"],mode='lines+markers', name="ImuKnet Single"))
+    fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df["ImuKnet Multi"],mode='lines+markers', name="ImuKnet Multi"))
 
+    # Vorherige Single                   
+    fig.add_trace(go.Scatter(x=df_single_old.index, y=means, mode='lines+markers', name="Vorherige Vorhersagen"))
 
     fig.add_trace(  go.Scatter(        name='Upper Bound',        x=df_single_old.index,        y=maxs,        mode='lines',        marker=dict(color="#444"),        line=dict(width=0),        showlegend=False    ))
 
     fig.add_trace(go.Scatter(        name='Lower Bound',        x=df_single_old.index,        y=mins,        marker=dict(color="#444"),        line=dict(width=0),        mode='lines',        fillcolor='rgba(68, 68, 68, 0.3)',        fill='tonexty',        showlegend=False    ))
 
+    # Vorherige Multi 
+    fig.add_trace(go.Scatter(x=df_multi_old.index, y=means_multi, mode='lines+markers', name="Vorherige Vorhersagen"))
+
+    fig.add_trace(  go.Scatter(        name='Upper Bound',        x=df_multi_old.index,        y=maxs_multi,        mode='lines',        marker=dict(color="#444"),        line=dict(width=0),        showlegend=False    ))
+
+    fig.add_trace(go.Scatter(        name='Lower Bound',        x=df_multi_old.index,        y=mins_multi,        marker=dict(color="#444"),        line=dict(width=0),        mode='lines',        fillcolor='rgba(68, 68, 68, 0.3)',        fill='tonexty',        showlegend=False    ))
+
+  
     #for col in merged_df.columns.difference([ 'Messwerte', 'ImuKnet Single']):
         #fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df[col],mode='lines+markers', name='Vorhersage zu t='+col[-2:]+"h",    legendgroup="group",  legendgrouptitle_text="Vorherige Vorhersagen",line=dict(color='rgba(169,169,169,0.25)')))
 

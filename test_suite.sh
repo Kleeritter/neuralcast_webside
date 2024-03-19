@@ -28,14 +28,14 @@ path_input_forecast="${path_root}/testdata/stadtwetter/netcdf_daten/"
 path_output_forecast="${path_root}/testdata/stadtwetter/Vorhersage"
 
 #
-#"${python_root}/miniforge3/envs/Stadtwetter/bin/python3" "${path_root}/auto_forecast.py" $path_input_forecast $path_output_forecast $debug
-#echo " Forecast finished"
+"${python_root}/miniforge3/envs/Stadtwetter/bin/python3" "${path_root}/auto_forecast.py" $path_input_forecast $path_output_forecast $debug
+echo " Forecast finished"
 
 
 
 path_input_measured="${path_root}/testdata/stadtwetter/netcdf_daten/latest_herrenhausen_res_imuknet1.nc"
 path_input_forecast_single="${path_root}/testdata/stadtwetter/Vorhersage/forecast_test_single_multiday.nc"
-path_input_forecast_multi="${path_root}/testdata/stadtwetter/Vorhersage/forecast_test.nc"
+path_input_forecast_multi="${path_root}/testdata/stadtwetter/Vorhersage/forecast_test_multi_multiday.nc"
 
 path_output="${path_root}/testdata/stadtwetter/Vorhersage/grafiken/test/"
 debug=0  # true
