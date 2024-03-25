@@ -100,8 +100,7 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
         #fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df[col],mode='lines+markers', name='Vorhersage zu t='+col[-2:]+"h",    legendgroup="group",  legendgrouptitle_text="Vorherige Vorhersagen",line=dict(color='rgba(169,169,169,0.25)')))
 
     fig.update_layout(showlegend=True)
-    fig.update_layout(title='Messwerte und Vorhersagen für '+ dataset[forecast_var].attrs['standard_name'],  xaxis_title='Zeit',
-                  yaxis_title=dataset[forecast_var].attrs['longname'] +"["+dataset[forecast_var].attrs["units"]+"]")
+    #fig.update_layout(title='Messwerte und Vorhersagen für '+ dataset[forecast_var].attrs['standard_name'],  xaxis_title='Zeit',                  yaxis_title=dataset[forecast_var].attrs['longname'] +"["+dataset[forecast_var].attrs["units"]+"]")
 
     fig.write_html(outputpath +forecast_var + ".html")
     
