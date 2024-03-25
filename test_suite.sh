@@ -29,7 +29,7 @@ path_input_forecast="${path_root}/testdata/stadtwetter/netcdf_daten/"
 path_output_forecast="${path_root}/testdata/stadtwetter/Vorhersage"
 
 #
-#"${python_root}/miniforge3/envs/Stadtwetter/bin/python3" "${path_root}/auto_forecast.py" $path_input_forecast $path_output_forecast $debug
+"${python_root}/miniforge3/envs/Stadtwetter/bin/python3" "${path_root}/auto_forecast.py" $path_input_forecast $path_output_forecast $debug
 echo " Forecast finished"
 
 
@@ -41,7 +41,7 @@ path_input_forecast_multi="${path_root}/testdata/stadtwetter/Vorhersage/forecast
 path_output="${path_root}/testdata/stadtwetter/Vorhersage/grafiken/test/"
 debug=0  # true
 
-#"${python_root}/miniforge3/envs/Stadtwetter/bin/python3" "${path_root}/auto_visualisation.py" $path_input_measured $path_input_forecast_single $path_input_forecast_multi $path_output $debug
+"${python_root}/miniforge3/envs/Stadtwetter/bin/python3" "${path_root}/auto_visualisation.py" $path_input_measured $path_input_forecast_single $path_input_forecast_multi $path_output $debug
 echo " Visuals finished"
 
 

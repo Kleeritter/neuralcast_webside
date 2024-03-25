@@ -18,7 +18,7 @@ def neural_forecast_var_multi(variable, dataset):
     #print(os.getcwd())
 
     ### Pfade ###
-    modelpath= "forecast/imuknet/models/multi/best_model_state_"+variable+"_24_24.pt"
+    modelpath= "/home/alex/code/neuralcast_webside/webside_training/Archiv/modelneu/lstm_multi/models/best_model_state_"+variable+"_24_24.pt"#"forecast/imuknet/models/multi/best_model_state_"+variable+"_24_24.pt"
     hyper_params_path= "forecast/imuknet/params/multi/best_params_lstm_multi_"+variable+".yaml"
     params_path= "webside_training/params_for_normal_imuknet.yaml"
     ### Pfade ###
@@ -48,6 +48,9 @@ def neural_forecast_var_multi(variable, dataset):
          corvars= ["herrenhausen_Temperatur","derived_Press_sl","herrenhausen_Feuchte","dach_Diffus_CMP-11","dach_Global_CMP-11","herrenhausen_Gust_Speed", "sonic_Gust_Speed","herrenhausen_Regen","herrenhausen_Wind_Speed",
        "sonic_Wind_Speed","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos","derived_Taupunkt","derived_Taupunkt3h","derived_Press3h", "derived_rainsum3h","derived_Temp3h","derived_vertwind" ]
     ### Daten einlesen ###
+
+    corvars = ["herrenhausen_Temperatur","derived_Press_sl","herrenhausen_Feuchte","dach_Diffus_CMP-11","dach_Global_CMP-11","herrenhausen_Gust_Speed", "sonic_Gust_Speed","herrenhausen_Regen","herrenhausen_Wind_Speed",
+       "sonic_Wind_Speed","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos"]
 
     ### Modell aufrufen und Vorhersage erstellen ###
     forecasts= multilstm_full(modell=modelpath,data=sliced_dataset,forecast_horizon=24,forecast_var=variable,hyper_params_path=hyper_params_path, corvars=corvars)
