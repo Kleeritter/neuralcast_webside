@@ -18,7 +18,7 @@ def neural_forecast_var_multi(variable, dataset):
     #print(os.getcwd())
 
     ### Pfade ###
-    modelpath= "/home/alex/code/neuralcast_webside/webside_training/Archiv/modelneu/lstm_multi/models/best_model_state_"+variable+"_24_24.pt"#"forecast/imuknet/models/multi/best_model_state_"+variable+"_24_24.pt"
+    modelpath= "webside_training/Archiv/modelneu/lstm_multi/models/best_model_state_"+variable+"_24_24.pt"#"forecast/imuknet/models/multi/best_model_state_"+variable+"_24_24.pt"
     hyper_params_path= "forecast/imuknet/params/multi/best_params_lstm_multi_"+variable+".yaml"
     params_path= "webside_training/params_for_normal_imuknet.yaml"
     ### Pfade ###
