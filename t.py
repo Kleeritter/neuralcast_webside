@@ -1,26 +1,19 @@
-import plotly.graph_objs as go
-import plotly.io as pio
-import json
+import torch
 
-# Daten für die Grafik
-x = [1, 2, 3, 4, 5]
-y = [10, 11, 12, 13, 14]
+# check for amd hip
+print(torch.cuda.is_available())
+print(torch.version.hip)
 
-# Erstellen des Plotly-Traces
-trace = go.Scatter(x=x, y=y)
+device = torch.device('cuda')
+id = torch.cuda.current_device()
+# print gpu name
+print(torch.cuda.get_device_name(id))
+# no memory is allocated at first
+print(torch.cuda.memory_allocated(id))
 
-# Erstellen des Layouts
-layout = go.Layout(title='Meine Plotly Grafik')
-
-# Erstellen des Figure-Objekts
-fig = go.Figure(data=[trace], layout=layout)
-
-# Konvertiere die Plotly-Grafik in JSON
-fig_json = pio.to_json(fig)
-
-# Speichere das JSON-Objekt in einer Datei
-with open('meine_grafik.json', 'w') as json_file:
-    json.dump(fig_json, json_file)
-
-
-fig.show()
+# store some variable in gpu memory
+r = torch.rand(16).to(device)
+# memory is allocated
+print(torch.cuda.memory_allocated(id))
+# crashes when accessing r
+print(r[0])

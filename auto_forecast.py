@@ -34,7 +34,7 @@ def main():
     neural_forecast_single(dataset=dataset,outputfile=outputfile, time_start=time_start, today=today)
     #### Multi Forecast ###
     print("start Multi")
-    dataset=path+"/latest_herrenhausen_normal_imuknet1.nc"
+    dataset=""#path+"/latest_herrenhausen_normal_imuknet1.nc"
     outputfile = output+"/forecast_test_multi_multiday.nc"
     neural_forecast_multi(dataset=dataset,outputfile=outputfile, time_start= time_start,today=today)
     #### Multi Forecast Ende ###
