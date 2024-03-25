@@ -196,3 +196,6 @@ converting/webside_data/resampled/2019.nc
 converting/webside_data/resampled/2020.nc
 converting/webside_data/resampled/2021.nc
 converting/webside_data/resampled/2022.nc
+
+testdata/remix
+webside_training/remix

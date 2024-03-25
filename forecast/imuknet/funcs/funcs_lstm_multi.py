@@ -25,21 +25,21 @@ class TemperatureDataset_multi(Dataset):
         self.data = xr.open_dataset(file_path)[cor_vars].to_dataframe()#.valuesmissing_values_mask = dataset['temp'].isnull()
         self.length = len(self.data[forecast_var]) - window_size
         # Min-max scaling for data preprocessing
-        for column in self.data.columns:
-            values = self.data[column].values.reshape(-1, 1)
-            if column == "srain":
-                self.data[column] = stats.zscore(values).flatten()
+        #for column in self.data.columns:
+         #   values = self.data[column].values.reshape(-1, 1)
+          #  if column == "srain":
+           #     self.data[column] = stats.zscore(values).flatten()
 
-            else:
-                scaler = MinMaxScaler(feature_range=(0, 1))
-                param_path ='/home/alex/PycharmProjects/neuralcaster/Data/params_for_normal.yaml'  # "../../Data/params_for_normal.yaml"
-                params = load_hyperparameters(param_path)
-                mins = params["Min_" + column]
-                maxs = params["Max_" + column]
-                train_values = [mins, maxs]
-                X_train_minmax = scaler.fit_transform(np.array(train_values).reshape(-1, 1))
-                scaled_values = scaler.transform(values)
-                self.data[column] = scaled_values.flatten()
+            #else:
+             #   scaler = MinMaxScaler(feature_range=(0, 1))
+              #  param_path ='/home/alex/PycharmProjects/neuralcaster/Data/params_for_normal.yaml'  # "../../Data/params_for_normal.yaml"
+               # params = load_hyperparameters(param_path)
+               # mins = params["Min_" + column]
+               # maxs = params["Max_" + column]
+               # train_values = [mins, maxs]
+               # X_train_minmax = scaler.fit_transform(np.array(train_values).reshape(-1, 1))
+              #  scaled_values = scaler.transform(values)
+              #  self.data[column] = scaled_values.flatten()
 
         # Set dataset parameters
         self.forecast_horizont = forecast_horizont

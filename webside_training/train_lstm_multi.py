@@ -9,7 +9,10 @@ import yaml
 from  tqdm  import tqdm
 
 
-file_path = "converting/webside_training/normal_2016-2022.nc"
+#file_path = "converting/webside_training/normal_2016-2022.nc"
+file_path = "converting/webside_training/Archiv/normal.nc"
+
+
 logs ="/home/alex/Dokumente/lightning_logs"
 
 def train(forecast_var,forecast_horizont,Ruthe=False):

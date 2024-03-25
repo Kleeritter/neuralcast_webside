@@ -34,7 +34,11 @@ def resample(netcdf_filepath, outputfile, v=2):
     from datetime import timedelta
     ds=wind_split(netcdf_filepath)
     #ds = xr.open_dataset(netcdf_filepath)
-    time_index = pd.to_datetime(ds['time'].values, unit='s')
+    try:
+        time_index = pd.to_datetime(ds['time'].values, unit='s')
+    except KeyError:
+        ds = ds.rename({'index': 'time'})
+        time_index = pd.to_datetime(ds['time'].values, unit='s')
     if v==1:
         vars= ["herrenhausen_Temperatur","herrenhausen_Druck","herrenhausen_Feuchte","dach_Diffus_CMP-11","dach_Global_CMP-11","herrenhausen_Gust_Speed", "sonic_Gust_Speed","herrenhausen_Regen","herrenhausen_Wind_Speed",
        "sonic_Wind_Speed","sonic_Wind_Dir_sin","sonic_Wind_Dir_cos","derived_Press_sl","derived_Taupunkt","sonic_Wind_Dir"]#,"derived_Taupunkt3h","derived_Temp3h", "derived_Press3h",,"derived_rainsum3h","derived_vertwind" ]
@@ -94,9 +98,9 @@ def resample(netcdf_filepath, outputfile, v=2):
     #if "wind_dir_50" in vars:
      #   df_cleaned.loc[df_cleaned['wind_dir_50'] < 0, 'wind_dir_50'] = 0
     
-    df_cleaned=df_cleaned.to_xarray()
+    df_cleaned=df_cleaned.to_xarray().to_netcdf(outputfile)
     
-    df_cleaned = attribute_transfer(df_cleaned).to_netcdf(outputfile)
+    #df_cleaned = attribute_transfer(df_cleaned).to_netcdf(outputfile)
     ds.close()
 
     return
@@ -148,7 +152,7 @@ def normalize(netcdf_filepath, outputfile, v=2):
             values = data[column].values.reshape(-1, 1)
 
             scaler = MinMaxScaler(feature_range=(0, 1))
-            #print(os.getcwd())
+            print(os.getcwd())
             if v==1:
                 param_path ='../webside_training/params_for_normal_imuknet.yaml'  # "../../Data/params_for_normal.yaml"
             else:
