@@ -4,7 +4,7 @@ import pandas as pd
 from datetime import timedelta
 import plotly.graph_objects as go
 import numpy as np
-from sklearn.metrics import mean_squared_error,root_mean_squared_error
+from sklearn.metrics import mean_squared_error#,root_mean_squared_error
 from pytz import timezone
 import yaml
 import os
@@ -124,11 +124,15 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
     print("Means:", merged_df['Messwerte'][abs(47-len(means)):47])
     #### Single
 
-    rms_single = root_mean_squared_error(merged_df['Messwerte'][abs(47-len(means)):47], means)
+    #rms_single = root_mean_squared_error(merged_df['Messwerte'][abs(47-len(means)):47], means)
+    rms_single = mean_squared_error(merged_df['Messwerte'][abs(47-len(means)):47], means,squared=False)
+
     #### Multi
 
 
-    rms_multi = root_mean_squared_error(merged_df['Messwerte'][abs(47-len(means_multi)):47], means_multi)
+    #rms_multi = root_mean_squared_error(merged_df['Messwerte'][abs(47-len(means_multi)):47], means_multi)
+    rms_multi = mean_squared_error(merged_df['Messwerte'][abs(47-len(means_multi)):47], means_multi,squared=False)
+
     ### Plotting
 
 
