@@ -166,7 +166,9 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
         y=max(np.max(merged_df),np.max(maxs_multi),np.max(maxs))+1,
         xref="x",
         yref="y",
-        text="Rmse <br> Uni= "+str(round(rms_single,2))+unit+" <br> Multi= "+ str(round(rms_multi,2))+unit ,
+        text="Rmse <br> Single= "+str(round(rms_single,2))+unit+" <br> Multi= "+ str(round(rms_multi,2))+unit ,
+        #text=  "<center>Rmse <br> Uni= " + str(round(rms_single, 2)) + unit + " <br> Multi= " + str(round(rms_multi, 2)) + unit + "</center>",
+
         showarrow=False,
         font=dict(
             family="Courier New, monospace",
