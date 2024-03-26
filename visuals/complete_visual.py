@@ -163,10 +163,10 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
     fig.add_trace(go.Scatter(        name='Lower Bound',        x=df_multi_old.index,        y=mins_multi,        marker=dict(color="#444"),        line=dict(width=0),        mode='lines',        fillcolor='rgba(68, 68, 68, 0.3)',        fill='tonexty',        showlegend=False,   legendgroup="group2" ))
     fig.add_annotation(
         x=np.max(merged_df.index)-timedelta(hours=5),
-        y=max(np.max(merged_df),np.max(maxs_multi),np.max(maxs))+2,
+        y=max(np.max(merged_df),np.max(maxs_multi),np.max(maxs))+1,
         xref="x",
         yref="y",
-        text="Rmse <br> Single= "+str(round(rms_single,2))+unit+" <br> Multi= "+ str(round(rms_multi,2))+unit ,
+        text="Rmse <br> Uni= "+str(round(rms_single,2))+unit+" <br> Multi= "+ str(round(rms_multi,2))+unit ,
         showarrow=False,
         font=dict(
             family="Courier New, monospace",
