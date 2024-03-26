@@ -29,7 +29,7 @@ path_input_forecast="${path_root}/testdata/stadtwetter/netcdf_daten/"
 path_output_forecast="${path_root}/testdata/stadtwetter/Vorhersage"
 
 #
-"${python_root}/miniforge3/envs/Stadtwetter/bin/python3" "${path_root}/auto_forecast.py" $path_input_forecast $path_output_forecast $debug
+#"${python_root}/miniforge3/envs/Stadtwetter/bin/python3" "${path_root}/auto_forecast.py" $path_input_forecast $path_output_forecast $debug
 echo " Forecast finished"
 
 

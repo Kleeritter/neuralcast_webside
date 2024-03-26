@@ -1,0 +1,103 @@
+herrenhausen_Temperatur:
+  units: °C
+  longname: Temperatur in Herrenhausen
+  standard_name: Lufttemperatur
+
+herrenhausen_Feuchte:
+  units: "%"
+  longname: Relative Luftfeuchtigkeit in Herrenhausen
+  standard_name: relative_Luftfeuchtigkeit
+
+herrenhausen_Regen:
+  units: Hits
+  longname: Niederschlagsmenge in Herrenhausen
+  standard_name: Niederschlagsmenge
+
+herrenhausen_Wind_Speed:
+  units: m/s
+  longname: Windgeschwindigkeit in Herrenhausen bei 50m Höhe
+  standard_name: Windgeschwindigkeit
+
+herrenhausen_Gust_Speed:
+  units: m/s
+  longname: Böengeschwindigkeit in Ruthe bei 50m Höhe
+  standard_name: Böengeschwindigkeit
+
+herrenhausen_Globalstrahlung:
+  units: W/m^2
+  longname: Solarstrahlung in Herrenhausen (CM3)
+  standard_name: solare_Strahlung
+
+herrenhausen_Psychro_T:
+  units: °C
+  longname: Trockentemperatur des Psychrometers in Herrenhausen
+  standard_name: Lufttemperatur
+
+herrenhausen_Psychro_Tf:
+  units: °C
+  longname: Feuchttemperatur des Psychrometers in Herrenhausen
+  standard_name: Feuchttemperatur
+
+herrenhausen_Druck:
+  units: hPa
+  longname: Luftdruck in Herrenhausen (nicht reduziert)
+  standard_name: Luftdruck
+
+sonic_Wind_Speed:
+  units: m/s
+  longname: Windgeschwindigkeit in Ruthe bei 10m Höhe
+  standard_name: Windgeschwindigkeit
+
+sonic_Gust_Speed:
+  units: m/s
+  longname: Böengeschwindigkeit in Ruthe bei 10m Höhe
+  standard_name: Böengeschwindigkeit
+
+sonic_Wind_Dir:
+  units: ppm
+  longname: Windrichtung in Herrenhausen
+  standard_name: Windrichtung
+
+sonic_Temperatur:
+  units: °C
+  longname: Temperatur in Herrenhausen (Ultraschall)
+  standard_name: Lufttemperatur
+
+dach_CO2_ppm:
+  units: ppm
+  longname: Massenanteil von Kohlendioxid in der Luft in Herrenhausen
+  standard_name: Massenanteil_von_Kohlendioxid_in_der_Luft
+
+dach_CO2_Sensor:
+  units: "?"
+  longname: Massenanteil von Kohlendioxid in der Luft in Herrenhausen
+  #standard_name: Massenanteil_von_Kohlendioxid_in_der_Luft
+
+dach_Diffus_CMP-11:
+  units: W/m^2
+  longname: Diffuse Solarstrahlung in Herrenhausen (CMP-11)
+  #standard_name: solare_Strahlung
+
+dach_Global_CMP-11:
+  units: W/m^2
+  longname: Solarstrahlung in Herrenhausen (CMP-11)
+  standard_name: solare_Strahlung
+
+dach_Geneigt_CMP-11:
+  units: W/m^2
+  longname: Geneigte Solarstrahlung in Herrenhausen (CMP-11)
+  #standard_name: solare_Strahlung
+
+dach_Temp_AMUDIS_Box:
+  units: °C
+  longname: Temperatur der AMUDIS-Box in Herrenhausen
+  #standard_name: Lufttemperatur
+
+dach_Temp_Bentham_Box:
+  units: °C
+  longname: Temperatur der Bentham-Box in Herrenhausen
+  #standard_name: Lufttemperatur
+
+derived_Press_sl:
+  units: hPa
+  longname: Luftdruck reduziert auf Meereshöhe
