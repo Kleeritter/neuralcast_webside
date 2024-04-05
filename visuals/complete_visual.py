@@ -77,6 +77,13 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
 
 
     df_single = df_single[forecast_var+"_"+last_forecast_hour][-24:] 
+
+    forecasts_single = dataset_forecast_single.to_dataframe().filter(regex=f'^{forecast_var}')[-24:]
+
+    formins =forecasts_single.min(axis=1).values
+
+    formaxs =forecasts_single.max(axis=1).values
+
     selected_columns = dataset_forecast_single.to_dataframe().filter(regex=f'^{forecast_var}')[-72:-24] # Remove  [:-24] for multi line  version
 
 
@@ -100,6 +107,11 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
     last_forecast_hour_multi = dataset_multi.attrs["last_forecast_hour"]
     df_multi =dataset_multi.to_dataframe()
 
+    forecasts_m = dataset_multi.to_dataframe().filter(regex=f'^{forecast_var}')[-24:]
+
+    forminm =forecasts_m.min(axis=1).values
+
+    formaxm =forecasts_m.max(axis=1).values
 
     df_multi = df_multi[forecast_var+"_"+last_forecast_hour_multi][-24:] 
     selected_columns = dataset_multi.to_dataframe().filter(regex=f'^{forecast_var}')[-72:-24]
@@ -151,9 +163,16 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
 
         #fig.add_trace(go.Scatter(x=df_single_old.index, y=means, mode='lines+markers', name="Mittelwert der Vorhersagen",legendgroup="group1",  legendgrouptitle_text="Vorherige Vorhersagen Univariant"))
 
-        fig.add_trace(  go.Scatter(        name='Vorherige Vorhersagen',        x=df_single_old.index,        y=maxs,        mode='lines',        marker=dict(color="#444"),        line=dict(width=0),        showlegend=True  ,legendgroup="group2", legendgrouptitle_text="Vorherige Vorhersagen"  ))
 
-        fig.add_trace(go.Scatter(        name='Lower Bound',        x=df_single_old.index,        y=mins,        marker=dict(color="#444"),        line=dict(width=0),        mode='lines',        fillcolor='rgba(255, 0, 0, 0.5)',        fill='tonexty',        showlegend=False   ,legendgroup="group1" ))
+       # Schatten der Zukunft:
+        fig.add_trace(  go.Scatter(  visible="legendonly",      name='Unsicherheit der Vorhersagen',        x=forecasts_m.index,        y=formaxm,        mode='lines',        marker=dict(color="#444"),        line=dict(width=0),        showlegend=True,  legendgroup="group3",legendgrouptitle_text="Unsicherheit der Vorhersagen" ))
+
+        fig.add_trace(go.Scatter(     visible="legendonly",    name='Lower Bound',        x=forecasts_m.index,        y=forminm,        marker=dict(color="#444"),        line=dict(width=0),        mode='lines',        fillcolor='rgba(255, 0, 0, 0.5)',        fill='tonexty',        showlegend=False,   legendgroup="group3" ))
+    
+        #Scjatten der Vergangenheit
+        fig.add_trace(  go.Scatter(   visible="legendonly",     name='Vorherige Vorhersagen',        x=df_single_old.index,        y=maxs,        mode='lines',        marker=dict(color="#444"),        line=dict(width=0),        showlegend=True  ,legendgroup="group2", legendgrouptitle_text="Vorherige Vorhersagen"  ))
+
+        fig.add_trace(go.Scatter(   visible="legendonly",     name='Lower Bound',        x=df_single_old.index,        y=mins,        marker=dict(color="#444"),        line=dict(width=0),        mode='lines',        fillcolor='rgba(255, 0, 0, 0.5)',        fill='tonexty',        showlegend=False   ,legendgroup="group1" ))
 
 
         rmse_string = "ML-Modell= "+str(round(rms_single,2))+unit
@@ -162,6 +181,14 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
         fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df["ImuKnet Multi"],mode='lines+markers', name="ML Vorhersage",line=dict(color="#FF0000")))
         #fig.add_trace(go.Scatter(x=df_multi_old.index, y=means_multi, mode='lines+markers', name="Mittelwert der Vorhersagen",legendgroup="group2",  legendgrouptitle_text="Vorherige Vorhersagen Multivariant"))
 
+       # Schatten der Zukunft:
+        fig.add_trace(  go.Scatter(  visible="legendonly",      name='Unsicherheit der Vorhersagen',        x=forecasts_single.index,        y=formaxs,        mode='lines',        marker=dict(color="#444"),        line=dict(width=0),        showlegend=True,  legendgroup="group3",legendgrouptitle_text="Unsicherheit der Vorhersagen" ))
+
+        fig.add_trace(go.Scatter(     visible="legendonly",    name='Lower Bound',        x=forecasts_single.index,        y=formins,        marker=dict(color="#444"),        line=dict(width=0),        mode='lines',        fillcolor='rgba(255, 0, 0, 0.5)',        fill='tonexty',        showlegend=False,   legendgroup="group3" ))
+    
+       
+       # Schatten der Vergangenheit
+       
         fig.add_trace(  go.Scatter(  visible="legendonly",      name='Vorherige Vorhersagen',        x=df_multi_old.index,        y=maxs_multi,        mode='lines',        marker=dict(color="#444"),        line=dict(width=0),        showlegend=True,  legendgroup="group2",legendgrouptitle_text="Vorherige Vorhersagen" ))
 
         fig.add_trace(go.Scatter(     visible="legendonly",    name='Lower Bound',        x=df_multi_old.index,        y=mins_multi,        marker=dict(color="#444"),        line=dict(width=0),        mode='lines',        fillcolor='rgba(255, 0, 0, 0.5)',        fill='tonexty',        showlegend=False,   legendgroup="group2" ))
