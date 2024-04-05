@@ -2,31 +2,39 @@ herrenhausen_Temperatur:
   units: °C
   longname: Temperatur in Herrenhausen
   standard_name: Lufttemperatur
+  best_model: multi
 
 herrenhausen_Feuchte:
   units: "%"
   longname: Relative Luftfeuchtigkeit in Herrenhausen
   standard_name: relative_Luftfeuchtigkeit
+  best_model: multi
 
 herrenhausen_Regen:
   units: Hits
   longname: Niederschlagsmenge in Herrenhausen
   standard_name: Niederschlagsmenge
+  best_model: multi
 
 herrenhausen_Wind_Speed:
   units: m/s
   longname: Windgeschwindigkeit in Herrenhausen bei 50m Höhe
   standard_name: Windgeschwindigkeit
+  best_model: multi
+
 
 herrenhausen_Gust_Speed:
   units: m/s
   longname: Böengeschwindigkeit in Ruthe bei 50m Höhe
   standard_name: Böengeschwindigkeit
+  best_model: multi
 
 herrenhausen_Globalstrahlung:
   units: W/m^2
   longname: Solarstrahlung in Herrenhausen (CM3)
   standard_name: solare_Strahlung
+  best_model: single
+
 
 herrenhausen_Psychro_T:
   units: °C
@@ -47,16 +55,21 @@ sonic_Wind_Speed:
   units: m/s
   longname: Windgeschwindigkeit in Ruthe bei 10m Höhe
   standard_name: Windgeschwindigkeit
+  best_model: single
 
 sonic_Gust_Speed:
   units: m/s
   longname: Böengeschwindigkeit in Ruthe bei 10m Höhe
   standard_name: Böengeschwindigkeit
+  best_model: single
+
 
 sonic_Wind_Dir:
-  units: ppm
+  units: Grad
   longname: Windrichtung in Herrenhausen
   standard_name: Windrichtung
+  best_model: multi
+
 
 sonic_Temperatur:
   units: °C
@@ -77,11 +90,15 @@ dach_Diffus_CMP-11:
   units: W/m^2
   longname: Diffuse Solarstrahlung in Herrenhausen (CMP-11)
   #standard_name: solare_Strahlung
+  best_model: single
+
 
 dach_Global_CMP-11:
   units: W/m^2
   longname: Solarstrahlung in Herrenhausen (CMP-11)
   standard_name: solare_Strahlung
+  best_model: single
+
 
 dach_Geneigt_CMP-11:
   units: W/m^2
@@ -101,3 +118,5 @@ dach_Temp_Bentham_Box:
 derived_Press_sl:
   units: hPa
   longname: Luftdruck reduziert auf Meereshöhe
+  best_model: multi
+

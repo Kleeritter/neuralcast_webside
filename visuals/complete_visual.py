@@ -58,6 +58,7 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
     
     unit = attribute_data[forecast_var]["units"]
     longname = attribute_data[forecast_var]["longname"]
+    best_model = attribute_data[forecast_var]["best_model"]
 
     print(unit)
 
@@ -144,29 +145,44 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
     print(merged_df)
     fig = go.Figure()
 
-    fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df['Messwerte'], mode='lines+markers', name='Messwerte'))
-    fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df["ImuKnet Single"],mode='lines+markers', name="ImuKnet Single"))
-    fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df["ImuKnet Multi"],mode='lines+markers', name="ImuKnet Multi"))
+    fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df['Messwerte'], mode='lines+markers', name='Messwerte',line=dict(color="#000000")))
+    if best_model == "single":
+        fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df["ImuKnet Single"],mode='lines+markers', name="ML Vorhersage",line=dict(color="#FF0000")))
+
+        #fig.add_trace(go.Scatter(x=df_single_old.index, y=means, mode='lines+markers', name="Mittelwert der Vorhersagen",legendgroup="group1",  legendgrouptitle_text="Vorherige Vorhersagen Univariant"))
+
+        fig.add_trace(  go.Scatter(        name='Vorherige Vorhersagen',        x=df_single_old.index,        y=maxs,        mode='lines',        marker=dict(color="#444"),        line=dict(width=0),        showlegend=True  ,legendgroup="group2", legendgrouptitle_text="Vorherige Vorhersagen"  ))
+
+        fig.add_trace(go.Scatter(        name='Lower Bound',        x=df_single_old.index,        y=mins,        marker=dict(color="#444"),        line=dict(width=0),        mode='lines',        fillcolor='rgba(255, 0, 0, 0.5)',        fill='tonexty',        showlegend=False   ,legendgroup="group1" ))
+
+
+        rmse_string = "ML-Modell= "+str(round(rms_single,2))+unit
+
+    elif best_model == "multi":
+        fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df["ImuKnet Multi"],mode='lines+markers', name="ML Vorhersage",line=dict(color="#FF0000")))
+        #fig.add_trace(go.Scatter(x=df_multi_old.index, y=means_multi, mode='lines+markers', name="Mittelwert der Vorhersagen",legendgroup="group2",  legendgrouptitle_text="Vorherige Vorhersagen Multivariant"))
+
+        fig.add_trace(  go.Scatter(  visible="legendonly",      name='Vorherige Vorhersagen',        x=df_multi_old.index,        y=maxs_multi,        mode='lines',        marker=dict(color="#444"),        line=dict(width=0),        showlegend=True,  legendgroup="group2",legendgrouptitle_text="Vorherige Vorhersagen" ))
+
+        fig.add_trace(go.Scatter(     visible="legendonly",    name='Lower Bound',        x=df_multi_old.index,        y=mins_multi,        marker=dict(color="#444"),        line=dict(width=0),        mode='lines',        fillcolor='rgba(255, 0, 0, 0.5)',        fill='tonexty',        showlegend=False,   legendgroup="group2" ))
+    
+        rmse_string = "ML-Modell= "+ str(round(rms_multi,2))+unit
+
+    else:
+        fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df["ImuKnet Single"],mode='lines+markers', name="ImuKnet Single"))
+        fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df["ImuKnet Multi"],mode='lines+markers', name="ImuKnet Multi"))
+        rmse_string = "Single= "+str(round(rms_single,2))+unit+"Multi= "+ str(round(rms_multi,2))+unit 
 
     # Vorherige Single                   
-    fig.add_trace(go.Scatter(x=df_single_old.index, y=means, mode='lines+markers', name="Mittelwert der Vorhersagen",legendgroup="group1",  legendgrouptitle_text="Vorherige Vorhersagen Univariant"))
-
-    fig.add_trace(  go.Scatter(        name='Upper Bound',        x=df_single_old.index,        y=maxs,        mode='lines',        marker=dict(color="#444"),        line=dict(width=0),        showlegend=False  ,legendgroup="group1"  ))
-
-    fig.add_trace(go.Scatter(        name='Lower Bound',        x=df_single_old.index,        y=mins,        marker=dict(color="#444"),        line=dict(width=0),        mode='lines',        fillcolor='rgba(68, 68, 68, 0.3)',        fill='tonexty',        showlegend=False   ,legendgroup="group1" ))
-
+    
     # Vorherige Multi 
-    fig.add_trace(go.Scatter(x=df_multi_old.index, y=means_multi, mode='lines+markers', name="Mittelwert der Vorhersagen",legendgroup="group2",  legendgrouptitle_text="Vorherige Vorhersagen Multivariant"))
-
-    fig.add_trace(  go.Scatter(        name='Upper Bound',        x=df_multi_old.index,        y=maxs_multi,        mode='lines',        marker=dict(color="#444"),        line=dict(width=0),        showlegend=False,  legendgroup="group2" ))
-
-    fig.add_trace(go.Scatter(        name='Lower Bound',        x=df_multi_old.index,        y=mins_multi,        marker=dict(color="#444"),        line=dict(width=0),        mode='lines',        fillcolor='rgba(68, 68, 68, 0.3)',        fill='tonexty',        showlegend=False,   legendgroup="group2" ))
+    
     fig.add_annotation(
         x=np.max(merged_df.index)-timedelta(hours=5),
         y=max(np.max(merged_df),np.max(maxs_multi),np.max(maxs))+1,
         xref="x",
         yref="y",
-        text="Rmse <br> Single= "+str(round(rms_single,2))+unit+" <br> Multi= "+ str(round(rms_multi,2))+unit ,
+        text="Skillscore (RMSE) <br>"+rmse_string ,
         #text=  "<center>Rmse <br> Uni= " + str(round(rms_single, 2)) + unit + " <br> Multi= " + str(round(rms_multi, 2)) + unit + "</center>",
 
         showarrow=False,
