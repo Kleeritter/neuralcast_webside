@@ -177,7 +177,7 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
         data.setdefault(forecast_var, {})['RMSE'] = str(rms_single)
 
         # Schreiben Sie die aktualisierten Daten zurück in die YAML-Datei
-        with open("/stadtwetter/public_html/units.json", 'w') as json_file:
+        with open("/home/stadtwetter/public_html/units.json", 'w') as json_file:
             json.dump(data, json_file)
 
         fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df["ImuKnet Single"],mode='lines+markers', name="ML Vorhersage",line=dict(color="#FF0000")))
@@ -213,7 +213,7 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
         #with open("neuralcast_webside/visuals/units.json", 'w') as json_file:
          #   json.dump(data, json_file)
 
-        with open("/stadtwetter/public_html/units.json", 'w') as json_file:
+        with open("/home/stadtwetter/public_html/units.json", 'w') as json_file:
             json.dump(data, json_file)
 
         fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df["ImuKnet Multi"],mode='lines+markers', name="ML Vorhersage",line=dict(color="#FF0000")))
