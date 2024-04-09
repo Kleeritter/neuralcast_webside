@@ -11,7 +11,7 @@ def main():
     parser.add_argument('inputpath_forecast_multi')
     parser.add_argument('outputpath')
     parser.add_argument('debug')
-    parser.add_argument('insert_test_path')
+   # parser.add_argument('insert_test_path')
 
 
     args = parser.parse_args() 
@@ -19,7 +19,7 @@ def main():
     output =args.outputpath
     today  = datetime.now()
     debug = int(args.debug)
-    input_test =args.insert_test_path
+    #input_test =args.insert_test_path
     print(debug)
     if debug==0:
         print("DEBUG")
@@ -40,7 +40,7 @@ def main():
        "sonic_Wind_Speed","sonic_Wind_Dir"]
     
     for forecast_var in forecast_vars:
-        visualize_var(forecast_var=forecast_var,measured_data_path=args.inputpath_measured, forecast_multi_path=args.inputpath_forecast_multi,forecast_single_path=args.inputpath_forecast_single,outputpath=args.outputpath,input_template_path=input_test)
+        visualize_var(forecast_var=forecast_var,measured_data_path=args.inputpath_measured, forecast_multi_path=args.inputpath_forecast_multi,forecast_single_path=args.inputpath_forecast_single,outputpath=args.outputpath)
         print(forecast_var+ " completed")
 
     return

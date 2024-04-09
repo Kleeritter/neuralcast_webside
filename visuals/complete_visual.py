@@ -11,7 +11,7 @@ import os
 import json
 from jinja2 import Template
 
-def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_herrenhausen_res_imuknet1.nc",forecast_multi_path="forecast_test.nc",forecast_single_path="forecast_test_single.nc", outputpath="",input_template_path=""):
+def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_herrenhausen_res_imuknet1.nc",forecast_multi_path="forecast_test.nc",forecast_single_path="forecast_test_single.nc", outputpath=""):
     #forecast_var="derived_Press_sl"
     dataset = xr.open_dataset(measured_data_path)
     dataset_forecast_single = xr.open_dataset(forecast_single_path)
