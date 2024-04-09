@@ -38,10 +38,11 @@ path_input_measured="${path_root}/testdata/stadtwetter/netcdf_daten/latest_herre
 path_input_forecast_single="${path_root}/testdata/stadtwetter/Vorhersage/forecast_test_single_multiday.nc"
 path_input_forecast_multi="${path_root}/testdata/stadtwetter/Vorhersage/forecast_test_multi_multiday.nc"
 
-path_output="${path_root}/testdata/stadtwetter/Vorhersage/grafiken/test/"
+path_output="${path_root}/testdata/stadtwetter/Vorhersage/grafiken/insert_test/jsons/"
+path_template="${path_root}/testdata/stadtwetter/Vorhersage/grafiken/insert_test/test.html"
 debug=0  # true
 
-"${python_root}/miniforge3/envs/Stadtwetter/bin/python3" "${path_root}/auto_visualisation.py" $path_input_measured $path_input_forecast_single $path_input_forecast_multi $path_output $debug
+"${python_root}/miniforge3/envs/Stadtwetter/bin/python3" "${path_root}/auto_visualisation.py" $path_input_measured $path_input_forecast_single $path_input_forecast_multi $path_output $debug $path_template
 echo " Visuals finished"
 
 

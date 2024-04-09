@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  
+</head>
+
+<body>
+    <h1>Choose a Plot</h1>
+    <select id="plotSelect" onchange="showPlot()">
+        <option value="herrenhausen_Temperatur">Herrenhausen Temperatur</option>
+        <option value="herrenhausen_Feuchte">Herrenhausen Feuchte</option>
+        <option value="dach_Diffus_CMP-11">Herrenhausen Diffuse Strahlung</option>
+        <option value="dach_Global_CMP-11">Herrenhausen Global Strahlung</option>
+        <option value="derived_Press_sl">Herrenhausen Luftdruck</option>
+        <option value="herrenhausen_Regen">Herrenhausen Regen</option>
+        <option value="herrenhausen_Gust_Speed">Herrenhausen Windboen 10m </option>
+        <option value="herrenhausen_Wind_Speed">Herrenhausen Windgeschwindigkeit 10m</option>
+        <option value="sonic_Gust_Speed">Herrenhausen Windboen 50m </option>
+        <option value="sonic_Wind_Speed">Herrenhausen Windgeschwindigkeit 50m</option>
+        <option value="sonic_Wind_Dir">Herrenhausen Windrichtung 50m</option>
+    
+        <!-- Weitere Optionen einfügen... -->
+    </select>
+    <!-- Definiere die Plot-Tags -->
+    <div id="plotContainer">
+           <div id="plot1" class="plot"> {{herrenhausen_Temperatur}} </div>
+         <!--  <div id="plot2" class="plot">{herrenhausen_Feuchte}</div> -->
+           <div id="plot2" class="plot">{{sonic_Wind_Dir}} </div>
+
+        <!-- Weitere Plot-Tags einfügen... -->
+    </div>
+
+    
+</body>
+</html>

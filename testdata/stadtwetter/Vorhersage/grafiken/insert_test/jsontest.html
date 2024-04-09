@@ -1,0 +1,121 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Learning Stadtwetter Vorhersagen</title> 
+    <link rel="stylesheet" type="text/css" href="test.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        #plotContainer {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="Text">
+
+    <h1>Machine Learning Stadtwetter Vorhersagen</h1>
+
+    <p>Diese Seite präsentiert die Ergebnisse einer neuen Forschung des Instituts. Die hier dargestellten meteorologischen Vorhersagen wurden durch den Einsatz von ML-Modellen basierend auf neuronalen Netzwerken im Rahmen einer Bachelorarbeit erzeugt. Die Modelle wurden speziell trainiert, um präzise Vorhersagen für verschiedene Meteorologische Parameter zu liefern.</p>
+    
+    <p>Wählen Sie bitte aus den verfügbaren Plots, um die Vorhersagen für einen spezifischen meteorologischen Parameter zu untersuchen. Jeder Plot gibt stündliche Vorhersagen für die nächsten 24 Stunden wieder. Die aktuelle Vorhersage ist in Rot markiert, während die blauen Linien die zugrunde liegenden Messwerte repräsentieren. Graue Linien zeigen vergangene Vorhersagen zu jeder Stunde an.</p>
+    
+</div>
+
+<label for="plotSelect">Wählen Sie einen meteorologischen Parameter:</label>
+<select id="plotSelect" onchange="loadPlot()" id="plotSelector">
+    <option value="herrenhausen_Temperatur">Herrenhausen Temperatur</option>
+    <option value="herrenhausen_Feuchte">Herrenhausen Feuchte</option>
+    <option value="dach_Diffus_CMP-11">Herrenhausen Diffuse Strahlung</option>
+    <option value="dach_Global_CMP-11">Herrenhausen Global Strahlung</option>
+    <option value="derived_Press_sl">Herrenhausen Luftdruck</option>
+    <option value="herrenhausen_Regen">Herrenhausen Regen</option>
+    <option value="herrenhausen_Gust_Speed">Herrenhausen Windboen 10m </option>
+    <option value="herrenhausen_Wind_Speed">Herrenhausen Windgeschwindigkeit 10m</option>
+    <option value="sonic_Gust_Speed">Herrenhausen Windboen 50m </option>
+    <option value="sonic_Wind_Speed">Herrenhausen Windgeschwindigkeit 50m</option>
+    <option value="sonic_Wind_Dir">Herrenhausen Windrichtung 50m</option>
+
+
+
+</select>
+
+<div id="plotContainer">
+    <!-- The selected plot will be loaded here -->
+</div>
+
+<div id="rmse-container"></div>
+
+
+
+<script>
+     async function loadPlot() {
+        var selectBox = document.getElementById("plotSelect");
+        var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+        //var jsonSrc = `jsons/${selectedValue}.json`;
+
+        //async function logMovies() {
+           // const response = await fetch(`http://0.0.0.0:8000/jsons/${selectedValue}.json`);
+         //   const movies = await response.json();
+         //   console.log(movies);
+        //}
+        //logMovies()
+        //const response = await fetch(`http://0.0.0.0:8000/jsons/${selectedValue}.json`);
+        const response = await fetch(`https://www1.muk.uni-hannover.de/~stadtwetter/jsons/${selectedValue}.json`);
+        const data = await response.json();
+
+        //Reqeust RMSEs
+
+        //const response_rsmse = await fetch(`http://0.0.0.0:8000/units.json`);
+        const response_rsmse = await fetch(`https://www1.muk.uni-hannover.de/~stadtwetter/units.json`);
+
+        const units = await response_rsmse.json();
+
+     // Extrahiere den RMSE-Wert
+        const rmseValue = Math.round(units[selectedValue].RMSE * 100) / 100;
+
+        const rmseUnit = units[selectedValue].units
+
+        // Erstelle den Text für den RMSE-Wert
+        const rmseText = `RMSE: ${rmseValue} ${rmseUnit}`;
+
+        // Füge den Text in das entsprechende div-Element ein
+        const rmseContainer = document.getElementById('rmse-container');
+        rmseContainer.textContent = rmseText;
+     
+
+
+        //var data = JSON.parse(movies);
+        var layout = { 
+        title: 'Responsive to window\'s size!',
+        font: {size: 18}
+        };
+
+        var config = {responsive: true}
+
+        //Plotly.from_json('plotContainer', fig,layout,con )    
+
+        Plotly.newPlot('plotContainer', data.data, data.layout,config);    
+
+       // Plotly.d3.json(jsonSrc, function(error, fig) {
+       //     if (error) return console.warn(error);
+       //     Plotly.newPlot('plotContainer', fig,layout,config )        });
+    }
+
+    // Initial load
+    loadPlot();
+</script>
+
+<div id="Text">
+    <h2>Über das ML-Modell</h2>
+    <!-- Ihre Informationen über das ML-Modell hier -->
+</div>
+
+<div id="Text">
+    <h2>Modelldaten</h2>
+    <!-- Ihre Modelldaten hier -->
+</div>
+</body>
+</html>

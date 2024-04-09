@@ -7,6 +7,7 @@ def main():
     parser.add_argument('inputpath')
     parser.add_argument('outputpath')
     parser.add_argument('debug')
+
     args = parser.parse_args() 
 
     path = args.inputpath

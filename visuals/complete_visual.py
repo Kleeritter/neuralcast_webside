@@ -8,8 +8,10 @@ from sklearn.metrics import mean_squared_error#,root_mean_squared_error
 from pytz import timezone
 import yaml
 import os
+import json
+from jinja2 import Template
 
-def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_herrenhausen_res_imuknet1.nc",forecast_multi_path="forecast_test.nc",forecast_single_path="forecast_test_single.nc", outputpath=""):
+def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_herrenhausen_res_imuknet1.nc",forecast_multi_path="forecast_test.nc",forecast_single_path="forecast_test_single.nc", outputpath="",input_template_path=""):
     #forecast_var="derived_Press_sl"
     dataset = xr.open_dataset(measured_data_path)
     dataset_forecast_single = xr.open_dataset(forecast_single_path)
@@ -146,6 +148,10 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
     #rms_multi = root_mean_squared_error(merged_df['Messwerte'][abs(47-len(means_multi)):47], means_multi)
     rms_multi = mean_squared_error(merged_df['Messwerte'][abs(48-len(means_multi)):48], means_multi,squared=False)
 
+
+       # Fügen Sie den RMSE-Wert zu den Daten hinzu
+  
+
     ### Plotting
 
 
@@ -159,6 +165,21 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
 
     fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df['Messwerte'], mode='lines+markers', name='Messwerte',line=dict(color="#000000")))
     if best_model == "single":
+
+        #attribute_data[forecast_var]['RMSE'] = rms_single
+        try:
+            with open("neuralcast_webside/visuals/units.yml", 'r') as yaml_file:
+                data = yaml.safe_load(yaml_file)
+        except FileNotFoundError:
+            # Wenn die Datei nicht existiert, erstellen Sie ein leeres Datenobjekt
+            data = {}
+        
+        data.setdefault(forecast_var, {})['RMSE'] = str(rms_single)
+
+        # Schreiben Sie die aktualisierten Daten zurück in die YAML-Datei
+        with open("/stadtwetter/public_html/units.json", 'w') as json_file:
+            json.dump(data, json_file)
+
         fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df["ImuKnet Single"],mode='lines+markers', name="ML Vorhersage",line=dict(color="#FF0000")))
 
         #fig.add_trace(go.Scatter(x=df_single_old.index, y=means, mode='lines+markers', name="Mittelwert der Vorhersagen",legendgroup="group1",  legendgrouptitle_text="Vorherige Vorhersagen Univariant"))
@@ -175,9 +196,26 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
         fig.add_trace(go.Scatter(   visible="legendonly",     name='Lower Bound',        x=df_single_old.index,        y=mins,        marker=dict(color="#444"),        line=dict(width=0),        mode='lines',        fillcolor='rgba(255, 0, 0, 0.5)',        fill='tonexty',        showlegend=False   ,legendgroup="group1" ))
 
 
-        rmse_string = "ML-Modell= "+str(round(rms_single,2))+unit
+        rmse_string = str(round(rms_single,2))+unit
 
     elif best_model == "multi":
+
+        try:
+            with open("neuralcast_webside/visuals/units.yml", 'r') as yaml_file:
+                data = yaml.safe_load(yaml_file)
+        except FileNotFoundError:
+            # Wenn die Datei nicht existiert, erstellen Sie ein leeres Datenobjekt
+            data = {}
+        
+        data.setdefault(forecast_var, {})['RMSE'] = str(rms_multi)
+
+        # Schreiben Sie die aktualisierten Daten zurück in die YAML-Datei
+        #with open("neuralcast_webside/visuals/units.json", 'w') as json_file:
+         #   json.dump(data, json_file)
+
+        with open("/stadtwetter/public_html/units.json", 'w') as json_file:
+            json.dump(data, json_file)
+
         fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df["ImuKnet Multi"],mode='lines+markers', name="ML Vorhersage",line=dict(color="#FF0000")))
         #fig.add_trace(go.Scatter(x=df_multi_old.index, y=means_multi, mode='lines+markers', name="Mittelwert der Vorhersagen",legendgroup="group2",  legendgrouptitle_text="Vorherige Vorhersagen Multivariant"))
 
@@ -193,7 +231,7 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
 
         fig.add_trace(go.Scatter(     visible="legendonly",    name='Lower Bound',        x=df_multi_old.index,        y=mins_multi,        marker=dict(color="#444"),        line=dict(width=0),        mode='lines',        fillcolor='rgba(255, 0, 0, 0.5)',        fill='tonexty',        showlegend=False,   legendgroup="group2" ))
     
-        rmse_string = "ML-Modell= "+ str(round(rms_multi,2))+unit
+        rmse_string =  str(round(rms_multi,2))+unit
 
     else:
         fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df["ImuKnet Single"],mode='lines+markers', name="ImuKnet Single"))
@@ -203,13 +241,13 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
     # Vorherige Single                   
     
     # Vorherige Multi 
-    
-    fig.add_annotation(
+    """
+    fig.add_annotation( 
         x=np.max(merged_df.index)-timedelta(hours=5),
         y=max(np.max(merged_df),np.max(maxs_multi),np.max(maxs))+1,
         xref="x",
         yref="y",
-        text="Skillscore (RMSE) <br>"+rmse_string ,
+        text="Skillscore <br>"+rmse_string ,
         #text=  "<center>Rmse <br> Uni= " + str(round(rms_single, 2)) + unit + " <br> Multi= " + str(round(rms_multi, 2)) + unit + "</center>",
 
         showarrow=False,
@@ -227,21 +265,40 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
         bgcolor="#ff7f0e",
         opacity=0.8
         )
-  
+  """
     #for col in merged_df.columns.difference([ 'Messwerte', 'ImuKnet Single']):
         #fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df[col],mode='lines+markers', name='Vorhersage zu t='+col[-2:]+"h",    legendgroup="group",  legendgrouptitle_text="Vorherige Vorhersagen",line=dict(color='rgba(169,169,169,0.25)')))
 
     fig.update_layout(showlegend=True)
     
-    fig.update_layout(legend=dict(
-        yanchor="top",
-        y=0.99,
-        xanchor="left",
-        x=0.01
-    ))
-    fig.update_layout(title='Messwerte und Vorhersagen für '+ longname,  xaxis_title='Zeit (MESZ)',                  yaxis_title=longname  +"["+unit+"]")
+  #  fig.update_layout(legend=dict(
+   #     yanchor="top",
+    #    y=0.99,
+     #   xanchor="left",
+      #  x=0.01
+   # ))
 
-    fig.write_html(outputpath +forecast_var + ".html")
+    fig.update_layout(legend=dict(
+        orientation="h",
+        yanchor="bottom",
+        y=1.02,
+        xanchor="right",
+        x=1
+    ))
+    fig.update_layout( xaxis_title='Zeit (MESZ)',                  yaxis_title=longname  +"["+unit+"]")
+    #fig.update_layout(legend_title_text='Trend')
+    #fig.write_html(outputpath +forecast_var + ".html")
+
+
+    #plotly_jinja_data = {forecast_var:fig.to_html(full_html=False,include_plotlyjs=False)}
+#consider also defining the include_plotlyjs parameter to point to an external Plotly.js as described above
+
+    #with open(outputpath + "test.html", "w", encoding="utf-8") as output_file:
+       # with open(input_template_path) as template_file:
+     #       j2_template = Template(template_file.read())
+      #      output_file.write(j2_template.render(plotly_jinja_data))
+
+    fig.write_json(file=outputpath+forecast_var+".json")
     
     return
 
