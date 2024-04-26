@@ -11,7 +11,7 @@ import os
 import json
 from jinja2 import Template
 
-def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_herrenhausen_res_imuknet1.nc",forecast_multi_path="forecast_test.nc",forecast_single_path="forecast_test_single.nc", outputpath=""):
+def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_herrenhausen_res_imuknet1.nc",forecast_multi_path="forecast_test.nc",forecast_single_path="forecast_test_single.nc", outputpath="",debug=False):
     #forecast_var="derived_Press_sl"
     dataset = xr.open_dataset(measured_data_path)
     dataset_forecast_single = xr.open_dataset(forecast_single_path)
@@ -78,9 +78,9 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
     df_single =dataset_forecast_single.to_dataframe()
 
 
-    df_single = df_single[forecast_var+"_"+last_forecast_hour][-24:] 
+    df_single = df_single[forecast_var+"_"+last_forecast_hour][-25:] 
 
-    forecasts_single = dataset_forecast_single.to_dataframe().filter(regex=f'^{forecast_var}')[-24:]
+    forecasts_single = dataset_forecast_single.to_dataframe().filter(regex=f'^{forecast_var}')[-25:]
 
     formins =forecasts_single.min(axis=1).values
 
@@ -109,7 +109,7 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
     last_forecast_hour_multi = dataset_multi.attrs["last_forecast_hour"]
     df_multi =dataset_multi.to_dataframe()
 
-    forecasts_m = dataset_multi.to_dataframe().filter(regex=f'^{forecast_var}')[-24:]
+    forecasts_m = dataset_multi.to_dataframe().filter(regex=f'^{forecast_var}')[-25:]
 
     forminm =forecasts_m.min(axis=1).values
 
@@ -159,7 +159,7 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
 
 
   
-
+    print(debug)
     print(merged_df)
     fig = go.Figure()
 
@@ -177,8 +177,10 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
         data.setdefault(forecast_var, {})['RMSE'] = str(rms_single)
 
         # Schreiben Sie die aktualisierten Daten zurück in die YAML-Datei
-        with open("/home/stadtwetter/public_html/units.json", 'w') as json_file:
-            json.dump(data, json_file)
+        print(debug)
+        if not debug:
+            with open("/home/stadtwetter/public_html/units.json", 'w') as json_file:
+                json.dump(data, json_file)
 
         fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df["ImuKnet Single"],mode='lines+markers', name="ML Vorhersage",line=dict(color="#FF0000")))
 
@@ -212,9 +214,9 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
         # Schreiben Sie die aktualisierten Daten zurück in die YAML-Datei
         #with open("neuralcast_webside/visuals/units.json", 'w') as json_file:
          #   json.dump(data, json_file)
-
-        with open("/home/stadtwetter/public_html/units.json", 'w') as json_file:
-            json.dump(data, json_file)
+        if not debug:
+            with open("/home/stadtwetter/public_html/units.json", 'w') as json_file:
+                json.dump(data, json_file)
 
         fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df["ImuKnet Multi"],mode='lines+markers', name="ML Vorhersage",line=dict(color="#FF0000")))
         #fig.add_trace(go.Scatter(x=df_multi_old.index, y=means_multi, mode='lines+markers', name="Mittelwert der Vorhersagen",legendgroup="group2",  legendgrouptitle_text="Vorherige Vorhersagen Multivariant"))

@@ -2,17 +2,18 @@
 #conda init
 #export PYTHONPATH=$PYTHONPATH:/localdata/weathermaps/imuk
 
-root_root=/Users/alex/Code #/mnt/nvmente/CODE
-root_root=/mnt/nvmente/CODE
+#root_root=/Users/alex/Code #/mnt/nvmente/CODE
+#root_root=/mnt/nvmente/CODE
 
-root_root=/home/alex/code
+root_root=/home/alex
 #python_root=/Users/alex #/home/alex
 python_root=/home/alex
 #"${python_root}/miniforge3/bin/conda" init zsh
-"${python_root}/miniforge3/bin/conda" activate Stadtwetter
+"${python_root}/miniforge3/bin/conda" activate stadtwetter
 
 
 path_root="${root_root}/neuralcast_webside"
+#path_root="${root_root}/neuralcast"
 
 path_input="${path_root}/testdata/datenarchiv/imuk/"
 path_output="${path_root}/testdata/stadtwetter/netcdf_daten/"
@@ -42,7 +43,7 @@ path_output="${path_root}/testdata/stadtwetter/Vorhersage/grafiken/insert_test/j
 path_template="${path_root}/testdata/stadtwetter/Vorhersage/grafiken/insert_test/test.html"
 debug=0  # true
 
-"${python_root}/miniforge3/envs/Stadtwetter/bin/python3" "${path_root}/auto_visualisation.py" $path_input_measured $path_input_forecast_single $path_input_forecast_multi $path_output $debug $path_template
+"${python_root}/miniforge3/envs/stadtwetter/bin/python3" "${path_root}/auto_visualisation.py" $path_input_measured $path_input_forecast_single $path_input_forecast_multi $path_output $debug #$path_template
 echo " Visuals finished"
 
 

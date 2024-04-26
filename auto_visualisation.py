@@ -23,9 +23,11 @@ def main():
     print(debug)
     if debug==0:
         print("DEBUG")
+        debug=True
         today = datetime(2024, 2, 27,2)  # Set the desired date
     else:
         today  = date.today()
+        debug=False
 
     #origin =os.getcwd()
     #print(origin)
@@ -40,7 +42,7 @@ def main():
        "sonic_Wind_Speed","sonic_Wind_Dir"]
     
     for forecast_var in forecast_vars:
-        visualize_var(forecast_var=forecast_var,measured_data_path=args.inputpath_measured, forecast_multi_path=args.inputpath_forecast_multi,forecast_single_path=args.inputpath_forecast_single,outputpath=args.outputpath)
+        visualize_var(forecast_var=forecast_var,measured_data_path=args.inputpath_measured, forecast_multi_path=args.inputpath_forecast_multi,forecast_single_path=args.inputpath_forecast_single,outputpath=args.outputpath,debug=debug)
         print(forecast_var+ " completed")
 
     return
