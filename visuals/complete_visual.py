@@ -115,7 +115,7 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
 
     formaxm =forecasts_m.max(axis=1).values
 
-    df_multi = df_multi[forecast_var+"_"+last_forecast_hour_multi][-24:] 
+    df_multi = df_multi[forecast_var+"_"+last_forecast_hour_multi][-25:] 
     selected_columns = dataset_multi.to_dataframe().filter(regex=f'^{forecast_var}')[-72:-24]
 
     df_multi_old = selected_columns
