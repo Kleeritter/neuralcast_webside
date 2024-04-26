@@ -119,7 +119,7 @@ def load_hyperparameters(file_path):
 def neural_forecast_multi(dataset, outputfile, time_start,today):
     import xarray as xr
     import pandas as pd 
-    from datetime import datetime
+    from datetime import datetime, timedelta
     import numpy as np
     import os
     ds = xr.Dataset()#[("time",pd.date_range(start='1/1/2018', periods=24,freq="1H"))])
@@ -132,7 +132,7 @@ def neural_forecast_multi(dataset, outputfile, time_start,today):
      "sonic_Gust_Speed","herrenhausen_Regen", "herrenhausen_Wind_Speed", "sonic_Wind_Speed","sonic_Wind_Dir_sin", "sonic_Wind_Dir_cos", "sonic_Wind_Dir"]
 
     numered_variable_names = [f"{variable}_{today.strftime('%H')}" for variable in variable_list]
-    time_start = today.strftime('%Y-%m-%d %H:00') - datetime.timedelta(hour=1)
+    time_start = today.strftime('%Y-%m-%d %H:00') - timedelta(hour=1)
 
     print(time_start)
 

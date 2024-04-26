@@ -24,7 +24,7 @@ def main():
     origin =os.getcwd()
     print(origin)
     os.chdir(origin +"/neuralcast_webside")
-    time_start = today.strftime('%d.%m.%Y %H:00') - datetime.timedelta(hour=1)
+    time_start = today.strftime('%d.%m.%Y %H:00') - timedelta(hour=1)
     print(time_start)
     print(today)
     ### Imuknet1 Forecast###
