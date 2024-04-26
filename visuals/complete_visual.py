@@ -293,7 +293,7 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
         xanchor="right",
         x=1
     ))
-    fig.update_layout( xaxis_title='Zeit (MESZ)',                  yaxis_title=longname  +"("+unit+")")
+    fig.update_layout( xaxis_title='Zeit (MESZ)',                  yaxis_title=longname  +" ("+unit+")")
     #fig.update_layout(legend_title_text='Trend')
     #fig.write_html(outputpath +forecast_var + ".html")
 
