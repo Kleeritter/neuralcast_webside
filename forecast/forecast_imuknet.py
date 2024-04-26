@@ -263,7 +263,7 @@ def neural_forecast_var_single(variable, dataset):
 def neural_forecast_single(dataset, outputfile, time_start,today):
     import xarray as xr
     import pandas as pd 
-    from datetime import datetime
+    from datetime import datetime,timedelta
     import os
     import numpy as np
 
@@ -272,7 +272,7 @@ def neural_forecast_single(dataset, outputfile, time_start,today):
 
 
     numered_variable_names = [f"{variable}_{today.strftime('%H')}" for variable in variable_list]
-    time_start = today.strftime('%Y-%m-%d %H:00')
+    time_start = (today- timedelta(hours=1)).strftime('%Y-%m-%d %H:00') #today.strftime('%Y-%m-%d %H:00')
 
     print(time_start)
 
