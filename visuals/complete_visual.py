@@ -163,6 +163,7 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
 
     #merged_df["ImuKnet Single"][-26] = merged_df["Messwerte"][-26]
     #merged_df.iloc[-26, "ImuKnet Single"] = merged_df.iloc[-26, "Messwerte"]
+    print(merged_df.loc[merged_df.index[-26]])
     merged_df.loc[merged_df.index[-26], "ImuKnet Single"] = merged_df.loc[merged_df.index[-26], "Messwerte"]
     print(merged_df)
     fig = go.Figure()
