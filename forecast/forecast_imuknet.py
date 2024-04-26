@@ -132,7 +132,7 @@ def neural_forecast_multi(dataset, outputfile, time_start,today):
      "sonic_Gust_Speed","herrenhausen_Regen", "herrenhausen_Wind_Speed", "sonic_Wind_Speed","sonic_Wind_Dir_sin", "sonic_Wind_Dir_cos", "sonic_Wind_Dir"]
 
     numered_variable_names = [f"{variable}_{today.strftime('%H')}" for variable in variable_list]
-    time_start = today.strftime('%Y-%m-%d %H:00') - timedelta(hours=1)
+    time_start = (today- timedelta(hours=1)).strftime('%Y-%m-%d %H:00') 
 
     print(time_start)
 
