@@ -294,10 +294,11 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
 
     #plotly_jinja_data = {forecast_var:fig.to_html(full_html=False,include_plotlyjs=False)}
 #consider also defining the include_plotlyjs parameter to point to an external Plotly.js as described above
+    if debug:  fig.write_html(outputpath +forecast_var + ".html")
 
     #with open(outputpath + "test.html", "w", encoding="utf-8") as output_file:
        # with open(input_template_path) as template_file:
-     #       j2_template = Template(template_file.read())
+       #     j2_template = Template(template_file.read())
       #      output_file.write(j2_template.render(plotly_jinja_data))
 
     fig.write_json(file=outputpath+forecast_var+".json")

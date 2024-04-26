@@ -17,14 +17,14 @@ def main():
     #debug=0
     if debug==0:
         print("DEBUG")
-        today = datetime(2024, 3, 19,6)  # Set the desired date
+        today = datetime(2024, 3, 18,6)  # Set the desired date
     else:
         today  = datetime.now()
 
     origin =os.getcwd()
     print(origin)
     os.chdir(origin +"/neuralcast_webside")
-    time_start = today.strftime('%d.%m.%Y %H:00')
+    time_start = today.strftime('%d.%m.%Y %H:00') - datetime.timedelta(hour=1)
     print(time_start)
     print(today)
     ### Imuknet1 Forecast###
