@@ -98,11 +98,6 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
     mins = df_single_old.min(axis=1).values
     maxs = df_single_old.max(axis=1).values
     means = df_single_old.mean(axis=1).values
-    #print("Minimumwerte:", mins)
-    #print("Maximumwerte:", maxs)
- 
-
-
 
 
     #### Multi Forecast
@@ -124,7 +119,6 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
     mins_multi = df_multi_old.min(axis=1).values
     maxs_multi = df_multi_old.max(axis=1).values
     means_multi = df_multi_old.mean(axis=1).values
-
 
 
     merged_df = pd.merge(df, df_single, on='time',how='outer', suffixes=('_a', '_single',))
