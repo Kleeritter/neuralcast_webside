@@ -1,0 +1,89 @@
+dach_CO2_Sensor:
+  longname: Massenanteil von Kohlendioxid in der Luft in Herrenhausen
+  units: '?'
+dach_CO2_ppm:
+  longname: Massenanteil von Kohlendioxid in der Luft in Herrenhausen
+  standard_name: Massenanteil_von_Kohlendioxid_in_der_Luft
+  units: ppm
+dach_Diffus_CMP-11:
+  longname: Diffuse Solarstrahlung in Herrenhausen (CMP-11)
+  units: W/m^2
+dach_Geneigt_CMP-11:
+  longname: Geneigte Solarstrahlung in Herrenhausen (CMP-11)
+  units: W/m^2
+dach_Global_CMP-11:
+  best_model: single
+  longname: Solarstrahlung in Herrenhausen (CMP-11)
+  standard_name: solare_Strahlung
+  units: W/m^2
+dach_Temp_AMUDIS_Box:
+  longname: Temperatur der AMUDIS-Box in Herrenhausen
+  units: "°C"
+dach_Temp_Bentham_Box:
+  longname: Temperatur der Bentham-Box in Herrenhausen
+  units: "°C"
+derived_Press_sl:
+  best_model: multi
+  longname: "Luftdruck reduziert auf Meereshöhe"
+  units: hPa
+herrenhausen_Druck:
+  longname: Luftdruck in Herrenhausen (nicht reduziert)
+  standard_name: Luftdruck
+  units: hPa
+herrenhausen_Feuchte:
+  best_model: multi
+  longname: Relative Luftfeuchtigkeit in Herrenhausen
+  standard_name: relative_Luftfeuchtigkeit
+  units: '%'
+herrenhausen_Globalstrahlung:
+  best_model: single
+  longname: Solarstrahlung in Herrenhausen (CM3)
+  standard_name: solare_Strahlung
+  units: W/m^2
+herrenhausen_Gust_Speed:
+  best_model: multi
+  longname: "Böengeschwindigkeit in Ruthe bei 50m Höhe"
+  standard_name: "Böengeschwindigkeit"
+  units: m/s
+herrenhausen_Psychro_T:
+  longname: Trockentemperatur des Psychrometers in Herrenhausen
+  standard_name: Lufttemperatur
+  units: "°C"
+herrenhausen_Psychro_Tf:
+  longname: Feuchttemperatur des Psychrometers in Herrenhausen
+  standard_name: Feuchttemperatur
+  units: "°C"
+herrenhausen_Regen:
+  best_model: multi
+  longname: Niederschlagsmenge in Herrenhausen
+  standard_name: Niederschlagsmenge
+  units: Hits
+herrenhausen_Temperatur:
+  best_model: multi
+  longname: Temperatur in Herrenhausen
+  standard_name: Lufttemperatur
+  units: "°C"
+herrenhausen_Wind_Speed:
+  best_model: multi
+  longname: "Windgeschwindigkeit in Herrenhausen bei 50m Höhe"
+  standard_name: Windgeschwindigkeit
+  units: m/s
+sonic_Gust_Speed:
+  best_model: single
+  longname: "Böengeschwindigkeit in Ruthe bei 10m Höhe"
+  standard_name: "Böengeschwindigkeit"
+  units: m/s
+sonic_Temperatur:
+  longname: Temperatur in Herrenhausen (Ultraschall)
+  standard_name: Lufttemperatur
+  units: "°C"
+sonic_Wind_Dir:
+  best_model: multi
+  longname: Windrichtung in Herrenhausen
+  standard_name: Windrichtung
+  units: Grad
+sonic_Wind_Speed:
+  best_model: single
+  longname: "Windgeschwindigkeit in Ruthe bei 10m Höhe"
+  standard_name: Windgeschwindigkeit
+  units: m/s
