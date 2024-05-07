@@ -44,7 +44,7 @@ def main():
     # Extrahiere alle Variablennamen aus dem Dataset
         variable_names = list(ds.data_vars.keys())
 
-        filtered_variable_names = [var for var in variable_names if var.endswith(("00", "06"))]
+        filtered_variable_names = [var for var in variable_names if var.endswith(("00", "12"))]
 
 
         # Extrahiere die entsprechenden Variablen aus dem Dataset
