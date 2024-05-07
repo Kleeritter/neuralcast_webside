@@ -46,6 +46,6 @@ debug=1  # true
 echo " Visuals finished"
 
 
-path_ongoing="${path_root}/testdata/stadtwetter/Vorhersage/model_data_for_evaluation.nc"
+path_ongoing=""/data/stadtwetter/Vorhersage/model_data_for_evaluation.nc"
 
 "${python_root}/miniforge3/envs/stadtwetter/bin/python3" "${path_root}/auto_archive.py"  $path_input_forecast_single $path_input_forecast_multi $path_ongoing $debug #$path_template
