@@ -108,7 +108,7 @@ def main():
 
         # Konvertieren der Werte
         convert_years(path=path, full=False, startday=startday,endday=endday, location="Herrenhausen", filename=outputpath_herrenhausens)
-        convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthes)
+        #convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthes)
 
 
     else:
@@ -129,7 +129,7 @@ def main():
 
     # Konvertieren der Werte
     convert_years(path=path, full=False, startday=startday,endday=endday, location="Herrenhausen", filename=outputpath_herrenhausen)
-    convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthe)
+    #convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthe)
 
 
 
@@ -143,8 +143,8 @@ def main():
 
     resample(outputpath_herrenhausen, outputpath_herrenhausen_res,v=1)
     normalize(outputpath_herrenhausen_res,outputpath_herrenhausen_normal,v=1)
-    resample(outputpath_ruthe, outputpath_ruthe_res,v=1)
-    normalize(outputpath_ruthe_res,outputpath_ruthe_normal,v=1)
+    #resample(outputpath_ruthe, outputpath_ruthe_res,v=1)
+    #normalize(outputpath_ruthe_res,outputpath_ruthe_normal,v=1)
 
     print("start resampling imuknet2")
     outputpath_herrenhausen_res = args.outputpath+"latest_herrenhausen_res_imuknet2.nc"
@@ -154,8 +154,8 @@ def main():
 
     resample(outputpath_herrenhausen, outputpath_herrenhausen_res,v=2)
     normalize(outputpath_herrenhausen_res,outputpath_herrenhausen_normal,v=2)
-    resample(outputpath_ruthe, outputpath_ruthe_res,v=2)
-    normalize(outputpath_ruthe_res,outputpath_ruthe_normal,v=2)
+    #resample(outputpath_ruthe, outputpath_ruthe_res,v=2)
+    #normalize(outputpath_ruthe_res,outputpath_ruthe_normal,v=2)
 
 if __name__ == "__main__":
     main()
