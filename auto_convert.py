@@ -36,6 +36,7 @@ def main():
     os.makedirs(os.path.dirname(outputpath_herrenhausen), exist_ok=True)
     os.makedirs(os.path.dirname(outputpath_ruthe), exist_ok=True)
     print("start Year")
+    print(startday,endday)
     origin =os.getcwd()
     os.chdir(origin +"/neuralcast_webside/converting")
 
