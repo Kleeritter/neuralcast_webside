@@ -9,7 +9,7 @@ from datetime import date
 
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-
+from windrose import prepare_data_for_windrose
 
 # Initialize the app - incorporate a Dash Bootstrap theme
 external_stylesheets = [dbc.themes.CERULEAN]
@@ -23,6 +23,11 @@ df = ds.to_dataframe()
 cols =["herrenhausen_Temperatur","herrenhausen_Feuchte", "dach_Diffus_CMP-11","dach_Global_CMP-11","herrenhausen_Gust_Speed",
      "sonic_Gust_Speed","herrenhausen_Regen", "herrenhausen_Wind_Speed", "sonic_Wind_Speed", "sonic_Wind_Dir"
 ]
+
+def windrose(dataframe):
+
+    return dataframe
+
 
 app.layout = dbc.Container([
     dbc.Row([
@@ -68,21 +73,20 @@ app.layout = dbc.Container([
 
     dbc.Row([
 
+
+
         dbc.Col([
             dbc.Row([
             
             dcc.Dropdown(cols, 'herrenhausen_Temperatur', multi=True,
                          id='radio-buttons-final'),
                          
-                         
-
 
             ]),
              dbc.Row([
-                 
-
-                 
+                       
             dcc.Graph(figure={}, id='my-first-graph-final'),
+            
            
             ]),
 
@@ -95,19 +99,13 @@ app.layout = dbc.Container([
 
             ] ),
 
-  
-             
-             
-            #html.Button("Download Excel", id="btn_xlsx"),
-            #dcc.Download(id="download-dataframe-xlsx"),
-            #html.Button("Download CSV", id="btn_csv"),
-            #dcc.Download(id="download-dataframe-csv"),
-             
-             
-             
-             ],width=12),
+            
+             ],width=6),
 
+        dbc.Col([
+            dcc.Graph(figure={}, id='windrose_plot'),
 
+        ],width=6),
 
         ])
         
@@ -120,9 +118,7 @@ app.layout = dbc.Container([
     Output(component_id='table1', component_property='columns'),
     Output(component_id='table1', component_property='data'),
     Output(component_id='double_ax_graph', component_property='figure'),
-
-
-
+    Output(component_id="windrose_plot", component_property='figure'),
 
     Input(component_id='radio-buttons-final', component_property='value'),
 
@@ -187,7 +183,26 @@ def update_graph(col_chosen_1,date1_start,date2_end,yaxis_col1,yaxis_col2):
     fig_dual_ax.update_yaxes(title_text=dual_ax_filterd_df.columns[1], secondary_y=True)
 
 
-    return fig1,table1_columns, table1_data,fig_dual_ax
+    # windrose
+
+    windrose_data = prepare_data_for_windrose(filtered_df)
+
+    windrose_plot = px.bar_polar(windrose_data, r='frequency', theta='wind_dir_bin', color='wind_speed_bin',
+                   color_discrete_sequence=px.colors.sequential.Plasma_r,
+                   title='Windrose Diagramm')
+
+# Layout anpassen
+    windrose_plot.update_layout(
+        polar=dict(
+            radialaxis=dict(ticks='', showticklabels=False),
+            angularaxis=dict(direction='clockwise', showline=False)
+        )
+    )
+
+
+
+
+    return fig1,table1_columns, table1_data,fig_dual_ax,windrose_plot
 
 @callback(
     Output("download-dataframe-xlsx", "data"),
@@ -213,6 +228,8 @@ def excel(col_chosen_1,date1_start,date2_end,nclicks):
 
     excel = dcc.send_data_frame(filtered_df.to_excel, "mydf.xlsx", sheet_name="Sheet_name_1")
     return excel
+
+
 
 # Run the app
 if __name__ == '__main__':
