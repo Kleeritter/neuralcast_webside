@@ -42,7 +42,7 @@ def main():
 
     # Konvertieren der Werte
     convert_years(path=path, full=False, startday=startday,endday=endday, location="Herrenhausen", filename=outputpath_herrenhausen)
-    convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthe)
+    #convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthe)
 
     ### 2. Erstellen der Laufenden  Monatswerte Herrenhausen + Ruthe
     print("start Month")
@@ -55,7 +55,7 @@ def main():
 
     # Konvertieren der Werte
     convert_years(path=path, full=False, startday=startday,endday=endday, location="Herrenhausen", filename=outputpath_herrenhausens)
-    convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthes)
+    #convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthes)
 
     ### 3. Handling Besonderer Zeitpunkte im Jahr
     if today.strftime('%m') =="01" and today.strftime('%d') =="01" and today.strftime('%H') =="00" :#and today.strftime('%M') =="00" :
@@ -73,7 +73,7 @@ def main():
         
         # Konvertieren der Werte
         convert_years(path=path, full=False, startday=startday,endday=endday, location="Herrenhausen", filename=outputpath_herrenhausen)
-        convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthe)
+        #convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthe)
         
         #### Am Anfang des nächsten Jahres  wird der letzte Monat des vorherigen Jahres archiviert
         previos_month = previos_year.replace(month=12)
@@ -89,7 +89,7 @@ def main():
 
         # Konvertieren der Werte
         convert_years(path=path, full=False, startday=startday,endday=endday, location="Herrenhausen", filename=outputpath_herrenhausens)
-        convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthes)
+        #convert_years(path=path, full=False, startday=startday,endday=endday, location="Ruthe", filename=outputpath_ruthes)
 
 
     elif today.strftime('%d') =="01"  and today.strftime('%H') =="00" and today.strftime('%M') =="00":
