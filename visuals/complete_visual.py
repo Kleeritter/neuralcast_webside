@@ -22,17 +22,17 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
     temperature_vars = [var for var in dataset.variables if 'Temperatur' in var]
     press_vars = [var for var in dataset.variables if 'Press_sl' in var]
 
-    # Ziehe von den Werten dieser Variablen 278,15 ab
+    # 
     for var_name in temperature_vars:
-        dataset[var_name] -= 278.15
+        dataset[var_name] -= 273.15
     for var_name in press_vars:
         dataset[var_name] /= 100
     temperature_vars = [var for var in dataset_forecast_single.variables if 'Temperatur' in var]
     press_vars = [var for var in dataset_forecast_single.variables if 'Press_sl' in var]
 
-    # Ziehe von den Werten dieser Variablen 278,15 ab
+
     for var_name in temperature_vars:
-        dataset_forecast_single[var_name] -= 278.15
+        dataset_forecast_single[var_name] -= 273.15
     for var_name in press_vars:
         dataset_forecast_single[var_name] /= 100
 
@@ -40,9 +40,9 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
     press_vars = [var for var in dataset_multi.variables if 'Press' in var]
 
 
-    # Ziehe von den Werten dieser Variablen 278,15 ab
+
     for var_name in temperature_vars:
-        dataset_multi[var_name] -= 278.15
+        dataset_multi[var_name] -= 273.15
     for var_name in press_vars:
         dataset_multi[var_name] /= 100
 
