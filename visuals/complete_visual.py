@@ -21,30 +21,12 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
        # Finde alle Variablen im Dataset, deren Name "Temperatur" enthält
     temperature_vars = [var for var in dataset.variables if 'Temperatur' in var]
     press_vars = [var for var in dataset.variables if 'Press_sl' in var]
-
-    # 
-    for var_name in temperature_vars:
-        dataset[var_name] -= 273.15
-    for var_name in press_vars:
-        dataset[var_name] /= 100
-    temperature_vars = [var for var in dataset_forecast_single.variables if 'Temperatur' in var]
-    press_vars = [var for var in dataset_forecast_single.variables if 'Press_sl' in var]
+    humid_vars = [var for var in dataset.variables if 'Feuchte' in var]
 
 
-    for var_name in temperature_vars:
-        dataset_forecast_single[var_name] -= 273.15
-    for var_name in press_vars:
-        dataset_forecast_single[var_name] /= 100
-
-    temperature_vars = [var for var in dataset_multi.variables if 'Temperatur' in var]
-    press_vars = [var for var in dataset_multi.variables if 'Press' in var]
-
-
-
-    for var_name in temperature_vars:
-        dataset_multi[var_name] -= 273.15
-    for var_name in press_vars:
-        dataset_multi[var_name] /= 100
+    dataset = rescale_var(dataset=dataset)
+    dataset_forecast_single = rescale_var(dataset=dataset_forecast_single)
+    dataset_multi = rescale_var(dataset=dataset_multi)
 
     ##change time
 
@@ -143,21 +125,7 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
     rms_multi = mean_squared_error(merged_df['Messwerte'][abs(48-len(means_multi)):48], means_multi,squared=False)
 
 
-       # Fügen Sie den RMSE-Wert zu den Daten hinzu
-  
 
-    ### Plotting
-
-
-
-
-
-  
-    print(debug)
-
-    #merged_df["ImuKnet Single"][-26] = merged_df["Messwerte"][-26]
-    #merged_df.iloc[-26, "ImuKnet Single"] = merged_df.iloc[-26, "Messwerte"]
-    #print(merged_df.loc[merged_df.index[-26]])
     merged_df.loc[merged_df.index[-25], "ImuKnet Single"] = merged_df.loc[merged_df.index[-25], "Messwerte"]
     merged_df.loc[merged_df.index[-25], "ImuKnet Multi"] = merged_df.loc[merged_df.index[-25], "Messwerte"]
     print(merged_df)
@@ -240,45 +208,10 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
         fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df["ImuKnet Multi"],mode='lines+markers', name="ImuKnet Multi"))
         rmse_string = "Single= "+str(round(rms_single,2))+unit+"Multi= "+ str(round(rms_multi,2))+unit 
 
-    # Vorherige Single                   
-    
-    # Vorherige Multi 
-    """
-    fig.add_annotation( 
-        x=np.max(merged_df.index)-timedelta(hours=5),
-        y=max(np.max(merged_df),np.max(maxs_multi),np.max(maxs))+1,
-        xref="x",
-        yref="y",
-        text="Skillscore <br>"+rmse_string ,
-        #text=  "<center>Rmse <br> Uni= " + str(round(rms_single, 2)) + unit + " <br> Multi= " + str(round(rms_multi, 2)) + unit + "</center>",
-
-        showarrow=False,
-        font=dict(
-            family="Courier New, monospace",
-            size=16,
-            color="#ffffff"
-            ),
-        align="center",
-        ax=20,
-        ay=-30,
-        bordercolor="#c7c7c7",
-        borderwidth=2,
-        borderpad=4,
-        bgcolor="#ff7f0e",
-        opacity=0.8
-        )
-  """
-    #for col in merged_df.columns.difference([ 'Messwerte', 'ImuKnet Single']):
-        #fig.add_trace(go.Scatter(x=merged_df.index, y=merged_df[col],mode='lines+markers', name='Vorhersage zu t='+col[-2:]+"h",    legendgroup="group",  legendgrouptitle_text="Vorherige Vorhersagen",line=dict(color='rgba(169,169,169,0.25)')))
 
     fig.update_layout(showlegend=True)
     
-  #  fig.update_layout(legend=dict(
-   #     yanchor="top",
-    #    y=0.99,
-     #   xanchor="left",
-      #  x=0.01
-   # ))
+
 
     fig.update_layout(legend=dict(
         orientation="h",
@@ -288,21 +221,28 @@ def visualize_var(forecast_var="derived_Press_sl", measured_data_path="latest_he
         x=1
     ))
     fig.update_layout( xaxis_title='Zeit (MESZ)',                  yaxis_title=longname  +" ("+unit+")")
-    #fig.update_layout(legend_title_text='Trend')
-    #fig.write_html(outputpath +forecast_var + ".html")
 
-
-    #plotly_jinja_data = {forecast_var:fig.to_html(full_html=False,include_plotlyjs=False)}
-#consider also defining the include_plotlyjs parameter to point to an external Plotly.js as described above
     if debug:  fig.write_html(outputpath +forecast_var + ".html")
-
-    #with open(outputpath + "test.html", "w", encoding="utf-8") as output_file:
-       # with open(input_template_path) as template_file:
-       #     j2_template = Template(template_file.read())
-      #      output_file.write(j2_template.render(plotly_jinja_data))
-
     fig.write_json(file=outputpath+forecast_var+".json")
     
     return
 
 
+def rescale_var(dataset):
+    #Function to rescale Variables for public, e.g temperature in °C
+
+    temperature_vars = [var for var in dataset.variables if 'Temperatur' in var]
+    press_vars = [var for var in dataset.variables if 'Press_sl' in var]
+    humid_vars = [var for var in dataset.variables if 'Feuchte' in var]
+
+    for var_name in temperature_vars:
+        dataset[var_name] -= 273.15
+
+    for var_name in press_vars:
+        dataset[var_name] /= 100
+
+    for var_name in press_vars:
+        dataset[var_name] = np.clip(dataset[var_name] * 100, None, 100)
+
+
+    return dataset

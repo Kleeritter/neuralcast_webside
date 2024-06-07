@@ -28,3 +28,9 @@ tem_hour and tem_hour_multi are just for testing purposes.
 
 ## Visaualization
 The Visualiton folder contains all the means to visualize the data and compute the error metrics.
+
+
+
+## Dashboard
+
+To view the Dashboard run app.py in /dashboard

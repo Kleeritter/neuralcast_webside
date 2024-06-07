@@ -64,7 +64,7 @@ herrenhausen_Regen:
   best_model: multi
   longname: Niederschlagsmenge in Herrenhausen
   standard_name: Niederschlagsmenge
-  units: Hits
+  units: mm
 herrenhausen_Temperatur:
   RMSE: '0.694687543962412'
   best_model: multi

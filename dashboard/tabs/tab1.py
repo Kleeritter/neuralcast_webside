@@ -63,7 +63,7 @@ layout = dbc.Container([
   'z-index': '10',
   'textAlign': 'center'}),
         html.Div(
-         dcc.Graph(figure={}, id='overpres',style={"height": "30vh"},config={'staticPlot': True})
+         dcc.Graph(figure={}, id='overpres',style={"height": "20vh"},config={'staticPlot': True})
          ,style={'position': 'relative'}
          
          ),
@@ -87,7 +87,7 @@ layout = dbc.Container([
             html.Div(   html.H2(str(df["herrenhausen_Regen"].iloc[-1])+ "mm"),style={'textAlign': 'center'} ),
             
                         className="mb-3",
-             style={**drop_shadow_style,"height":"12vh"} )
+             style={**drop_shadow_style,"height":"20vh"} )
         ],md=4)
         ,
         dbc.Col([
@@ -95,7 +95,7 @@ layout = dbc.Container([
             html.Div(   html.H2(str(df["herrenhausen_Feuchte"].iloc[-1])+ "%"),style={'textAlign': 'center'} ),
             
                         className="mb-3",
-             style={**drop_shadow_style,"height":"12vh"} )
+             style={**drop_shadow_style,"height":"20vh"} )
         ],md=4)
         ,
         dbc.Col([
@@ -184,8 +184,14 @@ def register_callbacks(app):
         )
 
         large_graphic = px.line(df["herrenhausen_Druck"])
-        over_pres = px.line(df["herrenhausen_Druck"][-180:])
-        over_pres.update_layout(showlegend=False)
+        over_pres = px.line(df["herrenhausen_Druck"][-180:],color=px.Constant("black"),color_discrete_map="identity")
+        over_pres.update_layout(showlegend=False,plot_bgcolor='white',   margin=dict(
+        l=0,
+        r=0,
+        b=2,
+        t=40,
+        pad=0
+    ),)
         over_pres.update_xaxes(showticklabels=False,showgrid=False,visible=False) # Hide x axis ticks 
         over_pres.update_yaxes(showticklabels=False,showgrid=False,visible=False) # Hide y axis ticks
         #over_pres.update_config({'staticPlot': True})
