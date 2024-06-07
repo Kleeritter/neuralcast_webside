@@ -241,7 +241,7 @@ def rescale_var(dataset):
     for var_name in press_vars:
         dataset[var_name] /= 100
 
-    for var_name in press_vars:
+    for var_name in humid_vars:
         dataset[var_name] = np.clip(dataset[var_name] * 100, None, 100)
 
 
